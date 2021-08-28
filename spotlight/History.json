@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "Type": "History",
+        "Songs": [
+            {
+                "Id": 0,
+                "Title": "Siera Leone",
+                "Artist": "Frank Ocean",
+                "Image": "frank"
+            },
+            {
+                "Id": 1,
+                "Title": "Bandana",
+                "Artist": "Freddie Gibbs",
+                "Image": "bandana"
+            },
+            {
+                "Id": 2,
+                "Title": "Stay Down",
+                "Artist": "Brent Fayaz",
+                "Image": "brent"
+            },
+            {
+                "Id": 3,
+                "Title": "it's Lit",
+                "Artist": "Dave East",
+                "Image": "Beloved"
+            },
+            {
+                "Id": 4,
+                "Title": "Drive Slow",
+                "Artist": "Mac Ayres",
+                "Image": "driveslow"
+            },
+            {
+                "Id": 5,
+                "Title": "Freeze Tag ( ft. Phoeliz )",
+                "Artist": "Terrance Martin",
+                "Image": "Dinner-Party"
+            },
+            {
+                "Id": 6,
+                "Title": "Back of My Mind",
+                "Artist": "H.E.R.",
+                "Image": "backofmymind"
+            }
+        ]
+    }
+]

@@ -1,0 +1,143 @@
+  [
+    {
+      "id": "1",
+      "type": "Featured",
+      "tagline": "In The Spotlight",
+      "items": [
+        {
+            "id": "20fac5f0c1993caefa22ff238a217dc2",
+            "title": "East Atlanta Love Letter",
+            "artist": "6lack",
+            "imgURL": "6lack"
+        },
+        {
+            "id": "20fac5f0c1993caefa22ff238a217dc2",
+            "title": "Drive Slow",
+            "artist": "Mac Ayres",
+            "imgURL": "driveslow"
+        },
+        {
+            "id": "457391c9c82bfdcbb4947278c0401e41",
+            "title": "Blonde",
+            "artist": "Frank Ocean",
+            "imgURL": "frank"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "type": "Artists",
+      "tagline": "'up Next' Artists ",
+      "items": [
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "",
+            "artist": "6lack",
+            "imgURL": "6lack"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "",
+            "artist": "Mac Ayres",
+            "imgURL": "mac"
+        },
+        {
+            "id": "457391c9c82bfdcbb4947278c0401e41",
+            "title": "",
+            "artist": "Frank Ocean",
+            "imgURL": "frank"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "",
+            "artist": "Drake",
+            "imgURL": "drake"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "",
+            "artist": "Meg Thee Stallion",
+            "imgURL": "meg"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "",
+            "artist": "Kali Uchis",
+            "imgURL": "kali"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "type": "History",
+      "tagline": "Recent Listens",
+      "items": [
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Unfair",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Loaded Gun",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "457391c9c82bfdcbb4947278c0401e41",
+              "title": "East Atlanta Love Letter",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Sorry",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Disconnect",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Switch",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Thugger's Interlude",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Balenciaga",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Scripture",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Nonchalant",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          },
+          {
+              "id": "2133e19292afc827cc42285f6f0e565c",
+              "title": "Seasons",
+              "artist": "6lack",
+              "imgURL": "6lack"
+          }
+        ]
+    }
+  ]

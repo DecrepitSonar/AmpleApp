@@ -1,0 +1,51 @@
+
+[
+    {
+        "Id": 2,
+        "Type": "Playlist",
+        "Playlists": [
+            {
+                "Id": 0,
+                "Name": "",
+                "Songs": [
+                    {
+                        "Id": 0,
+                        "Title": "Special One.",
+                        "Artist": "Phoney Ppl",
+                        "Image": "Phoney"
+                    },
+                    {
+                        "Id": 1,
+                        "Title": "Let Her Go",
+                        "Artist": "6lack",
+                        "Image": "6lack"
+                    },
+                    {
+                        "Id": 2,
+                        "Title": "Calvin's Joint",
+                        "Artist": "Mac Ayres",
+                        "Image": "driveslow"
+                    },
+                    {
+                        "Id": 3,
+                        "Title": "Self Control",
+                        "Artist": "Frank Ocean",
+                        "Image": "frank"
+                    },
+                    {
+                        "Id": 4,
+                        "Title": "Why iii Love the Moon",
+                        "Artist": "Phoney Ppl",
+                        "Image": "Phoney"
+                    },
+                    {
+                        "Id": 5,
+                        "Title": "Skyline to",
+                        "Artist": "Frank Ocean",
+                        "Image": "frank"
+                    },
+                ]
+            }
+        ]
+    },
+]

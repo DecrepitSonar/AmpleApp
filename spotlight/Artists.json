@@ -1,0 +1,386 @@
+
+[
+    {
+        "Id" : 0,
+        "Type:": "Artists",
+        "Artists": [
+            {
+                "Id": 0,
+                "Name": "6lack",
+                "ImageUrl": "6lack",
+                "IsVerified": true,
+                "Albums": [
+                    {
+                        "Id": 0,
+                        "Name": "East Atlanta Love Letter",
+                        "Artist": "6lack",
+                        "Image": "6lack",
+                        "Songs": [
+                            {
+                                "Id": 0,
+                                "Title": "Unfair",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 1,
+                                "Title": "Loaded Gun",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 2,
+                                "Title": "East Atlanta Love Letter",
+                                "Artist": "Let Her Go",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 3,
+                                "Title": "Sorry",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 3,
+                                "Title": "Disconnect",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 4,
+                                "Title": "Switch",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 5,
+                                "Title": "Thugger's Interlude",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 6,
+                                "Title": "Balenciago",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 7,
+                                "Title": "Scripture",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 8,
+                                "Title": "Nonchalant",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 9,
+                                "Title": "Seasons",
+                                "Artist": "6lack ( feat. Khalid ) ",
+                                "Image": "6lack"
+                            },
+                            {
+                                "Id": 10,
+                                "Title": "Stan",
+                                "Artist": "6lack",
+                                "Image": "6lack"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "Id": 1,
+                "Name": "Mac Ayres",
+                "ImageUrl": "Mac",
+                "isVerified": true,
+                "Albums": [
+                    {
+                        "Id": 0,
+                        "Name": "Drive Slow",
+                        "Artist": "Mac Ayres",
+                        "Image": "driveslow",
+                        "Songs": [
+                            {
+                                "Id": 0,
+                                "Title": "Intro",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 1,
+                                "Title": "Calvin's Joint",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 2,
+                                "Title": "The Devil in the Details",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 3,
+                                "Title": "Slow Down",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 4,
+                                "Title": "Should We Take The Van",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 5,
+                                "Title": "Show Me",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 6,
+                                "Title": "Lonely",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 7,
+                                "Title": "Easy",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            },
+                            {
+                                "Id": 8,
+                                "Title": "Change Ya Mind",
+                                "Artist": "Mac Ayres",
+                                "Image": "driveslow"
+                            }
+                        ]
+                        
+                    }
+                ]
+            },
+            {
+                "Id": 2,
+                "Name": "Frank Ocean",
+                "ImageUrl": "frank",
+                "isVerified": true,
+                "Albums": [
+                    {
+                        "Id": 0,
+                        "Name": "Blonde",
+                        "Artist": "Frank Ocean",
+                        "Image": "frank",
+                        "Songs": [
+                            {
+                                "Id": 0,
+                                "Title": "Nikes",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 1,
+                                "Title": "Ivy",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 2,
+                                "Title": "Pink + White",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 3,
+                                "Title": "Be Yourself",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 4,
+                                "Title": "Solo",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 5,
+                                "Title": "Skyline To",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 6,
+                                "Title": "Self Control",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 7,
+                                "Title": "Good Guy",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 8,
+                                "Title": "Nights",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 9,
+                                "Title": "Solo Reprise",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 10,
+                                "Title": "Pretty Sweet",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 11,
+                                "Title": "Facebook Story",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 12,
+                                "Title": "Close To You",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 13,
+                                "Title": "White Farrari",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 14,
+                                "Title": "Seigfried",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 15,
+                                "Title": "Godspeed",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            },
+                            {
+                                "Id": 16,
+                                "Title": "Futura Free",
+                                "Artist": "Frank Ocean",
+                                "Image": "frank"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "Id": 3,
+                "Name": "Phoney Ppl",
+                "ImageUrl": "phoney",
+                "isVerified": true,
+                "Albums": [
+                    {
+                        "Id": 0,
+                        "Name": "Yesterday's Tomorrow",
+                        "Artist": "Phoney Ppl",
+                        "Image": "phoney",
+                        "Songs": [
+                            {
+                                "Id": 0,
+                                "Title": "Special One.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 1,
+                                "Title": "End of the NeiGht.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 2,
+                                "Title": "baby Meet My Lover.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 3,
+                                "Title": "Smoke to Get Sober.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 4,
+                                "Title": "HelGa.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 5,
+                                "Title": "aGe of You.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 6,
+                                "Title": "RExER.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 7,
+                                "Title": "Why iii Love The Moon.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 8,
+                                "Title": "Take a Change.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 9,
+                                "Title": "Statue of Liberty.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 10,
+                                "Title": "Special One - Interlude.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 11,
+                                "Title": "So Much Better.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 12,
+                                "Title": "Compromise.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                            {
+                                "Id": 13,
+                                "Title": "Somehow.",
+                                "Artist": "Phoney Ppl",
+                                "Image": "Phoney"
+                            },
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

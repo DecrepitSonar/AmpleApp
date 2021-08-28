@@ -1,0 +1,227 @@
+[
+  {
+    "id": "1",
+    "type": "Featured",
+    "tagline": "In The Spotlight",
+    "items": [
+      {
+          "id": "20fac5f0c1993caefa22ff238a217dc2",
+          "title": "East Atlanta Love Letter",
+          "artist": "6lack",
+          "imgURL": "EALL"
+      },
+      {
+          "id": "20fac5f0c1993caefa22ff238a217dc2",
+          "title": "Drive Slow",
+          "artist": "Mac Ayres",
+          "imgURL": "driveSlow"
+      },
+      {
+          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "title": "Blonde",
+          "artist": "Frank Ocean",
+          "imgURL": "frank"
+      },
+      {
+          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "title": "Why iii Love the moon",
+          "artist": "Phoney Ppl",
+          "imgURL": "phoney"
+      },
+      {
+          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "title": "Painted",
+          "artist": "Lucky Daye",
+          "imgURL": "Painted-Lucky-Daye"
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "type": "Artists",
+    "tagline": "On the Rise ",
+    "items": [
+      {
+          "id": "2133e19292afc827cc42285f6f0e565c",
+          "title": "",
+          "artist": "6lack",
+          "imgURL": "6lack1"
+      },
+      {
+          "id": "2133e19292afc827cc42285f6f0e565c",
+          "title": "",
+          "artist": "Mac Ayres",
+          "imgURL": "mac"
+      },
+      {
+          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "title": "",
+          "artist": "Kehlani",
+          "imgURL": "kehlani"
+      },
+      {
+          "id": "2133e19292afc827cc42285f6f0e565c",
+          "title": "",
+          "artist": "Drake",
+          "imgURL": "drake"
+      },
+      {
+          "id": "2133e19292afc827cc42285f6f0e565c",
+          "title": "",
+          "artist": "Meg Thee Stallion",
+          "imgURL": "meg"
+      },
+      {
+          "id": "2133e19292afc827cc42285f6f0e565c",
+          "title": "",
+          "artist": "Kali Uchis",
+          "imgURL": "kali"
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "type": "Trending",
+    "tagline": "Top 10 Hits",
+    "items": [
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Top 10",
+            "artist": "Sy Ari Da Kid",
+            "imgURL": "dakid",
+            "playCount": "413,123"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Hands up",
+            "artist": "6lack",
+            "imgURL": "Dinner-Party",
+            "playCount": "409,142"
+        },
+        {
+            "id": "457391c9c82bfdcbb4947278c0401e41",
+            "title": "While we wait",
+            "artist": "6lack",
+            "imgURL": "Kehlani_-_While_We_Wait",
+            "playCount": "343,421"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Wusah",
+            "artist": "6lack",
+            "imgURL": "major",
+            "playCount": "342,242"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Disconnect",
+            "artist": "6lack",
+            "imgURL": "6lack",
+            "playCount": "332,243"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Painted",
+            "artist": "6lack",
+            "imgURL": "Painted-Lucky-Daye",
+            "playCount": "312,123"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Thugger's Interlude",
+            "artist": "6lack",
+            "imgURL": "6lack",
+            "playCount": "301,123"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "What kind of music",
+            "artist": "6lack",
+            "imgURL": "whatkindofmusic",
+            "playCount": "299,132"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Scripture",
+            "artist": "6lack",
+            "imgURL": "6lack",
+            "playCount": "298,142"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Nonchalant",
+            "artist": "6lack",
+            "imgURL": "6lack",
+            "playCount": "280,132"
+        }
+      ]
+  },
+  {
+    "id": "1",
+    "type": "New Releases",
+    "tagline": "Fresh Drops",
+    "items": [
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Top 10",
+            "artist": "Sy Ari Da Kid",
+            "imgURL": "dakid"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Hands up",
+            "artist": "6lack",
+            "imgURL": "Dinner-Party"
+        },
+        {
+            "id": "457391c9c82bfdcbb4947278c0401e41",
+            "title": "While we wait",
+            "artist": "6lack",
+            "imgURL": "Kehlani_-_While_We_Wait"
+        },
+        {
+            "id": "2133e19292afc827cc42285f6f0e565c",
+            "title": "Wusah",
+            "artist": "6lack",
+            "imgURL": "major"
+        }
+      ]
+  },
+  {
+    "id": "1",
+    "type": "Playlists",
+    "tagline": "Something for every Mood",
+    "items": [
+        {
+            "id": "1",
+            "title": "Rap Life",
+            "artist": "",
+            "imgURL": "rap-life"
+        },
+        {
+            "id": "2",
+            "title": "R&B / Hip Hop",
+            "artist": "",
+            "imgURL": "rnb"
+        },
+        {
+            "id": "3",
+            "title": "Afro Vibes",
+            "artist": "",
+            "imgURL": "afro"
+        },
+        {
+            "id": "4",
+            "title": "Pop",
+            "artist": "",
+            "imgURL": "pop"
+        },
+        {
+            "id": "5",
+            "title": "Strictly RnB",
+            "artist": "",
+            "imgURL": "rnb"
+        }
+      ]
+    }
+]

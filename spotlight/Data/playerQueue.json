@@ -1,0 +1,23 @@
+[
+    {
+        "id":"1",
+        "type": "player",
+        "artist": "6lack",
+        "trackName": "East Atlanta Love Letter",
+        "imageURL": "6lack",
+        "backgroundVideoURL": "",
+        "trackQueue": [
+            {
+                "id": "",
+                "title": "",
+                "artist": ""
+            },
+            {
+                "id": "",
+                "title": "",
+                "artist": ""
+            }
+        ],
+        "saved": false
+    }
+]
