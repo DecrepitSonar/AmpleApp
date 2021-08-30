@@ -72,6 +72,7 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
     
     @objc func presentVc(_ sender: ImgGestureRecognizer){
         let view = OverViewController()
+        view.albumId = sender.albumId
 //        view.getAlbumDetail(albumId: sender.albumId!)
 //        view.getTracks(albumId: sender.albumId!)
         
@@ -418,10 +419,10 @@ class TrackDetailCell: UICollectionViewCell, DetailCell {
         image.contentMode = .scaleAspectFill
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.clipsToBounds = true
-        image.layer.cornerRadius = 5
+        image.layer.cornerRadius = 10
         
         name.textColor = .label
-        name.setFont(with: 20)
+        name.setFont(with: 15)
         artist.textColor = .secondaryLabel
         
         let labelStack = UIStackView(arrangedSubviews: [name, artist])
@@ -438,7 +439,7 @@ class TrackDetailCell: UICollectionViewCell, DetailCell {
         addSubview(horizontalStack)
         
         NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: 50),
+            image.heightAnchor.constraint(equalToConstant: 100),
             image.widthAnchor.constraint(equalToConstant: 50),
             
             horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor),

@@ -23,14 +23,14 @@ class NetworkManager {
     static func getFeaturedTracks(completion: @escaping (Result<[Song], NetworkError> ) -> [Song]){} // Get Featured Songs
     
     //User
-    static func login(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Authenticate user credentials
-    static func register(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Register user
-    static func getUser(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Get user data
-    static func getSaved<T: Decodable>(user: User, completion: @escaping (Result<T, NetworkError>) -> Void){} // Get user saved data
-    static func getFollowing(user: User, completion: @escaping (Result<[User], NetworkError>) -> Void){} // Get user following
-    static func getFollowers(user: User, completion: @escaping (Result<[User], NetworkError>) -> Void){} // Get user followers
-    static func logout(user: User, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // Unauthenticate user
-    
+//    static func login(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Authenticate user credentials
+//    static func register(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Register user
+//    static func getUser(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Get user data
+//    static func getSaved<T: Decodable>(user: User, completion: @escaping (Result<T, NetworkError>) -> Void){} // Get user saved data
+//    static func getFollowing(user: User, completion: @escaping (Result<[User], NetworkError>) -> Void){} // Get user following
+//    static func getFollowers(user: User, completion: @escaping (Result<[User], NetworkError>) -> Void){} // Get user followers
+//    static func logout(user: User, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // Unauthenticate user
+//
     // Artists
     static func getArtistsFeatured(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/featuredArtists")
@@ -413,44 +413,61 @@ class NetworkManager {
           return json
       }
     
-    static func readPlayerJson(fileName: String) -> [Player]?
-      {
-          var json: [Player]?
-        let decoder = JSONDecoder()
-          if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
-              do {
-                  let fileUrl = URL(fileURLWithPath: path)
-                  // Getting data from JSON file using the file URL
-                  let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
-                    
-                json = try? decoder.decode([Player].self, from: data)
-              } catch {
-                  // Handle error here
-              }
-          }
-//        print(json)
-        
-          return json
-      }
+//    static func readPlayerJson(fileName: String) -> [Player]?
+//      {
+//          var json: [Player]?
+//        let decoder = JSONDecoder()
+//          if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
+//              do {
+//                  let fileUrl = URL(fileURLWithPath: path)
+//                  // Getting data from JSON file using the file URL
+//                  let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
+//
+//                json = try? decoder.decode([Player].self, from: data)
+//              } catch {
+//                  // Handle error here
+//              }
+//          }
+////        print(json)
+//
+//          return json
+//      }
     
-    static func loadTrackDetail(filename: String) -> [TrackDetail] {
+    static func loadTrackDetail(filename: String, id: String) -> [TrackDetail] {
         var json: [TrackDetail]?
-        
+
         let decoder = JSONDecoder()
-        
+
         if let path = Bundle.main.path(forResource: filename, ofType: "json"){
             do {
                 let fileURL = URL(fileURLWithPath: path)
-                
+
                 let data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
-                
-                json = try decoder.decode([TrackDetail].self, from: data)
+
+                let json = try decoder.decode([TrackDetail].self, from: data)
+//                for x in 0..<response.count {
+////                    if(response[x].id == id){
+////                        json = response[x]
+////                        print(response[x])
+////                    print(id)
+//
+//                    json = response[x]
+//                    print(response[0)
+
+//                    }
+//                }
             }
             catch{
                 print(error)
             }
         }
-        print(json!)
+
+        print(json)
+        
         return json!
+
     }
+    
+    
+    
 }

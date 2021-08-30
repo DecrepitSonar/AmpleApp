@@ -29,6 +29,8 @@ class ImgGestureRecognizer: UITapGestureRecognizer{
 }
 
 class LayoutManager {
+    
+    // Sections Layout
     static func createFeaturedHeader(using: Any) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
     
@@ -98,6 +100,24 @@ class LayoutManager {
         
         return layoutSection
     }
+    static func createTrackDetailSection(using: TrackDetail) -> NSCollectionLayoutSection{
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+    
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.08))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+
+        let section = NSCollectionLayoutSection(group: group)
+        
+        let header = LayoutManager.createAlbumHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
+    // Header Layout
     static func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
         let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
       
@@ -105,17 +125,11 @@ class LayoutManager {
         
         return supplementoryItem
     }
-    static func createPlayer(using: Player) -> NSCollectionLayoutSection {
-        let items = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+    static func createAlbumHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
+        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.47))
         
-        let itemSize = NSCollectionLayoutItem(layoutSize: items)
+        let supplementoyItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         
-        let groupsize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        
-        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupsize, subitems: [itemSize])
-
-         let section = NSCollectionLayoutSection(group: layoutGroup)
-        
-        return section
+        return supplementoyItem
     }
 }
