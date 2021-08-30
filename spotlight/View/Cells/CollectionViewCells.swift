@@ -51,6 +51,7 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
     
     func configure(with catalog: Catalog, rootVc: UINavigationController?) {
         self.NavVc = rootVc
+//        self.NavVc?.navigationBar.setBackgroundImage(UIImage(named: catalog.imgURL)!, for: UIBarMetrics(rawValue: 3)!)
         
         image.image = UIImage(named: catalog.imgURL)
         tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentVc(_:)))

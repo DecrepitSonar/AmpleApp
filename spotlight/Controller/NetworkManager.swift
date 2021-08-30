@@ -413,61 +413,31 @@ class NetworkManager {
           return json
       }
     
-//    static func readPlayerJson(fileName: String) -> [Player]?
-//      {
-//          var json: [Player]?
-//        let decoder = JSONDecoder()
-//          if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
-//              do {
-//                  let fileUrl = URL(fileURLWithPath: path)
-//                  // Getting data from JSON file using the file URL
-//                  let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
-//
-//                json = try? decoder.decode([Player].self, from: data)
-//              } catch {
-//                  // Handle error here
-//              }
-//          }
-////        print(json)
-//
-//          return json
-//      }
-    
     static func loadTrackDetail(filename: String, id: String) -> [TrackDetail] {
+        var response: [DetailSection]?
         var json: [TrackDetail]?
-
+        
         let decoder = JSONDecoder()
 
         if let path = Bundle.main.path(forResource: filename, ofType: "json"){
             do {
                 let fileURL = URL(fileURLWithPath: path)
-
                 let data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
 
-                let json = try decoder.decode([TrackDetail].self, from: data)
-//                for x in 0..<response.count {
-////                    if(response[x].id == id){
-////                        json = response[x]
-////                        print(response[x])
-////                    print(id)
-//
-//                    json = response[x]
-//                    print(response[0)
-
-//                    }
-//                }
+                response = try decoder.decode([DetailSection].self, from: data)
+//                print(response!)
             }
             catch{
                 print(error)
             }
         }
-
-        print(json)
         
-        return json!
+        for x in 0..<response!.count {
+            if(response![x].id == id){
+                json = response![x].items
+            }
+        }
 
+        return json!
     }
-    
-    
-    
 }

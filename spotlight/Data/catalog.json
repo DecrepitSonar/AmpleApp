@@ -5,37 +5,37 @@
     "tagline": "In The Spotlight",
     "items": [
       {
-          "id": "20fac5f0c1993caefa22ff238a217dc2",
+          "id": "1",
           "title": "East Atlanta Love Letter",
           "artist": "6lack",
           "imgURL": "EALL"
       },
       {
-          "id": "20fac5f0c1993caefa22ff238a217dc2",
+          "id": "2",
           "title": "Drive Slow",
           "artist": "Mac Ayres",
           "imgURL": "driveSlow"
       },
       {
-          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "id": "3",
           "title": "Blonde",
           "artist": "Frank Ocean",
           "imgURL": "frank"
       },
       {
-          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "id": "4",
           "title": "Why iii Love the moon",
           "artist": "Phoney Ppl",
           "imgURL": "phoney"
       },
       {
-          "id": "457391c9c82bfdcbb4947278c0401e41",
+          "id": "5",
           "title": "Painted",
           "artist": "Lucky Daye",
           "imgURL": "Painted-Lucky-Daye"
       }
     ]
-  },
+  }, 
   {
     "id": "1",
     "type": "Artists",

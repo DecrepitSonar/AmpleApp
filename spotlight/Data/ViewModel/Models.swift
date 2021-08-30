@@ -60,10 +60,12 @@ struct Catalog: Codable, Hashable {
 
 // Track overview models
 
-//struct DetailSection: Codable, Hashable {
-//    var id: String
-//    var type: String
-//    var sections: [Tra ckDetail]
+struct DetailSection: Codable, Hashable {
+    var id: String
+    var type: String
+    var artist: String
+    var items: [TrackDetail]
+}
 
 struct TrackDetail: Codable, Hashable {
     var id: String
