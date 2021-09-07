@@ -35,7 +35,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         navigationItem.searchController = searchController
         
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
-        collectionView.backgroundColor = .red
+        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         view.addSubview(collectionView)
@@ -47,10 +47,10 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         
-//        createDataSource()
-//        reloadData()
-//        print("view loaded")
-//        print(section)
+        createDataSource()
+        reloadData()
+        print("view loaded")
+        print(section)
     }
     
     func createDataSource(){

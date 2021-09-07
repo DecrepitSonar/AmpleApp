@@ -11,13 +11,12 @@ import UIKit
 class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 //        view.backgroundColor = .systemBackground
         
 //        let helpBtn = UIBarButtonItem(title: "Help", style: .plain, target: self, action: #selector(cancel))
 //        helpBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
 //        navigationItem.rightBarButtonItem = helpBtn
-        
         
 //
         view.addSubview(Title)
@@ -26,7 +25,6 @@ class LoginViewController: UIViewController {
     
         // Register Button
 //        let keyboardDismissGesture =  UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
         
         // Login Button
         view.addSubview(LoginBtn)

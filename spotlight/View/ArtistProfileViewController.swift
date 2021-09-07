@@ -9,7 +9,6 @@ import UIKit
 
 class ArtistProfileViewController: UIViewController {
     
-//    let sections = NetworkManager.getProfil
     var collectionView: UICollectionView!
 //    var dataSource: UICollectionViewDiffableDataSource<User, Items>
     override func viewDidLoad() {

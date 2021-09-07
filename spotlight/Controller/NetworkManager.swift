@@ -393,9 +393,9 @@ class NetworkManager {
     // PUT
     
     // DELETE
-    static func readJSONFromFile(fileName: String) -> [Sections]?
+    static func readJSONFromFile(fileName: String) -> [LibObject]?
       {
-          var json: [Sections]?
+          var json: [LibObject]?
         let decoder = JSONDecoder()
           if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
               do {
@@ -403,12 +403,12 @@ class NetworkManager {
                   // Getting data from JSON file using the file URL
                   let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
                 
-                json = try? decoder.decode([Sections].self, from: data)
+                json = try? decoder.decode([LibObject].self, from: data)
               } catch {
                   // Handle error here
               }
           }
-//        print(json)
+        print("Section: ", json)
         
           return json
       }
@@ -440,4 +440,32 @@ class NetworkManager {
 
         return json!
     }
+    
+    static func readProfileData(filename: String, id: String) -> [LibObject]{
+        print("getting data")
+        
+        var json: [LibObject]?
+        let decoder = JSONDecoder()
+        
+        if let path = Bundle.main.path(forResource: filename, ofType: "json"){
+            do {
+                print("not nil")
+                let fileURL = URL(fileURLWithPath: path)
+                let data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
+                
+                 json = try decoder.decode([LibObject].self, from: data)
+                
+                print(json!)
+            }
+            catch{
+                print(error)
+            }
+        }
+        
+//        print(json!)
+        
+        return json!
+    }
+    
+    
 }

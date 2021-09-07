@@ -7,7 +7,7 @@
 
 import UIKit
 
-class OverViewController: UIViewController {
+class OverViewController: UIViewController, UICollectionViewDelegate {
     var albumId: String?
     
     fileprivate var section: [TrackDetail]?
@@ -21,12 +21,14 @@ class OverViewController: UIViewController {
         
         navigationController?.navigationItem.backButtonTitle = ""
         
-        section = NetworkManager.loadTrackDetail(filename: "AlbumDetail", id: albumId!)
+        section = NetworkManager.loadTrackDetail(filename: "AlbumDetail", id: "1")
         
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         collectionView.contentInsetAdjustmentBehavior = .never
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 80, right: 0)
+        collectionView.delegate = self
         
         // register items
         
@@ -43,7 +45,13 @@ class OverViewController: UIViewController {
         view.addSubview(collectionView)
         createDataSource()
         reloadData()
+
         
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffsetY = abs(collectionView.contentOffset.y)
+        print(contentOffsetY)
     }
     
     func configure<T: DetailCell>(_ cellType: T.Type, with trackItem: TrackItem, indexPath: IndexPath) -> T{
@@ -57,20 +65,30 @@ class OverViewController: UIViewController {
         return cell
 
     }
+    
+    func configureItems<T: DetailItems>(_ cellType: T.Type, with trackItems: [TrackItem], indexPath: IndexPath) -> T {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: T.reuseableIdentifier, for: indexPath) as? T else {
+            fatalError("could not configure cell")
+        }
+
+        cell.configure(items: trackItems)
+        return cell
+    }
+    
     // Create Datasource
     func createDataSource() {
         dataSource = UICollectionViewDiffableDataSource<TrackDetail, TrackItem> (collectionView: collectionView) {
             collectionview, IndexPath, item in
-
+            
+            let section = self.section![IndexPath.section]
+            
                 switch self.section![IndexPath.section].type {
-                case "Albums":
-                    return self.configure(AlbumCollectionCell.self, with: item, indexPath: IndexPath)
+                case "Tracks":
+                    return self.configureItems(TrackDetailCell.self, with: section.items, indexPath: IndexPath)
                 case "Artists":
                     return self.configure(TrackRelatedArtistSEction.self, with: item, indexPath: IndexPath)
-                case "Singles":
-                    return self.configure(AlbumCollectionCell.self, with: item, indexPath: IndexPath)
                 default:
-                    return self.configure(TrackDetailCell.self, with: item, indexPath: IndexPath)
+                    return self.configure(AlbumCollectionCell.self, with: item, indexPath: IndexPath)
                 }
         }
 
@@ -126,15 +144,13 @@ class OverViewController: UIViewController {
             let section = self.section![index]
 
             switch section.type{
-            case "Albums":
-                return LayoutManager.createMediumImageSliderSection(using: section)
+            case "Tracks":
+                return LayoutManager.createTableLayout(using: section)
             case "Artists":
                 return LayoutManager.createAviSliderSection(using: section)
-            case "Singles":
-                return LayoutManager.createMediumImageSliderSection(using: section)
             default:
                 print("configureing header detail")
-                return self.headerDeatil(using: section)
+                return LayoutManager.createMediumImageSliderSection(using: section)
             }
         }
 
@@ -152,8 +168,8 @@ class OverViewController: UIViewController {
 
         let section = NSCollectionLayoutSection(group: group)
         
-        let header = createAlbumHeader()
-        section.boundarySupplementaryItems = [header]
+//        let header = createAlbumHeader()
+//        section.boundarySupplementaryItems = [header]
         
         return section
     }

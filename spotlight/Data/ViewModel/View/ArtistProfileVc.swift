@@ -19,7 +19,7 @@ class Profile: UIViewController {
         
         collectionview = UICollectionView(frame: view.bounds, collectionViewLayout: compositionalLayout())
         collectionview.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        collectionview.backgroundColor = .systemBackground
+        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         // register cells
         collectionview.register(CollectionCell.self, forCellWithReuseIdentifier: CollectionCell.reuseIdentifier)
@@ -73,7 +73,7 @@ class Profile: UIViewController {
             switch(section.type){
             case "Tracks":
                 return self.configureCell(_cellType: CollectionCell.self, with: item, indexPath: indexPath)
-            case "Artists":
+            case "Artist":
                 return self.configureCell(_cellType: ArtistCell.self, with: item, indexPath: indexPath)
             default:
                 return self.configureCell(_cellType: LargeArtCollection.self, with: item, indexPath: indexPath)
