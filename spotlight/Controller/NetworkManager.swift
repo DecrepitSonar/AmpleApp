@@ -434,7 +434,9 @@ class NetworkManager {
         
         for x in 0..<response!.count {
             if(response![x].id == id){
-                json = response![x].items
+                if(response![x].items != nil){
+                    json = response![x].items
+                }
             }
         }
 

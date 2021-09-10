@@ -101,7 +101,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         }
         
         print("no Errors in cell configuration")
-        cell.configure(with: catalog, rootVc: self.navigationController!)
+        cell.configure(with: catalog, rootVc: self.navigationController!, indexPath: Int(indexPath.row))
         return cell
     }
     
@@ -110,7 +110,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         snapshot.appendSections(section)
         
         for section in section{
-            snapshot.appendItems(section.items, toSection: section)
+            snapshot.appendItems(section.items!, toSection: section)
         }
         datasource?.apply(snapshot)
     }

@@ -49,7 +49,7 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
         fatalError("")
     }
     
-    func configure(with catalog: LibItem, rootVc: UINavigationController?) {
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         self.NavVc = rootVc
         
         image.image = UIImage(named: catalog.imageURL)
@@ -65,6 +65,7 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
         view.albumId = sender.albumId
         
         print("presenting...")
+        NavVc!.title = "Featured"
         NavVc!.pushViewController(view, animated: true)
         
     }
@@ -105,7 +106,7 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
         fatalError("")
     }
     
-    func configure(with catalog: LibItem, rootVc: UINavigationController?){
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?){
         
         self.NavVc = rootVc
     
@@ -151,18 +152,22 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
         artist.setFont(with: 10)
         artist.textColor = .secondaryLabel
         
-        listenCount.setFont(with: 15)
+        listenCount.setFont(with: 10)
         listenCount.textColor = .secondaryLabel
+        
+        
+        chartPosition.setFont(with: 10)
+        chartPosition.textColor = .secondaryLabel
         
         let innterStackview = UIStackView(arrangedSubviews: [title, artist])
         innterStackview.axis = .vertical
         innterStackview.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackview = UIStackView(arrangedSubviews: [image, innterStackview, listenCount] )
+        let stackview = UIStackView(arrangedSubviews: [chartPosition, image, innterStackview, listenCount] )
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .horizontal
         stackview.alignment = .center
-        stackview.distribution = .fill
+        stackview.distribution = .fillProportionally
         stackview.spacing = 10
         
         addSubview(stackview)
@@ -172,12 +177,17 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
             image.heightAnchor.constraint(equalToConstant: 100),
             image.widthAnchor.constraint(equalToConstant: 50),
             
+            
+            
             stackview.topAnchor.constraint(equalTo: topAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             
-            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -100)
+            chartPosition.trailingAnchor.constraint(equalTo: image.leadingAnchor, constant: -20),
+            chartPosition.widthAnchor.constraint(equalToConstant: 5),
+            
+            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
         ])
     }
     
@@ -185,8 +195,8 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
         fatalError("")
     }
     
-    func configure(with catalog: LibItem, rootVc: UINavigationController?) {
-        chartPosition.text = "1"
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.artist
@@ -217,12 +227,11 @@ class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
         image.translatesAutoresizingMaskIntoConstraints = false
         
         artist.textColor = .secondaryLabel
-//        artist.translatesAutoresizingMaskIntoConstraints = false
+        artist.translatesAutoresizingMaskIntoConstraints = false
         artist.setFont(with: 10)
         
         title.textColor = .label
-        
-//        title.translatesAutoresizingMaskIntoConstraints = false
+        title.translatesAutoresizingMaskIntoConstraints = false
         
         let stackview = UIStackView(arrangedSubviews: [image, title, artist])
         stackview.translatesAutoresizingMaskIntoConstraints = false
@@ -235,11 +244,12 @@ class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
             
             image.heightAnchor.constraint(equalToConstant: 150),
             image.widthAnchor.constraint(equalToConstant: 150),
-//            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
             
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
             
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 0),
+            
+            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackview.topAnchor.constraint(equalTo: topAnchor),
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor)
@@ -252,7 +262,7 @@ class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
         fatalError("")
     }
     
-    func configure(with catalog: LibItem, rootVc: UINavigationController?) {
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.artist
@@ -325,17 +335,16 @@ class TrackOverviewSectionHeader: UICollectionReusableView{
     }
     
 }
-
-class TrackDetailStrip: UITableViewCell {
-    
-    static let reuseidentifier: String = "track"
+class TrackDetailStrip: UICollectionViewCell, DetailCell  {
+    static var reuseableIdentifier: String = "track"
     var image = UIImageView()
     var artist = UILabel()
     var name = UILabel()
+    let trackNumber = UILabel()
     
-    func config(item: TrackItem){
+    override init(frame: CGRect){
+        super.init(frame: frame)
         
-        contentView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         image.contentMode = .scaleAspectFill
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.clipsToBounds = true
@@ -343,83 +352,104 @@ class TrackDetailStrip: UITableViewCell {
         
         name.textColor = .label
         name.setFont(with: 15)
+        
         artist.textColor = .secondaryLabel
         artist.setFont(with: 10)
+        
+        trackNumber.translatesAutoresizingMaskIntoConstraints = false
+        trackNumber.setFont(with: 10)
+        trackNumber.textColor = .secondaryLabel
+//        trackNumber.backgroundColor = .red
         
         let labelStack = UIStackView(arrangedSubviews: [name, artist])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack])
+        let horizontalStack = UIStackView(arrangedSubviews: [trackNumber, image, labelStack])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
-        horizontalStack.distribution = .fill
+        horizontalStack.distribution = .fillProportionally
         
         horizontalStack.spacing = 25
+
         
         addSubview(horizontalStack)
         
         NSLayoutConstraint.activate([
+            
             image.heightAnchor.constraint(equalToConstant: 50),
             image.widthAnchor.constraint(equalToConstant: 50),
             
-            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            image.leadingAnchor.constraint(equalTo: trackNumber.trailingAnchor, constant: 7),
+            
+            trackNumber.widthAnchor.constraint(equalToConstant: 18 ),
+            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             horizontalStack.topAnchor.constraint(equalTo: topAnchor),
             horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-        
-        image.image = UIImage(named: item.imageURL)
-        name.text = item.title
-        artist.text = item.artist
-        
-    }
-}
-
-class TrackDetailCell: UICollectionViewCell, DetailItems, UITableViewDelegate, UITableViewDataSource{
-
-    static var reuseableIdentifier: String = "main"
-    
-    var tableview: UITableView!
-    
-    var tracks: [TrackItem]!
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        tableview = UITableView()
-        tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//        tableview.delegate = self
-//        tableview.dataSource = self
-        
-        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-
     }
     
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    
-    func configure(items: [TrackItem]) {
-//        print("Items", items)
-        tracks = items
-        
-        contentView.addSubview(tableview)
-        tableview.backgroundColor = .red
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tracks.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print(4)
-        let cell = tableview.dequeueReusableCell(withIdentifier: "cell")
-        cell!.textLabel?.text = "Track"
-        cell?.textLabel?.textColor = .white
-        return cell!
+    func configure(with trackItem: TrackItem, indexPath: IndexPath?) {
+        let index = Int(indexPath!.row) + 1
+        image.image = UIImage(named: trackItem.imageURL)
+        name.text = trackItem.title
+        artist.text = trackItem.artist
+        trackNumber.text = String(index)
     }
     
 }
+
+//class TrackDetailCell: UICollectionViewCell, DetailCell{
+//
+//    let image = UIImageView()
+//    let title = UILabel()
+//    let name = UILabel()
+//
+//    static var reuseableIdentifier: String = "main"
+//
+//    override init(frame: CGRect){
+//        super.init(frame: frame)
+//
+//        image.clipsToBounds = true
+//
+//        title.textColor = .label
+//        title.setFont(with: 15)
+//
+//        name.setFont(with: 10)
+//        name.textColor = .secondaryLabel
+//
+//
+//        let labelStack = UIStackView(arrangedSubviews: [title, name])
+//        labelStack.axis = .vertical
+//        labelStack.alignment = .leading
+//
+//        let stackview = UIStackView(arrangedSubviews: [image, labelStack])
+//        stackview.axis = .horizontal
+//
+//        addSubview(stackview)
+//
+//        NSLayoutConstraint.activate([
+//
+//            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
+//            stackview.topAnchor.constraint(equalTo: topAnchor),
+//            stackview.bottomAnchor.constraint(equalTo: bottomAnchor)
+//        ])
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("")
+//    }
+//    func configure(with item: TrackItem, indexPath: IndexPath?) {
+//        image.image = UIImage(named: item.imageURL)
+//        title.text = item.title
+//        name.text = item.artist
+//    }
+//}
 class AlbumCollectionCell: UICollectionViewCell, DetailCell{
 
     
@@ -472,7 +502,7 @@ class AlbumCollectionCell: UICollectionViewCell, DetailCell{
         fatalError("")
     }
     
-    func configure(with trackItem: TrackItem) {
+    func configure(with trackItem: TrackItem, indexPath: IndexPath?) {
         image.image = UIImage(named: trackItem.imageURL)
         artist.text = trackItem.artist
         title.text = trackItem.title
@@ -511,109 +541,177 @@ class TrackRelatedArtistSEction: UICollectionViewCell, DetailCell {
         fatalError("")
     }
 
-    func configure(with trackItem: TrackItem) {
+    func configure(with trackItem: TrackItem, indexPath: IndexPath?) {
         print("Seting up Artist")
         artistAvi.configureCard(img: trackItem.imageURL, name: trackItem.artist)
     }
 }
 
-class mediumSection: UICollectionViewCell, ProfileSectionConfigurer {
-    static var reuseIdentifier: String = "Medium Section"
-    
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-        
-    }
-    
-    required init(coder: NSCoder){
-        fatalError("")
-    }
-    
-    func configure(with item: ProfileItem) {
-        print(item)
-    }
-    
-}
+//class mediumSection: UICollectionViewCell, ProfileSectionConfigurer {
+//    static var reuseIdentifier: String = "Medium Section"
+//
+//
+//    override init(frame: CGRect){
+//        super.init(frame: frame)
+//
+//    }
+//
+//    required init(coder: NSCoder){
+//        fatalError("")
+//    }
+//
+//    func configure(with item: ProfileItem) {
+//        print(item)
+//    }
+//
+//}
 
 // To Do: Conver to UIcollectionview cell
 // Player cell
-class PlayerView {
-    
-    
-}
-class TrackHistorySection: UICollectionViewCell, SelfConfigureingCell{
-    func presenter(with rootVc: UINavigationController) {
-        
-    }
-    
-    static let reuseIdentifier: String = "History"
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    
-    func configure(with catalog: LibItem, rootVc: UINavigationController?) {
-        
-    }
-}
+//class PlayerView {
+//
+//
+//}
+//class TrackHistorySection: UICollectionViewCell, SelfConfigureingCell{
+//    func presenter(with rootVc: UINavigationController) {
+//
+//    }
+//
+//    static let reuseIdentifier: String = "History"
+//
+//    override init(frame: CGRect){
+//        super.init(frame: frame)
+//
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("")
+//    }
+//
+//    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+//
+//    }
+//}
 
 // headers
 class TrackImageHeader: UICollectionReusableView{
+    
     static let reuseableIdentifier: String = "image Header"
     
-    let title = UILabel()
-    let tagline = UILabel()
-    let image = UIImageView()
+    // labels
+    let title = UILabel() // Title
+    let artist = UILabel() //
+    let pageTag = UILabel()
+    // Images
+    let albumImage = UIImageView()
+    let artistAviImage = UIImageView()
+    
+    // buttons
+    let playBtn = UIButton()
+    let followBtn = UIButton()
+    let saveBtn = UIButton()
+    let optionsBtn = UIButton()
+    
+    
+    
     
     override init(frame: CGRect){
         super.init(frame: frame)
         
-//        let seperator = UIView(frame: .zero)
-//        seperator.backgroundColor = .quaternaryLabel
+        let seperator = UIView(frame: .zero)
+        seperator.backgroundColor = .quaternaryLabel
         
         title.textColor = .white
-        title.setFont(with: 35)
-//        title.text = "6lack"
+        title.setFont(with: 30)
+        title.numberOfLines = 0
         
-        tagline.textColor = .white
-        tagline.font = UIFont.boldSystemFont(ofSize: 33)
-        tagline.numberOfLines = 0
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.contentMode = .scaleAspectFit
+        artist.textColor = .label
+        artist.setFont(with: 20)
         
-        let stackView = UIStackView(arrangedSubviews: [title, tagline])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-//        stackView.distribution = .fillProportionally
-        stackView.spacing = 5
         
-        let primaryStack = UIStackView(arrangedSubviews: [image, stackView])
-        primaryStack.axis = .vertical
-        primaryStack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(primaryStack)
+        artistAviImage.layer.borderWidth = 1
+        artistAviImage.contentMode = .scaleAspectFill
+        artistAviImage.translatesAutoresizingMaskIntoConstraints = false
+        artistAviImage.clipsToBounds = true
+        artistAviImage.layer.cornerRadius = 16
+        
+        albumImage.translatesAutoresizingMaskIntoConstraints = false
+        albumImage.contentMode = .scaleAspectFill
+        albumImage.clipsToBounds = true
+        albumImage.layer.cornerRadius = 10
+        
+        // btns
+        followBtn.setTitle("Follow", for: .normal)
+        followBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+        followBtn.titleLabel?.setFont(with: 10)
+        followBtn.layer.borderWidth = 1
+        followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+        followBtn.layer.cornerRadius = 3
+        
+        saveBtn.setImage(UIImage(systemName: "heart"), for: .normal)
+        
+        playBtn.setImage(UIImage(systemName: "play.circle.fill"), for: .normal)
+        
+        optionsBtn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        optionsBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+        
+        pageTag.textColor = .secondaryLabel
+        
+        
+        let btnStack = UIStackView(arrangedSubviews: [pageTag, saveBtn])
+        btnStack.axis = .horizontal
+        btnStack.translatesAutoresizingMaskIntoConstraints = false
+        btnStack.distribution = .fillEqually
+        
+        let TirtiaryStack = UIStackView(arrangedSubviews: [pageTag, btnStack])
+        TirtiaryStack.axis = .horizontal
+        TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
+        TirtiaryStack.distribution = .equalSpacing
+        
+        let SecondaryStack = UIStackView(arrangedSubviews: [artistAviImage, artist, followBtn])
+        SecondaryStack.axis = .horizontal
+        SecondaryStack.alignment = .center
+        SecondaryStack.spacing = 10
+
+        
+        let ContainerStack = UIStackView(arrangedSubviews: [optionsBtn, title, SecondaryStack, seperator, TirtiaryStack ])
+        ContainerStack.translatesAutoresizingMaskIntoConstraints = false
+        ContainerStack.axis = .vertical
+        ContainerStack.spacing = 10
+        
+        
+        addSubview(albumImage)
+        
+//        albumImage.addSubview(playBtn)
+        
+        addSubview(ContainerStack)
         
         NSLayoutConstraint.activate([
-//            seperator.heightAnchor.constraint(equalToConstant: 1),
+            seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
+            albumImage.heightAnchor.constraint(equalToConstant: 325),
+            albumImage.widthAnchor.constraint(equalToConstant: 350),
+            albumImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            albumImage.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            albumImage.topAnchor.constraint(equalTo: topAnchor),
+            
+//            playBtn.centerXAnchor.constraint(equalTo: albumImage.centerXAnchor),
+//            playBtn.centerYAnchor.constraint(equalTo: albumImage.centerYAnchor),
+
+            artistAviImage.heightAnchor.constraint(equalToConstant: 30),
+            artistAviImage.widthAnchor.constraint(equalToConstant: 30),
+            
+            followBtn.widthAnchor.constraint(equalToConstant: 75),
+            
+            ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            ContainerStack.topAnchor.constraint(equalTo: albumImage.bottomAnchor, constant: 20),
+            ContainerStack.trailingAnchor.constraint(equalTo: albumImage.trailingAnchor),
+            
+            btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
+            optionsBtn.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
         ])
         
-        NSLayoutConstraint.activate([
-            image.leadingAnchor.constraint(equalTo: leadingAnchor),
-            image.trailingAnchor.constraint(equalTo: trailingAnchor),
-            image.topAnchor.constraint(equalTo: topAnchor, constant: -6),
-            image.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-        setupGradientLayer()
+//        setupGradientLayer()
     }
     
     required init?(coder: NSCoder) {
@@ -622,12 +720,17 @@ class TrackImageHeader: UICollectionReusableView{
     
     func setupGradientLayer(){
         let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = self.image.bounds
+        gradientLayer.frame = self.albumImage.bounds
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         gradientLayer.locations = [0.1, 1]
         
         layer.addSublayer(gradientLayer)
     }
+//
+//    func configure(with trackItem: TrackItem) {
+//        image.image = UIImage(named: trackItem.imageURL)
+//        title.text = trackItem.title
+//    }
     
 }
 class TrackSectionHeader: UICollectionReusableView{
@@ -674,7 +777,7 @@ class SectionHeader: UICollectionReusableView {
             
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
@@ -689,6 +792,7 @@ class SectionHeader: UICollectionReusableView {
       
 }
 
+// Profile VC Components
 class CollectionCell: UICollectionViewCell, CellConfigurer{
     
     static var reuseIdentifier: String = "Top Tracks"
@@ -933,5 +1037,3 @@ class ArtistCell: UICollectionViewCell, CellConfigurer {
     }
     
 }
-
-//class 

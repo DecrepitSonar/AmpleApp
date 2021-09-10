@@ -58,7 +58,7 @@ class Profile: UIViewController {
           snapshot.appendSections(section)
   
           for section in section {
-              snapshot.appendItems(section.items, toSection: section)
+              snapshot.appendItems(section.items!, toSection: section)
           }
   
           datasource?.apply(snapshot)

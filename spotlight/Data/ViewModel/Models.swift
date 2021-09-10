@@ -13,7 +13,7 @@ struct LibObject: Codable, Hashable{
     var tagline: String?
     var name: String?
     var imageURL: String?
-    var items: [LibItem]
+    var items: [LibItem]?
 }
 
 struct LibItem: Codable ,Hashable{
