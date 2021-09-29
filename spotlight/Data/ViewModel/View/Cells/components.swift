@@ -65,14 +65,14 @@ class FeaturedAlbums: UIScrollView, ViewManager{
         showsHorizontalScrollIndicator = false
         
         
-        NetworkManager.GetAlbumsFeatured{ (result) in
-            switch(result){
-            case .success(let abs):
-                self.albums = abs
-            case .failure(let err):
-                print(err)
-            }
-        }
+//        NetworkManager.GetAlbumsFeatured{ (result) in
+//            switch(result){
+//            case .success(let abs):
+//                self.albums = abs
+//            case .failure(let err):
+//                print(err)
+//            }
+//        }
     }
     
     required init?(coder: NSCoder) {

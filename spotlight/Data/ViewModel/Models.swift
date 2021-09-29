@@ -7,30 +7,56 @@
 
 import Foundation
 
-struct LibObject: Codable, Hashable{
+struct LibObject: Codable, Hashable {
     var id: String
     var type: String
     var tagline: String?
-    var name: String?
-    var imageURL: String?
     var items: [LibItem]?
 }
 
 struct LibItem: Codable ,Hashable{
     var id: String
-    var title: String
+    var title: String?
+    var artistId: String?
+    var albumId: String?
     var artist: String
     var imageURL: String
     var playCount: String?
+//    var followers: String?
+//    var listeners: String?
+//    var bio: String?
+//    var dateJoined: String?
 }
 
+struct AlbumDetail: Codable, Hashable {
+    var id: String
+    var type: String
+    var artist: String
+    var title: String
+    var artistImgURL: String?
+    var imageURL: String?
+    var items: [AlbumItems]?
+}
 
+struct AlbumItems: Codable, Hashable {
+    var id: String
+    var type: String?
+    var trackNum: String?
+    var title: String?
+    var artistId: String?
+    var artist: String?
+    var albumId: String?
+    var imageURL: String?
+    var name: String?
+    var isVerified: Bool?
+    var playCount: String?
+}
 
-struct Artist: Decodable {
-    var Id: String
-    var Name: String
-    var ImageUrl: String
-    var IsVerified: Bool
+struct Artist: Codable, Hashable {
+    var id: String
+    var name: String
+    var imageURL: String
+    var isVerified: Bool
 }
 
 struct Song: Decodable {
@@ -57,9 +83,6 @@ struct Playlist: Decodable {
     var Songs: [Song]
 }
 
-
-
-
 // Home section models
 struct Sections: Codable, Hashable {
     var id: String
@@ -78,31 +101,14 @@ struct Catalog: Codable, Hashable {
 //
 
 // Track overview models
-
 struct DetailSection: Codable, Hashable {
     var id: String
     var type: String
     var artist: String
-    var items: [TrackDetail]
+    var items: [AlbumDetail]
 }
 
-struct TrackDetail: Codable, Hashable {
-    var id: String
-    var type: String
-    var tagline: String
-    var artist: String
-    var title: String
-    var artistImgURL: String?
-    var imageURL: String?
-    var items: [TrackItem]
-}
 
-struct TrackItem: Codable, Hashable {
-    var id: String
-    var title: String
-    var artist: String
-    var imageURL: String
-}
 
 // Artist Profile data model
 struct ArtistDetail: Codable, Hashable{

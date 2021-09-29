@@ -10,18 +10,30 @@ import UIKit
 class OverViewController: UIViewController, UICollectionViewDelegate {
     var albumId: String?
     
-    fileprivate var section: [TrackDetail]?
+    fileprivate var section: [AlbumDetail]?
     
     
     fileprivate var collectionView: UICollectionView!
-    fileprivate var dataSource: UICollectionViewDiffableDataSource<TrackDetail, TrackItem>?
+    fileprivate var dataSource: UICollectionViewDiffableDataSource<AlbumDetail, AlbumItems>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
-        section = NetworkManager.loadTrackDetail(filename: "AlbumDetail", id: albumId!)
-        
+        print(albumId)
+        NetworkManager.getAlbum(id: albumId!) { Result in
+            switch Result {
+            case .success(let data ):
+                self.section = data
+                print(data)
+                self.initCollectionView()
+                
+            case .failure(let err):
+                print()
+            }
+        }
+    }
+    
+    func initCollectionView(){
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -37,14 +49,12 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
 //        collectionView.register(TrackImageHeader.self, forCellWithReuseIdentifier: TrackImageHeader.reuseableIdentifier)
         
         // Headers
-        collectionView.register(TrackImageHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackImageHeader.reuseableIdentifier)
-        collectionView.register(TrackOverviewSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackOverviewSectionHeader.reuseableIdentifier)
+        collectionView.register(DetailHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DetailHeader.reuseableIdentifier)
+        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
         
         view.addSubview(collectionView)
         createDataSource()
         reloadData()
-
-        
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -52,7 +62,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         print(contentOffsetY)
     }
     
-    func configure<T: DetailCell>(_ cellType: T.Type, with trackItem: TrackItem, indexPath: IndexPath) -> T{
+    func configure<T: DetailCell>(_ cellType: T.Type, with trackItem: AlbumItems, indexPath: IndexPath) -> T{
         print("Configureing cell")
 
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: T.reuseableIdentifier, for: indexPath) as? T else {
@@ -75,7 +85,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     
     // Create Datasource
     func createDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<TrackDetail, TrackItem> (collectionView: collectionView) {
+        dataSource = UICollectionViewDiffableDataSource<AlbumDetail, AlbumItems> (collectionView: collectionView) {
             collectionview, IndexPath, item in
             
                 switch self.section![IndexPath.section].type {
@@ -95,28 +105,28 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
             guard let section = self?.dataSource?.snapshot().sectionIdentifier(containingItem: firstSEction) else {return nil}
 
        
-            if section.imageURL!.isEmpty {
+            if section.imageURL == nil {
 
-                guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackOverviewSectionHeader.reuseableIdentifier, for: IndexPath) as? TrackOverviewSectionHeader else {return nil}
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else {return nil}
 
-                sectionHeader.tagline.text = section.tagline
-                sectionHeader.title.text = section.type
+                header.tagline.text = section.title
+                header.title.text = section.type
 
-                return sectionHeader
+                return header
             }else{
-                guard let imageHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackImageHeader.reuseableIdentifier, for: IndexPath) as? TrackImageHeader else {
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: DetailHeader.reuseableIdentifier, for: IndexPath) as? DetailHeader else {
                     return nil
                 }
                 
-                imageHeader.albumImage.image = UIImage(named: section.imageURL!)
+                header.albumImage.image = UIImage(named: section.imageURL!)
 
-                imageHeader.title.text = section.title
-                imageHeader.artist.text = section.artist
-                imageHeader.pageTag.text = section.type
-                imageHeader.artistAviImage.image = UIImage(named: section.artistImgURL!)
+                header.title.text = section.title
+                header.artist.text = section.title
+                header.pageTag.text = section.type
+                header.artistAviImage.image = UIImage(named: section.imageURL!)
                 
 
-                return imageHeader
+                return header
 
             }
         }
@@ -124,13 +134,13 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
 
     // initialize snapshot
     func reloadData(){
-        var snapshot = NSDiffableDataSourceSnapshot<TrackDetail, TrackItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<AlbumDetail, AlbumItems>()
         guard let section = section else { return }
         
         snapshot.appendSections(section)
         
         for section in section {
-            snapshot.appendItems(section.items, toSection: section)
+            snapshot.appendItems(section.items!, toSection: section)
         }
 
         dataSource?.apply(snapshot)

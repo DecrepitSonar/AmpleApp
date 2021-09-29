@@ -421,53 +421,6 @@
                     ]
                 },
                 {
-                    "id": "3",
-                    "type": "Artists",
-                    "tagline": "You may also like",
-                    "artist": "Frank Ocean",
-                    "title": "",
-                    "artistImgURL": "",
-                    "imageURL": "",
-                    "items": [
-                        {
-                            "id": "2133e19292afc827cc42285f6f0e565c",
-                            "title": "",
-                            "artist": "6lack",
-                            "imageURL": "6lack1"
-                        },
-                        {
-                            "id": "2133e19292afc827cc42285f6f0e565c",
-                            "title": "",
-                            "artist": "Mac Ayres",
-                            "imageURL": "mac"
-                        },
-                        {
-                            "id": "457391c9c82bfdcbb4947278c0401e41",
-                            "title": "",
-                            "artist": "Kehlani",
-                            "imageURL": "kehlani"
-                        },
-                        {
-                            "id": "2133e19292afc827cc42285f6f0e565c",
-                            "title": "",
-                            "artist": "Drake",
-                            "imageURL": "drake"
-                        },
-                        {
-                            "id": "2133e19292afc827cc42285f6f0e565c",
-                            "title": "",
-                            "artist": "Meg Thee Stallion",
-                            "imageURL": "meg"
-                        },
-                        {
-                            "id": "2133e19292afc827cc42285f6f0e565c",
-                            "title": "",
-                            "artist": "Kali Uchis",
-                            "imageURL": "kali"
-                        }
-                    ]
-                },
-                {
                     "id": "2",
                     "type": "Albums",
                     "tagline": "Other Albums by Frank Ocean",
@@ -531,7 +484,54 @@
                             "imageURL": "chanel"
                         }
                     ]
-                }
+                },
+                {
+                    "id": "3",
+                    "type": "Artists",
+                    "tagline": "You may also like",
+                    "artist": "Frank Ocean",
+                    "title": "",
+                    "artistImgURL": "",
+                    "imageURL": "",
+                    "items": [
+                        {
+                            "id": "2133e19292afc827cc42285f6f0e565c",
+                            "title": "",
+                            "artist": "6lack",
+                            "imageURL": "6lack1"
+                        },
+                        {
+                            "id": "2133e19292afc827cc42285f6f0e565c",
+                            "title": "",
+                            "artist": "Mac Ayres",
+                            "imageURL": "mac"
+                        },
+                        {
+                            "id": "457391c9c82bfdcbb4947278c0401e41",
+                            "title": "",
+                            "artist": "Kehlani",
+                            "imageURL": "kehlani"
+                        },
+                        {
+                            "id": "2133e19292afc827cc42285f6f0e565c",
+                            "title": "",
+                            "artist": "Drake",
+                            "imageURL": "drake"
+                        },
+                        {
+                            "id": "2133e19292afc827cc42285f6f0e565c",
+                            "title": "",
+                            "artist": "Meg Thee Stallion",
+                            "imageURL": "meg"
+                        },
+                        {
+                            "id": "2133e19292afc827cc42285f6f0e565c",
+                            "title": "",
+                            "artist": "Kali Uchis",
+                            "imageURL": "kali"
+                        }
+                    ]
+                },
             ]
     },
     {

@@ -16,12 +16,43 @@ enum NetworkError: Error{
 
 class NetworkManager {
     
-    static let baseURL = "http://localhost:3000/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
-    static func getFeaturedArtists(completion: @escaping (Result<[Artist], NetworkError>) -> [Album]){} // Get Featured artists
-    static func getFeaturedTracks(completion: @escaping (Result<[Song], NetworkError> ) -> [Song]){} // Get Featured Songs
-    
+//    static func getFeaturedArtists(completion: @escaping (Result<[Artist], NetworkError>) -> [Album]){} // Get Featured artists
+//    static func getFeaturedTracks(completion: @escaping (Result<[Song], NetworkError> ) -> [Song]){} // Get Featured Songs
+    static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)")
+        
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.servererr))
+//                    print(error)
+                }
+                
+                guard let httpresponse = response as? HTTPURLResponse else {
+//                    print(response)
+                    return
+                }
+                
+                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                    completion(.failure(.servererr))
+                    print()
+                    return
+                }
+                
+                let decoder = JSONDecoder()
+                
+                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
+                
+//                print(dataResponse)
+                completion(.success(dataResponse!))
+            }
+        }.resume()
+        
+    }
     //User
 //    static func login(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Authenticate user credentials
 //    static func register(user: User, completion: @escaping (Result<User, NetworkError>) -> Void){} // Register user
@@ -31,84 +62,85 @@ class NetworkManager {
 //    static func getFollowers(user: User, completion: @escaping (Result<[User], NetworkError>) -> Void){} // Get user followers
 //    static func logout(user: User, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // Unauthenticate user
 //
-    // Artists
-    static func getArtistsFeatured(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/featuredArtists")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-//                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
-                    return
-                }
-                
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                let dataResponse = try? decoder.decode([Artist].self, from: data!)
-                
+//    // Artists
+//    static func getArtistsFeatured(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
+//        let url = URL(string: "\(baseURL)/featuredArtists")
+//
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//            DispatchQueue.main.async {
+//                if error != nil {
+//                    completion(.failure(.servererr))
+////                    print(error)
+//                }
+//
+//                guard let httpresponse = response as? HTTPURLResponse else {
+////                    print(response)
+//                    return
+//                }
+//
+//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(.failure(.servererr))
+//                    return
+//                }
+//
+//                let decoder = JSONDecoder()
+//
+//                let dataResponse = try? decoder.decode([Artist].self, from: data!)
+//
+////                print(dataResponse!)
+//                completion(.success(dataResponse!))
+//            }
+//        }.resume()
+//
+//    } // Get Featured Artists
+//    static func getArtists(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
+//        let url = URL(string: "\(baseURL)/artists")
+//
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//            DispatchQueue.main.async {
+//                if error != nil {
+//                    completion(.failure(.servererr))
+////                    print(error)
+//                }
+//
+//                guard let httpresponse = response as? HTTPURLResponse else {
+////                    print(response)
+//                    return
+//                }
+//
+//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(.failure(.servererr))
+//                    return
+//                }
+//
+//                let decoder = JSONDecoder()
+//
+//                let dataResponse = try? decoder.decode([Artist].self, from: data!)
+//
 //                print(dataResponse!)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-        
-    } // Get Featured Artists
-    static func getArtists(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/artists")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-//                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
-                    return
-                }
-                
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                let dataResponse = try? decoder.decode([Artist].self, from: data!)
-                
-                print(dataResponse!)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-        
-    } // Get multiple Artists
-    static func getSingleArtist(with url: String, id: String, completion: @escaping (Result<Artist, NetworkError>) -> Void){} // Get one artist using ID
-    static func followArtist(with url: String, id: String, completion: @escaping () -> Void){} // add artist to following
-    static func unFollowArtist(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // remove artist from following
+//                completion(.success(dataResponse!))
+//            }
+//        }.resume()
+//
+//    } // Get multiple Artists
+//    static func getSingleArtist(with url: String, id: String, completion: @escaping (Result<Artist, NetworkError>) -> Void){} // Get one artist using ID
+//    static func followArtist(with url: String, id: String, completion: @escaping () -> Void){} // add artist to following
+//    static func unFollowArtist(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // remove artist from following
     
     // Albums
-    static func GetAlbumsFeatured(completion: @escaping (Result<[Album], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/featuredAlbums")
+    static func getAlbum(id: String, completion: @escaping (Result<[AlbumDetail], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)album?albumId=\(id)")
+        print(id)
                       
         URLSession.shared.dataTask(with: url!){ data, response, error in
                    DispatchQueue.main.async {
                        if error != nil {
                            completion(.failure(.servererr))
-       //                    print(error)
+//                           print(error)
                        }
        
                        guard let httpresponse = response as? HTTPURLResponse else {
-       //                    print(response)
+//                           print(response)
                            return
                        }
        
@@ -116,13 +148,17 @@ class NetworkManager {
                            completion(.failure(.servererr))
                            return
                        }
-       
-                       let decoder = JSONDecoder()
-       
-                       let dataResponse = try? decoder.decode([Album].self, from: data!)
-       
-//                       print(dataResponse!)
-                       completion(.success(dataResponse!))
+                    do{
+                        let decoder = JSONDecoder()
+        
+                        let dataResponse = try decoder.decode([AlbumDetail].self, from: data!)
+                        completion(.success(dataResponse))
+                    }
+                    catch{
+                        print(error)
+                    }
+                       
+                       
                    }
                }.resume()
 
@@ -157,37 +193,37 @@ class NetworkManager {
                }.resume()
     }
     static func getAlbumsOfArtist(with url: String, artistId: String, completion: @escaping (Result<[Album], NetworkError>) -> Void){} // Get all albums of artist with ID
-    static func getAlbum(id: String, completion: @escaping (Result<Album, NetworkError>) -> Void){
-        
-        let url = URL(string: "\(baseURL)/albums?albumId=\(id)")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-                  DispatchQueue.main.async {
-                      if error != nil {
-                          completion(.failure(.servererr))
-      //                    print(error)
-                      }
-      
-                      guard let httpresponse = response as? HTTPURLResponse else {
-      //                    print(response)
-                          return
-                      }
-      
-                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                          completion(.failure(.servererr))
-                          return
-                      }
-      
-                      let decoder = JSONDecoder()
-      
-                      let dataResponse = try? decoder.decode(Album.self, from: data!)
-      
-//                      print(dataResponse!)
-                      completion(.success(dataResponse!))
-                  }
-              }.resume()
-        
-    } // Get one album with ID
+//    static func getAlbum(id: String, completion: @escaping (Result<Album, NetworkError>) -> Void){
+//        
+//        let url = URL(string: "\(baseURL)/albums?albumId=\(id)")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//                  DispatchQueue.main.async {
+//                      if error != nil {
+//                          completion(.failure(.servererr))
+//      //                    print(error)
+//                      }
+//      
+//                      guard let httpresponse = response as? HTTPURLResponse else {
+//      //                    print(response)
+//                          return
+//                      }
+//      
+//                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                          completion(.failure(.servererr))
+//                          return
+//                      }
+//      
+//                      let decoder = JSONDecoder()
+//      
+//                      let dataResponse = try? decoder.decode(Album.self, from: data!)
+//      
+////                      print(dataResponse!)
+//                      completion(.success(dataResponse!))
+//                  }
+//              }.resume()
+//        
+//    } // Get one album with ID
     static func saveAlbum(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // add albums to saved
     static func unsaveAlbum(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // removed album from saved
     
@@ -413,9 +449,9 @@ class NetworkManager {
           return json
       }
     
-    static func loadTrackDetail(filename: String, id: String) -> [TrackDetail] {
+    static func loadTrackDetail(filename: String, id: String) -> [AlbumDetail] {
         var response: [DetailSection]?
-        var json: [TrackDetail]?
+        var json: [AlbumDetail]?
         
         let decoder = JSONDecoder()
 

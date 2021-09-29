@@ -2,17 +2,43 @@
 [
             {
                 "id": "1",
+                "type": "Header",
+                "tagline": "Top Tracks",
+                "name": "Mac Ayres",
+                "imageURL": "mac",
+                "items": [
+                    {
+                        "id": "1",
+                        "title": "",
+                        "artist": "Mac Ayres",
+                        "imageURL": "mac",
+                    },
+                    {
+                        "id": "2",
+                        "title": "Drive Slow",
+                        "artist": "Mac Ayres",
+                        "imageURL": "mac",
+                        "followers": "314",
+                        "listeners": "1231",
+                        "bio": "This is a temp Bio for prototyping purposes",
+                        "dateJoined": "Feb 1 1995"
+                    }
+                ]
+            },
+            {
+                "id": "1",
                 "type": "Tracks",
                 "tagline": "Top Tracks",
-                "name": "",
-                "imageURL": "",
+                "name": "Mac Ayres",
+                "imageURL": "mac",
                 "items": [
                     {
                         "id": "1",
                         "title": "Drive Slow",
                         "artist": "Mac Ayres",
                         "imageURL": "driveSlow",
-                        "playCount": "132,132"
+                        "playCount": "132,132",
+                        
                     },
                     {
                         "id": "2",

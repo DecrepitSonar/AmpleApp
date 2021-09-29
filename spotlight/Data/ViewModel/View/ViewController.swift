@@ -17,7 +17,8 @@ class RVC: UIViewController {
 
 class ViewController: UIViewController, UISearchResultsUpdating {
 
-    var section = NetworkManager.readJSONFromFile(fileName: "catalog")!
+//    var section = NetworkManager.readJSONFromFile(fileName: "catalog")!
+    var section = [LibObject]()
     
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     var collectionView: UICollectionView!
@@ -27,6 +28,18 @@ class ViewController: UIViewController, UISearchResultsUpdating {
 
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        NetworkManager.loadHomeContent { result in
+            switch(result){
+            case .success(let data):
+                print(data)
+                self.section = data
+                self.initCollectionView()
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browes"
         
@@ -34,6 +47,10 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         
+        
+    }
+    
+    func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -49,8 +66,6 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
         createDataSource()
         reloadData()
-        print("view loaded")
-        print(section)
     }
     
     func createDataSource(){
