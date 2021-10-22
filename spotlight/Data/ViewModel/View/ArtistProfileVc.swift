@@ -8,8 +8,9 @@
 import UIKit
 
 class Profile: UIViewController {
-    
-    let section = NetworkManager.readProfileData(filename: "profileData", id: "1")
+    var artistId: String?
+//    let section = NetworkManager.readProfileData(filename: "profileData", id: "1")
+    var section = [LibObject]()
     
     var collectionview: UICollectionView!
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
@@ -17,27 +18,20 @@ class Profile: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.isHidden = true
-        collectionview = UICollectionView(frame: view.bounds, collectionViewLayout: compositionalLayout())
-        collectionview.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        NetworkManager.getArtistsProfileData(artistId: artistId!) { result in
+            switch( result) {
+            case .success(let data):
+//                print(data)
+                self.section = data
+                self.initCollection()
+//                print(self.section)
+            case .failure(let err):
+                print(err)
+            }
+        }
         
-        // register cells
-        collectionview.register(CollectionCell.self, forCellWithReuseIdentifier: CollectionCell.reuseIdentifier)
-        collectionview.register(LargeArtCollection.self, forCellWithReuseIdentifier: LargeArtCollection.reuseIdentifier)
-        collectionview.register(ArtistCell.self, forCellWithReuseIdentifier: ArtistCell.reuseIdentifier)
-        collectionview.register(ProfileHeader.self, forCellWithReuseIdentifier: ProfileHeader.reuseIdentifier)
+//        navigationController?.navigationBar.isHidden = true
         
-        collectionview.contentInsetAdjustmentBehavior = .never
-        collectionview.contentInset = UIEdgeInsets(top: 50, left: 0, bottom: 100, right: 0)
-        
-        // Headers
-        collectionview.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
-        
-        view.addSubview( collectionview)
-        
-        createDataSource()
-        reloadData()
     }
     
     func compositionalLayout() -> UICollectionViewLayout {
@@ -58,10 +52,32 @@ class Profile: UIViewController {
         
         return compositionalLayout
     }
+    func initCollection(){
+        collectionview = UICollectionView(frame: view.bounds, collectionViewLayout: compositionalLayout())
+        collectionview.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
+        // register cells
+        collectionview.register(CollectionCell.self, forCellWithReuseIdentifier: CollectionCell.reuseIdentifier)
+        collectionview.register(LargeArtCollection.self, forCellWithReuseIdentifier: LargeArtCollection.reuseIdentifier)
+        collectionview.register(ArtistCell.self, forCellWithReuseIdentifier: ArtistCell.reuseIdentifier)
+        collectionview.register(ProfileHeader.self, forCellWithReuseIdentifier: ProfileHeader.reuseIdentifier)
+        
+        collectionview.contentInsetAdjustmentBehavior = .never
+        collectionview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+        
+        // Headers
+        collectionview.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
+        
+        view.addSubview( collectionview)
+        
+        createDataSource()
+        reloadData()
+    }
     // create Data source snapshot
     func reloadData(){
           var snapshot = NSDiffableDataSourceSnapshot<LibObject , LibItem>()
-        let section = self.section
+          let section = self.section
   
           snapshot.appendSections(section)
   
@@ -77,7 +93,7 @@ class Profile: UIViewController {
         datasource = UICollectionViewDiffableDataSource<LibObject, LibItem> (collectionView: collectionview, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
             
             let section = self.section[indexPath.section]
-//            print(section.type)
+
             switch(section.type){
             case "Header":
                 return self.configureCell(_cellType: ProfileHeader.self, with: item, indexPath: indexPath)
@@ -92,7 +108,6 @@ class Profile: UIViewController {
         
         datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
       
-            
             guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
             guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
                 
@@ -111,7 +126,7 @@ class Profile: UIViewController {
     
     fileprivate func configureCell<T: CellConfigurer>(_cellType: T.Type, with item: LibItem, indexPath: IndexPath ) -> T {
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, for: indexPath) as? T
-        cell?.configure(item: item, indexPath: indexPath.row )
+        cell?.configure(item: item, vc: navigationController, indexPath: indexPath.row )
             return cell!
     }
 }

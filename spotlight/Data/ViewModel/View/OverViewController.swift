@@ -69,7 +69,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
             fatalError("could not configure cell")
         }
 
-        cell.configure(with: trackItem, indexPath: indexPath)
+        cell.configure(with: trackItem, rootVc: navigationController, indexPath: indexPath)
         return cell
 
     }

@@ -95,7 +95,7 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
         contentView.addSubview(stackview)
         
         NSLayoutConstraint.activate([
-            stackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            stackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             stackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackview.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -112,7 +112,7 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
     
         
         print("Seting up Artist")
-        artistAvi.configureCard(img: catalog.imageURL, name: catalog.artist)
+        artistAvi.configureCard(img: catalog.imageURL, name: catalog.name!)
         print(catalog)
         
         tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentView(_sender:)))
@@ -122,7 +122,7 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
     
     @objc func presentView(_sender: ImgGestureRecognizer) {
         let view = Profile()
-//        view.artistId = _sender.id
+        view.artistId = _sender.id
         
         NavVc?.pushViewController(view, animated: true)
         
@@ -238,21 +238,23 @@ class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
         stackview.axis = .vertical
         stackview.distribution = .fill
         stackview.alignment = .leading
+        stackview.spacing = 0
         
         addSubview(stackview)
         NSLayoutConstraint.activate([
+         
+            
+            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackview.topAnchor.constraint(equalTo: topAnchor),
+            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             image.heightAnchor.constraint(equalToConstant: 150),
             image.widthAnchor.constraint(equalToConstant: 150),
             
             title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
             
-            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 0),
-            
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackview.topAnchor.constraint(equalTo: topAnchor),
-            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor)
+            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -20),
         ])
         
 //        stackview.spacing = 5
@@ -352,7 +354,7 @@ class TrackDetailStrip: UICollectionViewCell, DetailCell  {
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    func configure(with trackItem: AlbumItems, indexPath: IndexPath?) {
+    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?,indexPath: IndexPath?) {
         let index = Int(indexPath!.row) + 1
         image.image = UIImage(named: trackItem.imageURL!)
         name.text = trackItem.title
@@ -399,9 +401,9 @@ class AlbumCollectionCell: UICollectionViewCell, DetailCell{
 
             image.heightAnchor.constraint(equalToConstant: 150),
             image.widthAnchor.constraint(equalToConstant: 150),
-//            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
 
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
+            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -20),
 
             stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackview.topAnchor.constraint(equalTo: topAnchor),
@@ -414,7 +416,7 @@ class AlbumCollectionCell: UICollectionViewCell, DetailCell{
         fatalError("")
     }
     
-    func configure(with trackItem: AlbumItems, indexPath: IndexPath?) {
+    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?) {
         image.image = UIImage(named: trackItem.imageURL!)
         artist.text = trackItem.artist
         title.text = trackItem.title
@@ -422,8 +424,10 @@ class AlbumCollectionCell: UICollectionViewCell, DetailCell{
 }
 class TrackRelatedArtistSEction: UICollectionViewCell, DetailCell {
 
-    
     static var reuseableIdentifier: String = "Artist Recommendation"
+
+    var vc: UINavigationController?
+    var tapGesture: ImgGestureRecognizer?
     
     let image = UIImageView()
     let label = UILabel()
@@ -441,7 +445,6 @@ class TrackRelatedArtistSEction: UICollectionViewCell, DetailCell {
         
         addSubview(stackview)
         
-        
         NSLayoutConstraint.activate([
             stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -453,9 +456,24 @@ class TrackRelatedArtistSEction: UICollectionViewCell, DetailCell {
         fatalError("")
     }
 
-    func configure(with trackItem: AlbumItems, indexPath: IndexPath?) {
+    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?) {
+        
+        image.isUserInteractionEnabled = true
         print("Seting up Artist")
+        
         artistAvi.configureCard(img: trackItem.imageURL!, name: trackItem.name!)
+        vc = rootVc
+        
+        tapGesture = ImgGestureRecognizer(target: self, action: #selector(present))
+        tapGesture?.id = trackItem.artistId
+        image.addGestureRecognizer(tapGesture!)
+
+    }
+    @objc func present(_sender: ImgGestureRecognizer){
+        print("image tapped")
+        let view = Profile()
+        view.artistId = _sender.id
+        vc?.pushViewController(view, animated: true)
     }
 }
 
@@ -478,8 +496,6 @@ class DetailHeader: UICollectionReusableView{
     let followBtn = UIButton()
     let saveBtn = UIButton()
     let optionsBtn = UIButton()
-    
-    
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -572,7 +588,7 @@ class DetailHeader: UICollectionReusableView{
         NSLayoutConstraint.activate([
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            albumImage.heightAnchor.constraint(equalToConstant: 325),
+            albumImage.heightAnchor.constraint(equalToConstant: 355),
             albumImage.widthAnchor.constraint(equalToConstant: 350),
             albumImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             albumImage.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
@@ -647,8 +663,8 @@ class SectionHeader: UICollectionReusableView {
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
             
         ])
@@ -660,7 +676,6 @@ class SectionHeader: UICollectionReusableView {
     }
       
 }
-
 
 // Profile VC Components
 class ProfileHeader: UICollectionViewCell, CellConfigurer {
@@ -690,7 +705,13 @@ class ProfileHeader: UICollectionViewCell, CellConfigurer {
 
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFill
-
+        addSubview(image)
+        
+        image.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        image.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        image.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        image.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
         followBtn.setTitle("Follow", for:  .normal)
         followBtn.titleLabel!.setFont(with: 10)
 
@@ -702,42 +723,41 @@ class ProfileHeader: UICollectionViewCell, CellConfigurer {
         stack.alignment = .center
         stack.distribution = .equalCentering
     
+        backgroundColor = .red
     }
     
     required init?(coder: NSCoder) {
         fatalError("")
     }
     
-    func configure(item: LibItem, indexPath: Int?) {
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?) {
         
         name.text = item.artist
         container.frame = frame
         bioContainer.frame = frame
         image.image = UIImage(named: item.imageURL)
         
-        image.heightAnchor.constraint(equalToConstant: 300).isActive = true
-        image.widthAnchor.constraint(equalToConstant: frame.width).isActive = true
-        
-        switch indexPath {
-        case 0:
-
-            addSubview(image)
-            container.addSubview(stack)
-            addSubview(container)
-            
-            container.topAnchor.constraint(equalTo: topAnchor).isActive = true
-            
-            name.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20).isActive = true
-            name.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20).isActive = true
-        default:
-//            container.addSubview(image)
-//            bioContainer.addSubview()
-            
-            addSubview(bioContainer)
-//            bioContainer.backgroundColor = .red
-        }
-        
+//        image.frame = frame
+//        image.heightAnchor.constraint(equalToConstant: 300).isActive = true
+//        image.widthAnchor.constraint(equalToConstant: frame.width).isActive = true
       
+        setupGradient()
+    }
+    
+    func setupGradient(){
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradientLayer.locations = [0.0, 0.1]
+        
+        let container = UIView()
+        container.frame = frame
+        
+        
+//        container.backgroundColor = .red
+        container.layer.zPosition = 2
+        
+        container.layer.addSublayer(gradientLayer)
+        addSubview(container)
     }
 }
 class CollectionCell: UICollectionViewCell, CellConfigurer{
@@ -798,7 +818,7 @@ class CollectionCell: UICollectionViewCell, CellConfigurer{
         fatalError("")
     }
     
-    func configure(item: LibItem, indexPath: Int?){
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
         chartPosition.text = "1"
         image.image = UIImage(named: item.imageURL)
         title.text = item.title
@@ -818,9 +838,9 @@ class SmallWidthCollectionCell: UICollectionViewCell, CellConfigurer{
     override init(frame: CGRect){
         super.init(frame: frame)
         
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
-        image.layer.cornerRadius = 10
+        image.layer.cornerRadius = 15
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.translatesAutoresizingMaskIntoConstraints = false
         
@@ -863,7 +883,7 @@ class SmallWidthCollectionCell: UICollectionViewCell, CellConfigurer{
         fatalError("")
     }
     
-    func configure(item: LibItem, indexPath: Int?){
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
         
         image.image = UIImage(named: item.imageURL)
         title.text = item.title
@@ -907,9 +927,9 @@ class LargeArtCollection: UICollectionViewCell, CellConfigurer{
 
             image.heightAnchor.constraint(equalToConstant: 150),
             image.widthAnchor.constraint(equalToConstant: 150),
-//            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
-
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
+            
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
+            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -20),
 
             stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackview.topAnchor.constraint(equalTo: topAnchor),
@@ -922,7 +942,7 @@ class LargeArtCollection: UICollectionViewCell, CellConfigurer{
         fatalError("")
     }
     
-    func configure(item: LibItem, indexPath: Int?){
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
         image.image = UIImage(named: item.imageURL)
         artist.text = item.artist
         title.text = item.title
@@ -961,25 +981,23 @@ class ArtistCell: UICollectionViewCell, CellConfigurer {
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    func configure(item: LibItem, indexPath: Int?) {
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?) {
         
-//        self.NavVc = rootVc
+        self.NavVc = vc
     
-        
         print("Seting up Artist")
-        artistAvi.configureCard(img: item.imageURL, name: item.artist)
-//        print(catalog)
+        artistAvi.configureCard(img: item.imageURL, name: item.name!)
         
-//        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentView(_sender:)))
-//        tapGesture.id = catalog.id
-//        image.addGestureRecognizer(tapGesture)
+        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentView(_sender:)))
+        tapGesture.id = item.artistId
+        image.addGestureRecognizer(tapGesture)
     }
     
     @objc func presentView(_sender: ImgGestureRecognizer) {
-//        let view = ArtistProfileVc()
-//        view.artistId = _sender.id
+        let view = Profile()
+        view.artistId = _sender.id
         
-//        NavVc?.pushViewController(view, animated: true)
+        NavVc?.pushViewController(view, animated: true)
         
     }
     

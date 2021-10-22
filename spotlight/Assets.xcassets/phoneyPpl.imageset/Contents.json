@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "mac.jpeg",
+      "filename" : "download.jpeg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "download 2.jpeg",
       "idiom" : "universal",
       "scale" : "2x"
     },

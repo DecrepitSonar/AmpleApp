@@ -15,12 +15,12 @@ protocol SelfConfigureingCell {
 
 protocol CellConfigurer {
     static var reuseIdentifier: String { get }
-    func configure(item: LibItem, indexPath: Int?)
+    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?)
 }
 
 protocol  DetailCell {
     static var reuseableIdentifier: String { get }
-    func configure(with trackItem: AlbumItems, indexPath: IndexPath?)
+    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?)
 }
 //
 //protocol DetailItems {
@@ -53,11 +53,11 @@ class LayoutManager {
     
         let layoutItems = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.83), heightDimension: .estimated(285))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.83), heightDimension: .estimated(325))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 10, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .groupPaging
         
         let sectionheader = createSectionHeader()
@@ -71,11 +71,11 @@ class LayoutManager {
     
         let layoutItems = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.25), heightDimension: .estimated(120))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.25), heightDimension: .estimated(100))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuous
         
         let sectionheader = createSectionHeader()
@@ -93,7 +93,7 @@ class LayoutManager {
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 10, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for collection Section")
         
@@ -111,7 +111,7 @@ class LayoutManager {
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 10, bottom: 0, trailing: 10)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for History Section")
         
@@ -140,13 +140,13 @@ class LayoutManager {
     static func createSmallProfileTableLayout(using: Any) -> NSCollectionLayoutSection{
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.20))
         let items = NSCollectionLayoutItem(layoutSize: itemSize)
-        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 10)
+        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)
     
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalHeight(0.35))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for collection Section")
         
@@ -162,14 +162,13 @@ class LayoutManager {
         let item = NSCollectionLayoutItem(layoutSize: size)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(350))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 50, trailing: 0)
         
         let layoutSection = NSCollectionLayoutSection(group: group)
-        layoutSection.orthogonalScrollingBehavior = .groupPaging
         
         return layoutSection
     }
-    
     
     static func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
         let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
@@ -179,7 +178,7 @@ class LayoutManager {
         return supplementoryItem
     }
     static func createAlbumHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
-        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.65))
+        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.62))
         
         let supplementoyItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         

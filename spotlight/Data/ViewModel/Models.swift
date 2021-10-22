@@ -16,12 +16,15 @@ struct LibObject: Codable, Hashable {
 
 struct LibItem: Codable ,Hashable{
     var id: String
+    var type: String?
+    var trackNum: String?
     var title: String?
     var artistId: String?
     var albumId: String?
-    var artist: String
+    var artist: String?
     var imageURL: String
     var playCount: String?
+    var name: String?
 //    var followers: String?
 //    var listeners: String?
 //    var bio: String?

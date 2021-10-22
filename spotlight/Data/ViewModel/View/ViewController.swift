@@ -32,7 +32,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         NetworkManager.loadHomeContent { result in
             switch(result){
             case .success(let data):
-                print(data)
+//                print(data)
                 self.section = data
                 self.initCollectionView()
             case .failure(let error):

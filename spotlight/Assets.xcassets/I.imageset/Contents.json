@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "download.jpeg",
+      "filename" : "f9966d2a0bc624d1c4cd0bc2b74bc669.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,6 +12,14 @@
     {
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "2x"
     }
   ],
   "info" : {

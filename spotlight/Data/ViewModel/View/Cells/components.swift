@@ -586,8 +586,6 @@ class AViCard: UIView {
     
     override init(frame: CGRect){
         super.init(frame: frame)
-//        layer.borderColor = UIColor.red.cgColor
-//        layer.borderWidth = 1
 //
     }
     

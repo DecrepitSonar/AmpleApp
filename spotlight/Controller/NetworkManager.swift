@@ -16,12 +16,10 @@ enum NetworkError: Error{
 
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-    static let baseURL = "http://localhost:8080/api/v1/"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+//    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
-//    static func getFeaturedArtists(completion: @escaping (Result<[Artist], NetworkError>) -> [Album]){} // Get Featured artists
-//    static func getFeaturedTracks(completion: @escaping (Result<[Song], NetworkError> ) -> [Song]){} // Get Featured Songs
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)")
         
@@ -39,7 +37,7 @@ class NetworkManager {
                 
                 guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
                     completion(.failure(.servererr))
-                    print()
+//                    print()
                     return
                 }
                 
@@ -63,36 +61,41 @@ class NetworkManager {
 //    static func logout(user: User, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // Unauthenticate user
 //
 //    // Artists
-//    static func getArtistsFeatured(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
-//        let url = URL(string: "\(baseURL)/featuredArtists")
-//
-//        URLSession.shared.dataTask(with: url!){ data, response, error in
-//            DispatchQueue.main.async {
-//                if error != nil {
-//                    completion(.failure(.servererr))
-////                    print(error)
-//                }
-//
-//                guard let httpresponse = response as? HTTPURLResponse else {
-////                    print(response)
-//                    return
-//                }
-//
-//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-//                    completion(.failure(.servererr))
-//                    return
-//                }
-//
-//                let decoder = JSONDecoder()
-//
-//                let dataResponse = try? decoder.decode([Artist].self, from: data!)
-//
-////                print(dataResponse!)
-//                completion(.success(dataResponse!))
-//            }
-//        }.resume()
-//
-//    } // Get Featured Artists
+    static func getArtistsProfileData(artistId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)artist\(artistId)")
+        
+        print("Artist id: ", artistId)
+        print(url)
+
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.servererr))
+                    print(error)
+                }
+
+                guard let httpresponse = response as? HTTPURLResponse else {
+                    print(response)
+                    return
+                }
+
+                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                    print(httpresponse.mimeType)
+                    completion(.failure(.servererr))
+                    return
+                }
+
+                let decoder = JSONDecoder()
+
+                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
+
+//                print(dataResponse!)
+                completion(.success(dataResponse!))
+            }
+        }.resume()
+
+    } // Get Featured Artists
+    
 //    static func getArtists(completion: @escaping (Result<[Artist], NetworkError>) -> Void){
 //        let url = URL(string: "\(baseURL)/artists")
 //
@@ -444,7 +447,7 @@ class NetworkManager {
                   // Handle error here
               }
           }
-        print("Section: ", json)
+//        print("Section: ", json)
         
           return json
       }
@@ -493,10 +496,10 @@ class NetworkManager {
                 
                  json = try decoder.decode([LibObject].self, from: data)
                 
-                print(json!)
+//                print(json!)
             }
             catch{
-                print(error)
+//                print(error)
             }
         }
         
