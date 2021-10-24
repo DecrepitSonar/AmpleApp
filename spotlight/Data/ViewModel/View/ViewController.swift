@@ -102,7 +102,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
             guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
             if section.tagline!.isEmpty{return nil}
-            
+        
             sectionHeader.tagline.text = section.tagline
             sectionHeader.title.text = section.type
             

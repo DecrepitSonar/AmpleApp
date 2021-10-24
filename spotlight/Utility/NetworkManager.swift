@@ -16,8 +16,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-    static let baseURL = "http://localhost:8080/api/v1/"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+//    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){

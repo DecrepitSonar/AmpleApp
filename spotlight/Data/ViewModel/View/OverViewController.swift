@@ -39,27 +39,36 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     func initCollectionView(){
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.2)
         collectionView.delegate = self
         
         // register items
-        
-        // Section Cells
         collectionView.register(TrackDetailStrip.self, forCellWithReuseIdentifier: TrackDetailStrip.reuseableIdentifier)
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
         collectionView.register(AlbumCollectionCell.self, forCellWithReuseIdentifier: AlbumCollectionCell.reuseableIdentifier)
         collectionView.register(TrackRelatedArtistSEction.self, forCellWithReuseIdentifier: TrackRelatedArtistSEction.reuseableIdentifier)
-//        collectionView.register(TrackImageHeader.self, forCellWithReuseIdentifier: TrackImageHeader.reuseableIdentifier)
         
         // Headers
         collectionView.register(DetailHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DetailHeader.reuseableIdentifier)
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
         
         view.addSubview(collectionView)
+        
+        
         createDataSource()
+        
         reloadData()
     }
 
+    func setupGradient(){
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.2).cgColor]
+        gradientLayer.frame = view.frame
+        gradientLayer.locations = [0.0,0.5]
+        
+        collectionView.layer.addSublayer(gradientLayer)
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = abs(collectionView.contentOffset.y)
         print(contentOffsetY)
@@ -118,7 +127,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 header.artist.text = section.artist
                 header.pageTag.text = section.type
                 header.artistAviImage.image = UIImage(named: section.artistImgURL!)
-                
+                header.datePublished.text = "\(section.items!.count) Tracks, Published 2019, 45 minutes"
 
                 return header
 
