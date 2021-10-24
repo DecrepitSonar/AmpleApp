@@ -21,15 +21,15 @@ class Profile: UIViewController {
         NetworkManager.getArtistsProfileData(artistId: artistId!) { result in
             switch( result) {
             case .success(let data):
-//                print(data)
                 self.section = data
-                self.initCollection()
-//                print(self.section)
+                self.initCollection(
+                )
             case .failure(let err):
                 print(err)
             }
         }
         
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 //        navigationController?.navigationBar.isHidden = true
         
     }

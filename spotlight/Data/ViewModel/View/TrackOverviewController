@@ -1,14 +1,14 @@
 //
-//  OverViewController.swift
+//  LoadingViewController.swift
 //  spotlight
 //
-//  Created by Robert Aubow on 8/22/21.
+//  Created by Bajo on 2021-10-23.
 //
 
 import UIKit
 
-class OverViewController: UIViewController, UICollectionViewDelegate {
-    var albumId: String?
+class TrackOverviewController: UIViewController {
+    var trackId: String?
     
     fileprivate var section: [AlbumDetail]?
     
@@ -162,5 +162,4 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
 
         return compositionalLayout
     }
-   
 }

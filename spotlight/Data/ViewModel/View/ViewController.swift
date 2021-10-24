@@ -32,17 +32,17 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         NetworkManager.loadHomeContent { result in
             switch(result){
             case .success(let data):
-//                print(data)
+                print(data)
                 self.section = data
                 self.initCollectionView()
             case .failure(let error):
                 print(error)
             }
-        }
+        } 
         
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browes"
-        
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         let searchController = UISearchController(searchResultsController: RVC())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
@@ -61,6 +61,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
         collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
+        collectionView.register(TrackHistorySlider.self, forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         
@@ -80,6 +81,9 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             case "Artists":
                 print("Adding Artist section")
                 return self.configure(ArtistSection.self, with: Catalog, indexPath: IndexPath)
+            case "History":
+                print("Adding history section ")
+                return self.configure(TrackHistorySlider.self, with: Catalog, indexPath: IndexPath)
             case "Trending":
                 print("Adding Trending section")
                 return self.configure(TrendingSection.self, with: Catalog, indexPath: IndexPath)

@@ -575,8 +575,8 @@ class Label: UIView, ButtonViewManager{
     }
     
     func presentViewPage() {
-        let Vc = TrackHistoryViewController()
-        vc!.pushViewController(Vc, animated: true)
+//        let Vc = TrackHistoryViewController()
+//        vc!.pushViewController(Vc, animated: true)
     }
 } // Section Label with button
 class AViCard: UIView {

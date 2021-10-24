@@ -22,12 +22,6 @@ protocol  DetailCell {
     static var reuseableIdentifier: String { get }
     func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?)
 }
-//
-//protocol DetailItems {
-//    static var reuseableIdentifier: String { get }
-//    func configure(items: [TrackItem], indexPath: IndexPath?)
-//}
-
 protocol ProfileSectionConfigurer {
     static var reuseIdentifier: String { get }
     func configure(with item: ProfileItem)
@@ -53,7 +47,7 @@ class LayoutManager {
     
         let layoutItems = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.83), heightDimension: .estimated(325))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.90), heightDimension: .estimated(320))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
@@ -178,7 +172,7 @@ class LayoutManager {
         return supplementoryItem
     }
     static func createAlbumHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
-        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.62))
+        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.68))
         
         let supplementoyItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         

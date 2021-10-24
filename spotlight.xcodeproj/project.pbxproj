@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		223D30C0272456FE00E799A7 /* TrackOverviewController in Sources */ = {isa = PBXBuildFile; fileRef = 223D30BF272456FE00E799A7 /* TrackOverviewController */; };
 		225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2253148926E523EE00D1F496 /* AppDelegate.swift */; };
 		225314D226E523EF00D1F496 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AA26E523EF00D1F496 /* HomeViewController.swift */; };
 		225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AB26E523EF00D1F496 /* bundle-decodable.swift */; };
@@ -63,6 +64,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		223D30BF272456FE00E799A7 /* TrackOverviewController */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrackOverviewController; sourceTree = "<group>"; };
 		2253148926E523EE00D1F496 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		225314AA26E523EF00D1F496 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		225314AB26E523EF00D1F496 /* bundle-decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "bundle-decodable.swift"; sourceTree = "<group>"; };
@@ -150,8 +152,6 @@
 		225314F726E5241300D1F496 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				229F559E26E5288D00D10B36 /* NetworkManager.swift */,
-				225314F826E5241300D1F496 /* UtilityFunctions.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -189,6 +189,7 @@
 				229F55D226E52E9900D10B36 /* ReleasesVc.swift */,
 				229F55D426E52E9900D10B36 /* OverViewController.swift */,
 				229F55D526E52E9900D10B36 /* SettingsViewController.swift */,
+				223D30BF272456FE00E799A7 /* TrackOverviewController */,
 			);
 			name = View;
 			path = Data/ViewModel/View;
@@ -201,6 +202,15 @@
 				229F55C526E52E9900D10B36 /* Cells.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		22D25BC727235F31007FB889 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				229F559E26E5288D00D10B36 /* NetworkManager.swift */,
+				225314F826E5241300D1F496 /* UtilityFunctions.swift */,
+			);
+			path = Utility;
 			sourceTree = "<group>";
 		};
 		D99178172677DEA100961969 = {
@@ -226,13 +236,14 @@
 		D99178222677DEA100961969 /* spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				22D25BC727235F31007FB889 /* Utility */,
+				229F55C226E52E9900D10B36 /* View */,
 				229F55BC26E52E9900D10B36 /* Data */,
 				2253148426E5237E00D1F496 /* Depricated */,
 				225314F726E5241300D1F496 /* Controller */,
 				D991782C2677DEA600961969 /* Assets.xcassets */,
 				2253148926E523EE00D1F496 /* AppDelegate.swift */,
 				225314AB26E523EF00D1F496 /* bundle-decodable.swift */,
-				229F55C226E52E9900D10B36 /* View */,
 				225314AE26E523EF00D1F496 /* SceneDelegate.swift */,
 				229F561E26E6CB2B00D10B36 /* DetailViewController.swift */,
 				D991782E2677DEA600961969 /* LaunchScreen.storyboard */,
@@ -418,6 +429,7 @@
 				225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */,
 				229F55F726E52E9900D10B36 /* Cells.swift in Sources */,
 				225314D226E523EF00D1F496 /* HomeViewController.swift in Sources */,
+				223D30C0272456FE00E799A7 /* TrackOverviewController in Sources */,
 				229F560326E52E9900D10B36 /* ProfileViewController.swift in Sources */,
 				229F560426E52E9900D10B36 /* ReleasesVc.swift in Sources */,
 				229F55FC26E52E9900D10B36 /* GenreCell.swift in Sources */,

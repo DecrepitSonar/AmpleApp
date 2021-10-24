@@ -13,11 +13,11 @@ enum NetworkError: Error{
     case sucess
     case servererr
 }
-
+ 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-//    static let baseURL = "http://localhost:8080/api/v1/"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
@@ -62,10 +62,10 @@ class NetworkManager {
 //
 //    // Artists
     static func getArtistsProfileData(artistId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)artist\(artistId)")
+        let url = URL(string: "\(baseURL)artist?id=\(artistId)")
         
-        print("Artist id: ", artistId)
-        print(url)
+//        print("Artist id: ", artistId)
+//        print(url)
 
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {

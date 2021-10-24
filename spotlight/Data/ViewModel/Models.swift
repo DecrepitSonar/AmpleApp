@@ -26,7 +26,7 @@ struct LibItem: Codable ,Hashable{
     var playCount: String?
     var name: String?
 //    var followers: String?
-//    var listeners: String?
+//    var listeners: Int32?
 //    var bio: String?
 //    var dateJoined: String?
 }
