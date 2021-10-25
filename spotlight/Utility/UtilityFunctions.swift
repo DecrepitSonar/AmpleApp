@@ -10,29 +10,24 @@ import  UIKit
 
 protocol SelfConfigureingCell {
     static var reuseIdentifier: String { get }
-    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?)
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?)
+    
 }
-protocol CellConfigurer {
-    static var reuseIdentifier: String { get }
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?)
+
+@objc protocol GestureAction {
+    @objc func didTap(_sender: CustomGestureRecognizer)
 }
-protocol DetailCell {
-    static var reuseableIdentifier: String { get }
-    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?)
+
+protocol Cell : SelfConfigureingCell & GestureAction {
+    
 }
-protocol ProfileSectionConfigurer {
-    static var reuseIdentifier: String { get }
-    func configure(with item: ProfileItem)
-}
+
 protocol PlayerConfiguration {
     static var reuseIdentifier: String { get }
     func configure(with player: Queue, rootVc: UINavigationController?)
 }
 
-class ImgGestureRecognizer: UITapGestureRecognizer{
-    var albumId: String?
-    var artist: String?
-    var track: Song?
+class CustomGestureRecognizer: UITapGestureRecognizer{
     var id: String?
 }
 
@@ -80,7 +75,7 @@ class LayoutManager {
         let items = NSCollectionLayoutItem(layoutSize: itemSize)
         items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 10)
     
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.93), heightDimension: .fractionalHeight(0.35))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.87), heightDimension: .fractionalHeight(0.35))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
@@ -114,12 +109,13 @@ class LayoutManager {
     static func createTableLayout(using: Any) -> NSCollectionLayoutSection{
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let items = NSCollectionLayoutItem(layoutSize: itemSize)
-        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10)
+        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 2, trailing: 10)
     
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.07))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         
         print("configured layout for History Section")
         
@@ -181,6 +177,19 @@ class LayoutManager {
         let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: item, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         
         return supplementoryItem
+    }
+    
+    static func configureCell<T: Cell>(collectionView: UICollectionView, navigationController: UINavigationController?, _ cellType: T.Type, with item: LibItem, indexPath: IndexPath) -> T{
+        print("Configureing cell")
+
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, for: indexPath) as? T else {
+            fatalError("could not configure cell")
+        }
+        
+        cell.configure(with: item, rootVc: navigationController, indexPath: indexPath.row)
+        
+        return cell
+
     }
 }
 

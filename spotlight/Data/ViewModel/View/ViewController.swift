@@ -72,24 +72,21 @@ class ViewController: UIViewController, UISearchResultsUpdating {
     func createDataSource(){
         
         
-        datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, Catalog in
+        datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
             print("creating datasource")
             switch self.section[IndexPath.section].type {
             case "Featured":
                 print("Adding Featured Section")
-                return self.configure(FeaturedHeader.self, with: Catalog, indexPath: IndexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, FeaturedHeader.self, with: item, indexPath: IndexPath)
             case "Artists":
                 print("Adding Artist section")
-                return self.configure(ArtistSection.self, with: Catalog, indexPath: IndexPath)
-            case "History":
-                print("Adding history section ")
-                return self.configure(TrackHistorySlider.self, with: Catalog, indexPath: IndexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, ArtistSection.self, with: item, indexPath: IndexPath)
             case "Trending":
                 print("Adding Trending section")
-                return self.configure(TrendingSection.self, with: Catalog, indexPath: IndexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, TrendingSection.self, with: item, indexPath: IndexPath)
             default:
                 print("Adding default section")
-                return self.configure(MediumImageSlider.self, with: Catalog, indexPath: IndexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, MediumImageSlider.self, with: item, indexPath: IndexPath)
             }
         }
         
@@ -101,6 +98,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             
             guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
             guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
+            
             if section.tagline!.isEmpty{return nil}
         
             sectionHeader.tagline.text = section.tagline
@@ -110,18 +108,6 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         }
         
     
-    }
-    
-    func configure<T: SelfConfigureingCell>(_ celltype: T.Type, with catalog: LibItem, indexPath: IndexPath) -> T{
-        print("configuring cells")
-        print("configuring cell with retrieved section data")
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: celltype.reuseIdentifier, for: indexPath) as? T else {
-            fatalError("unable to dequeu cell type \(celltype)")
-        }
-        
-        print("no Errors in cell configuration")
-        cell.configure(with: catalog, rootVc: self.navigationController!, indexPath: Int(indexPath.row))
-        return cell
     }
     
     func reloadData(){

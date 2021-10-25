@@ -59,8 +59,8 @@ class Profile: UIViewController {
         
         // register cells
         collectionview.register(CollectionCell.self, forCellWithReuseIdentifier: CollectionCell.reuseIdentifier)
-        collectionview.register(LargeArtCollection.self, forCellWithReuseIdentifier: LargeArtCollection.reuseIdentifier)
-        collectionview.register(ArtistCell.self, forCellWithReuseIdentifier: ArtistCell.reuseIdentifier)
+        collectionview.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionview.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
         collectionview.register(ProfileHeader.self, forCellWithReuseIdentifier: ProfileHeader.reuseIdentifier)
         
         collectionview.contentInsetAdjustmentBehavior = .never
@@ -75,6 +75,7 @@ class Profile: UIViewController {
         reloadData()
     }
     // create Data source snapshot
+    
     func reloadData(){
           var snapshot = NSDiffableDataSourceSnapshot<LibObject , LibItem>()
           let section = self.section
@@ -96,13 +97,13 @@ class Profile: UIViewController {
 
             switch(section.type){
             case "Header":
-                return self.configureCell(_cellType: ProfileHeader.self, with: item, indexPath: indexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionview, navigationController: self.navigationController, ProfileHeader.self, with: item, indexPath: indexPath)
             case "Tracks":
-                return self.configureCell(_cellType: CollectionCell.self, with: item, indexPath: indexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionview, navigationController: nil, CollectionCell.self, with: item, indexPath: indexPath)
             case "Artist":
-                return self.configureCell(_cellType: ArtistCell.self, with: item, indexPath: indexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionview, navigationController: self.navigationController, ArtistSection.self, with: item, indexPath: indexPath)
             default:
-                return self.configureCell(_cellType: LargeArtCollection.self, with: item, indexPath: indexPath)
+                return LayoutManager.configureCell(collectionView: self.collectionview, navigationController: self.navigationController, MediumImageSlider.self, with: item, indexPath: indexPath)
             }
         })
         
@@ -122,11 +123,5 @@ class Profile: UIViewController {
             return sectionHeader
                 
         }
-    }
-    
-    fileprivate func configureCell<T: CellConfigurer>(_cellType: T.Type, with item: LibItem, indexPath: IndexPath ) -> T {
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, for: indexPath) as? T
-        cell?.configure(item: item, vc: navigationController, indexPath: indexPath.row )
-            return cell!
     }
 }

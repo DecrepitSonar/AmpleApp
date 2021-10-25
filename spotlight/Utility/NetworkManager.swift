@@ -16,8 +16,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-//    static let baseURL = "http://localhost:8080/api/v1/"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
@@ -131,7 +131,7 @@ class NetworkManager {
 //    static func unFollowArtist(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // remove artist from following
     
     // Albums
-    static func getAlbum(id: String, completion: @escaping (Result<[AlbumDetail], NetworkError>) -> Void){
+    static func getAlbum(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)album?albumId=\(id)")
         print(id)
                       
@@ -154,7 +154,7 @@ class NetworkManager {
                     do{
                         let decoder = JSONDecoder()
         
-                        let dataResponse = try decoder.decode([AlbumDetail].self, from: data!)
+                        let dataResponse = try decoder.decode([LibObject].self, from: data!)
                         completion(.success(dataResponse))
                     }
                     catch{

@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 
-class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
-        
+class FeaturedHeader: UICollectionViewCell, Cell{
+
+    
+  
     static var reuseIdentifier: String = "Featured Header"
     
-    var tapGesture = ImgGestureRecognizer()
+    var tapGesture = CustomGestureRecognizer()
     var NavVc: UINavigationController?
     
     let tagline = UILabel()
@@ -53,16 +55,16 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
         self.NavVc = rootVc
         
         image.image = UIImage(named: catalog.imageURL)
-        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentVc(_:)))
-        tapGesture.albumId = catalog.albumId
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        tapGesture.id = catalog.albumId
         image.addGestureRecognizer(tapGesture)
         
         title.text = catalog.title
     }
     
-    @objc func presentVc(_ sender: ImgGestureRecognizer){
+    func didTap(_sender: CustomGestureRecognizer) {
         let view = OverViewController()
-        view.albumId = sender.albumId
+        view.albumId = _sender.id
         
         print("presenting...")
         NavVc!.title = "Featured"
@@ -70,12 +72,12 @@ class FeaturedHeader: UICollectionViewCell, SelfConfigureingCell{
         
     }
 }
-class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
+class ArtistSection: UICollectionViewCell,  Cell{
     
     static var reuseIdentifier: String = "Artist Section"
     
     var NavVc: UINavigationController?
-    var tapGesture: ImgGestureRecognizer!
+    var tapGesture: CustomGestureRecognizer!
     
     let image = UIImageView()
     let label = UILabel()
@@ -108,19 +110,18 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
     
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?){
         
-        self.NavVc = rootVc
+        self.NavVc = rootVc!
     
-        
         print("Seting up Artist")
         artistAvi.configureCard(img: catalog.imageURL, name: catalog.name!)
         print(catalog)
         
-        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentView(_sender:)))
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         tapGesture.id = catalog.id
         artistAvi.addGestureRecognizer(tapGesture)
     }
     
-    @objc func presentView(_sender: ImgGestureRecognizer) {
+    func didTap(_sender: CustomGestureRecognizer) {
         let view = Profile()
         view.artistId = _sender.id
         
@@ -128,8 +129,8 @@ class ArtistSection: UICollectionViewCell,  SelfConfigureingCell{
         
     }
 }
-class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
-    
+class TrendingSection: UICollectionViewCell, Cell{
+  
     static let reuseIdentifier: String = "Trending"
     
     let chartPosition = UILabel()
@@ -154,6 +155,12 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
         
         listenCount.setFont(with: 10)
         listenCount.textColor = .secondaryLabel
+        listenCount.textAlignment = .right
+        listenCount.numberOfLines = 0
+        listenCount.layer.borderColor = UIColor.red.cgColor
+        listenCount.layer.borderWidth = 1
+        listenCount.translatesAutoresizingMaskIntoConstraints = false
+        listenCount.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
         
         chartPosition.setFont(with: 10)
@@ -163,7 +170,7 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
         innterStackview.axis = .vertical
         innterStackview.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackview = UIStackView(arrangedSubviews: [chartPosition, image, innterStackview, listenCount] )
+        let stackview = UIStackView(arrangedSubviews: [chartPosition, image, innterStackview] )
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .horizontal
         stackview.alignment = .center
@@ -186,8 +193,8 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
             
             chartPosition.trailingAnchor.constraint(equalTo: image.leadingAnchor, constant: -20),
             chartPosition.widthAnchor.constraint(equalToConstant: 5),
-            
-            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
+        
+//            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
         ])
     }
     
@@ -199,20 +206,20 @@ class TrendingSection: UICollectionViewCell, SelfConfigureingCell{
         chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
-        artist.text = catalog.artist
-        listenCount.text = catalog.playCount!
+        artist.text = catalog.name
+        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
     }
     
-    func presenter(with rootVc: UINavigationController) {
+    func didTap(_sender: CustomGestureRecognizer) {
         
     }
 }
-class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
+class MediumImageSlider: UICollectionViewCell, Cell{
     
     static let reuseIdentifier: String = "MediumSlider"
     
     var vc: UINavigationController?
-    var tapgesture: ImgGestureRecognizer?
+    var tapgesture: CustomGestureRecognizer?
     
     let image = UIImageView()
     let artist = UILabel()
@@ -267,33 +274,32 @@ class MediumImageSlider: UICollectionViewCell, SelfConfigureingCell{
         
         vc = rootVc!
         
-        tapgesture = ImgGestureRecognizer(target: self, action: #selector(presenter(_sender:)))
-        tapgesture!.albumId = catalog.id
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        tapgesture!.id = catalog.id
         
         addGestureRecognizer(tapgesture!)
         
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
-        artist.text = catalog.artist
+        artist.text = catalog.name
     }
     
-    @objc func presenter(_sender: ImgGestureRecognizer) {
-        
+    func didTap(_sender: CustomGestureRecognizer) {
 
-        print(_sender.albumId!)
+        print(_sender.id!)
         let view = OverViewController()
-        view.albumId = _sender.albumId
+        view.albumId = _sender.id
 
         vc?.pushViewController(view, animated: true)
         
     }
 }
-class TrackHistorySlider: UICollectionViewCell, SelfConfigureingCell {
+class TrackHistorySlider: UICollectionViewCell, Cell {
     
     static let reuseIdentifier: String = "History cell"
     
     var vc: UINavigationController?
-    var tapgesture: ImgGestureRecognizer?
+    var tapgesture: CustomGestureRecognizer?
     
     let image = UIImageView()
     let artist = UILabel()
@@ -348,17 +354,17 @@ class TrackHistorySlider: UICollectionViewCell, SelfConfigureingCell {
         
         vc = rootVc!
         
-        tapgesture = ImgGestureRecognizer(target: self, action: #selector(presenter(_sender:)))
-        tapgesture!.albumId = catalog.id
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        tapgesture!.id = catalog.id
         
         addGestureRecognizer(tapgesture!)
         
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
-        artist.text = catalog.artist
+        artist.text = catalog.name
     }
     
-    @objc func presenter(_sender: ImgGestureRecognizer) {
+    func didTap(_sender: CustomGestureRecognizer) {
         print("History Track")
     }
 }
@@ -387,8 +393,11 @@ class PlayerContainerSection: UICollectionViewCell, PlayerConfiguration{
 }
 
 // Track Overview Cells
-class TrackDetailStrip: UICollectionViewCell, DetailCell  {
-    static var reuseableIdentifier: String = "track"
+class TrackDetailStrip: UICollectionViewCell, Cell{
+    static var reuseIdentifier: String = "track"
+    
+    var tapGesture: CustomGestureRecognizer?
+    
     var image = UIImageView()
     var artist = UILabel()
     var name = UILabel()
@@ -401,7 +410,10 @@ class TrackDetailStrip: UICollectionViewCell, DetailCell  {
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.clipsToBounds = true
         image.layer.cornerRadius = 5
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        self.addGestureRecognizer(tapGesture!)
         
+//        backgroundColor = .red
         name.textColor = .label
         name.setFont(with: 15)
         
@@ -422,7 +434,7 @@ class TrackDetailStrip: UICollectionViewCell, DetailCell  {
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
         horizontalStack.distribution = .fillProportionally
         
-        horizontalStack.spacing = 25
+        horizontalStack.spacing = 10
 
         
         addSubview(horizontalStack)
@@ -445,152 +457,30 @@ class TrackDetailStrip: UICollectionViewCell, DetailCell  {
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?,indexPath: IndexPath?) {
-        let index = Int(indexPath!.row) + 1
-        image.image = UIImage(named: trackItem.imageURL!)
-        name.text = trackItem.title
-        artist.text = trackItem.artist
+    
+    
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        let index = Int(indexPath!) + 1
+        image.image = UIImage(named: item.imageURL)
+        name.text = item.title
+        artist.text = item.name
         trackNumber.text = String(index)
     }
-    
-}
-
-class AlbumCollectionCell: UICollectionViewCell, DetailCell{
-
-    
-    static var reuseableIdentifier: String = "albums"
-    
-    var vc: UINavigationController?
-    var tapgesture: ImgGestureRecognizer?
-    
-    let image = UIImageView()
-    let artist = UILabel()
-    let title = UILabel()
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-     
-        image.clipsToBounds = true
-        image.layer.cornerRadius = 10
-        image.contentMode = .scaleAspectFill
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.isUserInteractionEnabled = true
-        
-        artist.textColor = .secondaryLabel
-        artist.setFont(with: 15)
-
-        title.textColor = .label
-        title.setFont(with: 12)
-
-        let stackview = UIStackView(arrangedSubviews: [image, title])
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        stackview.axis = .vertical
-        stackview.distribution = .fill
-        stackview.alignment = .leading
-
-        addSubview(stackview)
-        NSLayoutConstraint.activate([
-
-            image.heightAnchor.constraint(equalToConstant: 150),
-            image.widthAnchor.constraint(equalToConstant: 150),
-            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
-
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -20),
-
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackview.topAnchor.constraint(equalTo: topAnchor),
-            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+    @objc func didTap(_sender: CustomGestureRecognizer){
+//        backgroundColor = .red
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    
-    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?) {
-        vc = rootVc!
-        
-        image.image = UIImage(named: trackItem.imageURL!)
-        artist.text = trackItem.artist
-        title.text = trackItem.title
-        tapgesture = ImgGestureRecognizer(target: self, action: #selector(present))
-        tapgesture?.albumId = trackItem.id
-        image.addGestureRecognizer(tapgesture!)
-    }
-    
-    @objc func present(_sender: ImgGestureRecognizer){
-        let view = OverViewController()
-        
-        view.albumId = _sender.albumId
-        vc?.pushViewController(view, animated: true)
-    }
-}
-class TrackRelatedArtistSEction: UICollectionViewCell, DetailCell {
-
-    static var reuseableIdentifier: String = "Artist Recommendation"
-
-    var vc: UINavigationController?
-    var tapGesture: ImgGestureRecognizer?
-    
-    let image = UIImageView()
-    let label = UILabel()
-    
-    let artistAvi = AViCard()
-    
-    var stackview: UIStackView!
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-        
-        artistAvi.isUserInteractionEnabled = true
-        
-        stackview = UIStackView(arrangedSubviews: [artistAvi])
-        stackview.axis = .horizontal
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(stackview)
-        
-        NSLayoutConstraint.activate([
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-            stackview.topAnchor.constraint(equalTo: topAnchor),
-        ])
-    }
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-
-    func configure(with trackItem: AlbumItems, rootVc: UINavigationController?, indexPath: IndexPath?) {
-        
-        print("Seting up Artist")
-        
-        artistAvi.configureCard(img: trackItem.imageURL!, name: trackItem.name!)
-        vc = rootVc
-        print(trackItem)
-        tapGesture = ImgGestureRecognizer(target: self, action: #selector(present))
-        tapGesture?.id = trackItem.id
-        artistAvi.addGestureRecognizer(tapGesture!)
-
-    }
-    @objc func present(_sender: ImgGestureRecognizer){
-
-        let view = Profile()
-        view.artistId = _sender.id
-        vc?.pushViewController(view, animated: true)
-    }
 }
 
 // headers
-class DetailHeader: UICollectionReusableView{
+class DetailHeader: UICollectionReusableView, GestureAction{
     
     static let reuseableIdentifier: String = "image Header"
     
     var vc: UINavigationController?
-    var tapGesture: ImgGestureRecognizer?
+    var tapGesture: CustomGestureRecognizer?
     
-    let artistId = String()
+    var artistId = String()
     
     // labels
     let title = UILabel() // Title
@@ -633,7 +523,7 @@ class DetailHeader: UICollectionReusableView{
         artistAviImage.isUserInteractionEnabled = true
 
         
-        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentProfile(_sender:)))
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         artistAviImage.addGestureRecognizer(tapGesture!)
         
         albumImage.translatesAutoresizingMaskIntoConstraints = false
@@ -735,13 +625,17 @@ class DetailHeader: UICollectionReusableView{
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func presentProfile(_sender: ImgGestureRecognizer){
-        print("artistId")
+    func didTap(_sender: CustomGestureRecognizer) {
+        let view = Profile()
+        view.artistId = artistId
+        
+        vc?.pushViewController(view, animated: true)
     }
+
     
 }
-class SectionHeader: UICollectionReusableView {
-    
+class SectionHeader: UICollectionReusableView, GestureAction {
+  
     static let reuseIdentifier: String = "sectionHeader"
     
     let title = UILabel()
@@ -793,11 +687,14 @@ class SectionHeader: UICollectionReusableView {
         fatalError("")
     }
       
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
 }
 
 // Profile VC Components
-class ProfileHeader: UICollectionViewCell, CellConfigurer {
-    
+class ProfileHeader: UICollectionViewCell, Cell {
+  
     static var reuseIdentifier: String =  "profile Header"
     
     var image = UIImageView()
@@ -862,17 +759,17 @@ class ProfileHeader: UICollectionViewCell, CellConfigurer {
         fatalError("")
     }
     
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?) {
-        
-        name.text = item.artist!
-        let listnersCount = NumberFormatter.localizedString(from: 23425234, number: NumberFormatter.Style.decimal)
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+
+        name.text = item.name!
+        let listnersCount = NumberFormatter.localizedString(from: NSNumber(value: item.listeners!), number: NumberFormatter.Style.decimal)
         listener.text = "Listeners: \(listnersCount)"
-    
+
         image.image = UIImage(named: item.imageURL)
 
         setupGradient()
     }
-    
+//
     func setupGradient(){
         
         let gradientLayer = CAGradientLayer()
@@ -905,8 +802,12 @@ class ProfileHeader: UICollectionViewCell, CellConfigurer {
         containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
 
     }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
 }
-class CollectionCell: UICollectionViewCell, CellConfigurer{
+class CollectionCell: UICollectionViewCell, Cell{
     
     static var reuseIdentifier: String = "Top Tracks"
     
@@ -932,6 +833,7 @@ class CollectionCell: UICollectionViewCell, CellConfigurer{
         
         listenCount.setFont(with: 10)
         listenCount.textColor = .secondaryLabel
+        listenCount.textAlignment = .right
         
         let innterStackview = UIStackView(arrangedSubviews: [title, artist])
         innterStackview.axis = .vertical
@@ -964,190 +866,16 @@ class CollectionCell: UICollectionViewCell, CellConfigurer{
         fatalError("")
     }
     
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+
         chartPosition.text = "1"
         image.image = UIImage(named: item.imageURL)
         title.text = item.title
-        artist.text = item.artist
-        listenCount.text = item.playCount
+        artist.text = item.name
+        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
     }
 }
-class SmallWidthCollectionCell: UICollectionViewCell, CellConfigurer{
-    static var reuseIdentifier: String = "releases"
-    
-    let chartPosition = UILabel()
-    let image = UIImageView()
-    let title = UILabel()
-    let artist = UILabel()
-    let listenCount = UILabel()
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-        
-        backgroundColor = .red
-        image.contentMode = .scaleAspectFill
-        image.clipsToBounds = true
-        image.layer.cornerRadius = 15
-        image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        image.translatesAutoresizingMaskIntoConstraints = false
-        
-        title.setFont(with: 12)
-        
-        artist.setFont(with: 10)
-        artist.textColor = .secondaryLabel
-        
-        listenCount.setFont(with: 15)
-        listenCount.textColor = .secondaryLabel
-        
-        let innterStackview = UIStackView(arrangedSubviews: [title, artist])
-        innterStackview.axis = .vertical
-        innterStackview.translatesAutoresizingMaskIntoConstraints = false
-        
-        let stackview = UIStackView(arrangedSubviews: [image, innterStackview, listenCount] )
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        stackview.axis = .horizontal
-        stackview.alignment = .center
-        stackview.distribution = .fill
-        stackview.spacing = 10
-        
-        addSubview(stackview)
-        
-        NSLayoutConstraint.activate([
-            
-            image.heightAnchor.constraint(equalToConstant: 100),
-            image.widthAnchor.constraint(equalToConstant: 50),
-            
-            stackview.topAnchor.constraint(equalTo: topAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            
-            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
-        
-        image.image = UIImage(named: item.imageURL)
-        title.text = item.title
-        artist.text = item.artist
-        
-    }
-    
-    
-}
-class LargeArtCollection: UICollectionViewCell, CellConfigurer{
-    static var reuseIdentifier: String = "Albums"
-    
-    let image = UIImageView()
-    let artist = UILabel()
-    let title = UILabel()
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-     
-        image.clipsToBounds = true
-        image.layer.cornerRadius = 10
-        image.contentMode = .scaleAspectFill
-        image.translatesAutoresizingMaskIntoConstraints = false
-        
-        artist.textColor = .secondaryLabel
-//        artist.translatesAutoresizingMaskIntoConstraints = false
-        artist.setFont(with: 10)
-
-        title.textColor = .label
-        title.setFont(with: 12)
-
-//        title.translatesAutoresizingMaskIntoConstraints = false
-
-        let stackview = UIStackView(arrangedSubviews: [image, title])
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        stackview.axis = .vertical
-        stackview.distribution = .fill
-        stackview.alignment = .leading
-
-        addSubview(stackview)
-        NSLayoutConstraint.activate([
-
-            image.heightAnchor.constraint(equalToConstant: 150),
-            image.widthAnchor.constraint(equalToConstant: 150),
-            
-            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: -10),
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -30),
-
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackview.topAnchor.constraint(equalTo: topAnchor),
-            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?){
-        image.image = UIImage(named: item.imageURL)
-        artist.text = item.artist
-        title.text = item.title
-    }
-}
-class ArtistCell: UICollectionViewCell, CellConfigurer {
-    static var reuseIdentifier: String = "Artist"
-    
-    var NavVc: UINavigationController?
-    var tapGesture: ImgGestureRecognizer!
-    
-    let image = UIImageView()
-    let label = UILabel()
-    
-    let artistAvi = AViCard()
-    
-    var stackview: UIStackView!
-    
-    override init(frame: CGRect){
-        super.init(frame: frame)
-        
-        stackview = UIStackView(arrangedSubviews: [artistAvi])
-        stackview.axis = .vertical
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        
-        contentView.addSubview(stackview)
-        
-        NSLayoutConstraint.activate([
-            stackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            stackview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            stackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            stackview.topAnchor.constraint(equalTo: contentView.topAnchor),
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    func configure(item: LibItem, vc: UINavigationController?, indexPath: Int?) {
-        
-        self.NavVc = vc
-    
-        print("Seting up Artist")
-        artistAvi.configureCard(img: item.imageURL, name: item.name!)
-        
-        tapGesture = ImgGestureRecognizer(target: self, action: #selector(presentView(_sender:)))
-        tapGesture.id = item.artistId
-        image.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc func presentView(_sender: ImgGestureRecognizer) {
-        let view = Profile()
-        view.artistId = _sender.id
-        
-        NavVc?.pushViewController(view, animated: true)
-        
-    }
-    
-}
-

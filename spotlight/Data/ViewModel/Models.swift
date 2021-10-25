@@ -9,8 +9,13 @@ import Foundation
 
 struct LibObject: Codable, Hashable {
     var id: String
+    var artistId: String?
     var type: String
+    var title: String?
     var tagline: String?
+    var name: String?
+    var imageURL: String?
+    var artistImgURL: String?
     var items: [LibItem]?
 }
 
@@ -21,12 +26,13 @@ struct LibItem: Codable ,Hashable{
     var title: String?
     var artistId: String?
     var albumId: String?
-    var artist: String?
+//    var artist: String?
     var imageURL: String
-    var playCount: String?
+    var playCount: Int32?
     var name: String?
 //    var followers: String?
-//    var listeners: Int32?
+    var listeners: Int32?
+    var isVerified: Bool?
 //    var bio: String?
 //    var dateJoined: String?
 }
@@ -35,9 +41,8 @@ struct AlbumDetail: Codable, Hashable {
     var id: String
     var type: String
     var artist: String
-    var title: String
-    var artistImgURL: String?
-    var imageURL: String?
+
+    
     var items: [AlbumItems]?
 }
 
@@ -51,8 +56,8 @@ struct AlbumItems: Codable, Hashable {
     var albumId: String?
     var imageURL: String?
     var name: String?
-    var isVerified: Bool?
-    var playCount: String?
+    
+    var playCount: Int?
 }
 
 struct Artist: Codable, Hashable {
