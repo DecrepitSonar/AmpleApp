@@ -28,6 +28,8 @@
 		229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561726E5300000D10B36 /* AlbumDetail.json */; };
 		229F561C26E5300000D10B36 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561826E5300000D10B36 /* catalog.json */; };
 		229F561D26E5300000D10B36 /* overview.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561926E5300000D10B36 /* overview.json */; };
+		22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FAAF422732D6D20021F67C /* AudioManager.swift */; };
+		22FAAF452732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
 		D942194226DC7F6E00F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194026DC7F6E00F1DC78 /* Info.plist */; };
 		D942194B26DC7FB500F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194926DC7FB500F1DC78 /* Info.plist */; };
@@ -74,6 +76,8 @@
 		229F561726E5300000D10B36 /* AlbumDetail.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AlbumDetail.json; sourceTree = "<group>"; };
 		229F561826E5300000D10B36 /* catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		229F561926E5300000D10B36 /* overview.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = overview.json; sourceTree = "<group>"; };
+		22FAAF422732D6D20021F67C /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "6LACK - Nonchalant (Official Music Video).mp3"; sourceTree = "<group>"; };
 		D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightTests.swift; sourceTree = "<group>"; };
 		D942194026DC7F6E00F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D942194926DC7FB500F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -113,6 +117,8 @@
 		225314F726E5241300D1F496 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				229F559E26E5288D00D10B36 /* NetworkManager.swift */,
+				22FAAF422732D6D20021F67C /* AudioManager.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -120,6 +126,7 @@
 		229F55BC26E52E9900D10B36 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */,
 				229F561726E5300000D10B36 /* AlbumDetail.json */,
 				229F561826E5300000D10B36 /* catalog.json */,
 				229F561926E5300000D10B36 /* overview.json */,
@@ -159,7 +166,6 @@
 		22D25BC727235F31007FB889 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				229F559E26E5288D00D10B36 /* NetworkManager.swift */,
 				225314F826E5241300D1F496 /* UtilityFunctions.swift */,
 			);
 			path = Utility;
@@ -326,6 +332,7 @@
 				229F561C26E5300000D10B36 /* catalog.json in Resources */,
 				229F561A26E5300000D10B36 /* profileData.json in Resources */,
 				229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */,
+				22FAAF452732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 in Resources */,
 				D991782D2677DEA600961969 /* Assets.xcassets in Resources */,
 				229F561D26E5300000D10B36 /* overview.json in Resources */,
 			);
@@ -360,6 +367,7 @@
 				225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */,
 				229F560526E52E9900D10B36 /* components.swift in Sources */,
 				229F560626E52E9900D10B36 /* OverViewController.swift in Sources */,
+				22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */,
 				225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */,
 				229F560226E52E9900D10B36 /* LoginViewController.swift in Sources */,
 				225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */,

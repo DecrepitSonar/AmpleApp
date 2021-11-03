@@ -146,6 +146,8 @@ class MiniPlayer: UIView {
         
         NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
+        
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
@@ -178,6 +180,7 @@ class MiniPlayer: UIView {
         
         playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
         
         forwardBtn.setImage(UIImage(systemName: "forward.fill"), for: .normal)
         forwardBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
@@ -213,15 +216,25 @@ class MiniPlayer: UIView {
                 img.image = UIImage(named: track.Image)
                 artistLabel.text = track.Artists
                 trackLabel.text = track.Title
-               
-//                print(track.AlbumId)
             }
-//
+            AudioManager.getTrack(with: "")
         }
-        
     }
     
+    @objc func togglePlayBtn(){
     
+        if (player!.isPlaying){
+            playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        }else{
+            playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        }
+    }
+    
+    @objc func togglePlayState(){
+        if(player!.isPlaying == false){ player!.play() } else{ player!.pause()}
+        print("pressed")
+        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
+    }
     
     
 }

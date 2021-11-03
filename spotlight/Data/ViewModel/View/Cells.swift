@@ -880,6 +880,9 @@ class CollectionCell: UICollectionViewCell, Cell{
     override init(frame: CGRect){
         super.init(frame: frame)
         
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        addGestureRecognizer(tapGesture!)
+        
         image.contentMode = .scaleAspectFit
         image.clipsToBounds = true
         image.layer.cornerRadius = 10
@@ -936,8 +939,6 @@ class CollectionCell: UICollectionViewCell, Cell{
         
         let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!)
         
-        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
-        addGestureRecognizer(tapGesture!)
         tapGesture?.track = track
         
     }
