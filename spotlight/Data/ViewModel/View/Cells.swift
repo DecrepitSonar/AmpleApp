@@ -208,21 +208,22 @@ class TrendingSection: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc!
-        tapGesture?.id = catalog.id
+        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!)
+        
+        tapGesture?.track = track
         
         chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
+        
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
         
-//        let view = OverViewController()
-//        view.albumId = _sender.id
-        
-//        vc?.present(view, animated: true)
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: self, userInfo: ["track" : _sender.track!])
+
     }
 }
 class MediumImageSlider: UICollectionViewCell, Cell{
@@ -868,6 +869,8 @@ class CollectionCell: UICollectionViewCell, Cell{
     
     static var reuseIdentifier: String = "Top Tracks"
     
+    var tapGesture: CustomGestureRecognizer?
+    
     let chartPosition = UILabel()
     let image = UIImageView()
     let title = UILabel()
@@ -930,9 +933,16 @@ class CollectionCell: UICollectionViewCell, Cell{
         title.text = item.title
         artist.text = item.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)
+        
+        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!)
+        
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        addGestureRecognizer(tapGesture!)
+        tapGesture?.track = track
+        
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.track!])
     }
 }

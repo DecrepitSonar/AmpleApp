@@ -67,7 +67,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
         createDataSource()
         reloadData()
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
     }
     
     func createDataSource(){

@@ -125,8 +125,8 @@ class MiniPlayer: UIView {
         view.image = UIImage(named: "6lack")
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        view.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         view.clipsToBounds = true
         view.layer.cornerRadius = 5
@@ -147,10 +147,13 @@ class MiniPlayer: UIView {
         NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
         
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.8)
+        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
-        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 10).isActive = true
-        heightAnchor.constraint(equalToConstant: 80).isActive = true
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
+        
+        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20).isActive = true
+        heightAnchor.constraint(equalToConstant: 70).isActive = true
         
         addSubview(img)
         
@@ -161,6 +164,8 @@ class MiniPlayer: UIView {
         trackLabel.text = "Nonchallant"
         trackLabel.textColor = .label
         trackLabel.setFont(with: 12)
+        
+        trackLabel.widthAnchor.constraint(equalToConstant: 120).isActive = true
         
         let trackInfoStack = UIStackView(arrangedSubviews: [artistLabel, trackLabel])
         trackInfoStack.axis = .vertical
@@ -189,7 +194,7 @@ class MiniPlayer: UIView {
         
         img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
-        
+        img.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         buttonStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20).isActive = true
         buttonStack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
@@ -235,7 +240,7 @@ class customTab: UITabBarController{
         
         
         player.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
-        player.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor, constant: 5).isActive = true
+        player.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor, constant: 10).isActive = true
         
     }
     

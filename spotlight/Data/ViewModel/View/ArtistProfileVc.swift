@@ -68,7 +68,7 @@ class Profile: UIViewController {
         
         // Headers
         collectionview.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
-        
+        collectionview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 200, right: 0)
         view.addSubview( collectionview)
         
         createDataSource()
