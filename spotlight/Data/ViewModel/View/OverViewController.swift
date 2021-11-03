@@ -19,7 +19,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(albumId)
+//        print(albumId)
         NetworkManager.getAlbum(id: albumId!) { Result in
             switch Result {
             case .success(let data ):
@@ -27,7 +27,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 print(data)
                 self.initCollectionView()
                 
-            case .failure(let err):
+            case .failure(_):
                 print()
             }
         }
@@ -101,7 +101,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                     return nil
                 }
                 
-                header.albumImage.image = UIImage(named: section.imageURL!)
+                header.image.image = UIImage(named: section.imageURL!)
 
                 header.title.text = section.title
                 header.artist.text = section.name
@@ -142,7 +142,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
 //
 //            switch section.type{
 //            case "Tracks":
-            return LayoutManager.createTableLayout(using: self.section)
+            return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
 //            case "Artists":
 //                return LayoutManager.createAviSliderSection(using: section)
 //            default:

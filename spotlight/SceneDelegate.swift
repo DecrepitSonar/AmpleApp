@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let navigationController = UINavigationController(rootViewController: LoginViewController())
+        _ = UINavigationController(rootViewController: LoginViewController())
 
 //        navigationController.navigationBar.tintColor = UIColor.init(displayP3Red: 0 / 255, green: 0 / 255, blue: 0 / 255, alpha: 1)
         
@@ -27,10 +27,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        navigationController.navigationBar.prefersLargeTitles = true
 //        navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
-        
+ 
         
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = LoginViewController()
+   
+
         window?.makeKeyAndVisible()
     }
 

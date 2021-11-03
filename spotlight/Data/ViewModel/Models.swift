@@ -67,7 +67,7 @@ struct Artist: Codable, Hashable {
     var isVerified: Bool
 }
 
-struct Song: Decodable {
+struct Track: Decodable {
     var Id: String
     var Title: String
     var ArtistId: String
@@ -83,13 +83,13 @@ struct Album: Decodable {
     var Image: String
     var Artist: String
 }
-
-struct Playlist: Decodable {
-    var Id: String
-    var Name: String
-    var Image: String
-    var Songs: [Song]
-}
+//
+//struct Playlist: Decodable {
+//    var Id: String
+//    var Name: String
+//    var Image: String
+//    var Songs: [Song]
+//}
 
 // Home section models
 struct Sections: Codable, Hashable {

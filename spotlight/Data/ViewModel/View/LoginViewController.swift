@@ -59,30 +59,10 @@ class LoginViewController: UIViewController {
     
     @objc func handleLogin(){
         
-        let tabVc = UITabBarController()
-//        tabVc.tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.3)
-//        tabVc.tabBar.barTintColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        let tabVc = customTab()
         
-        let homeVc = UINavigationController(rootViewController: ViewController())
-        homeVc.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "rays"), tag: 0)
-//        homeVc.navigationBar.barTintColor = UIColor.init(displayP3Red: 0 / 255, green: 0 / 255, blue: 0 / 255, alpha: 0.5)
-//        homeVc.navigationBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-    
-        let player = UINavigationController(rootViewController: PlayerViewController())
-        player.tabBarItem = UITabBarItem(title: "Player", image: UIImage(systemName: "waveform"), tag: 0)
-        
-        let profile = UINavigationController(rootViewController: ProfileViewController())
-        profile.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person"), tag: 0)
-        
-        
-        let viewCs = [homeVc, player, profile]
-        tabVc.setViewControllers(viewCs, animated: true)
-        
-        // Do some authenticatiokn with a network call
-        // return result to completion handler
-        
-        tabVc.modalPresentationStyle = .fullScreen
-        tabVc.modalTransitionStyle = .crossDissolve
+//        tabVc.modalPresentationStyle = .fullScreen
+//        tabVc.modalTransitionStyle = .crossDissolve
         present(tabVc, animated: true)
     }
     

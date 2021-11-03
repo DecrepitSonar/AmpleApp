@@ -133,6 +133,9 @@ class TrendingSection: UICollectionViewCell, Cell{
   
     static let reuseIdentifier: String = "Trending"
     
+    var vc: UINavigationController?
+    var tapGesture: CustomGestureRecognizer?
+    
     let chartPosition = UILabel()
     let image = UIImageView()
     let title = UILabel()
@@ -141,6 +144,9 @@ class TrendingSection: UICollectionViewCell, Cell{
     
     override init(frame: CGRect){
         super.init(frame: frame)
+        
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        addGestureRecognizer(tapGesture!)
         
         image.contentMode = .scaleAspectFit
         image.clipsToBounds = true
@@ -161,7 +167,6 @@ class TrendingSection: UICollectionViewCell, Cell{
         listenCount.layer.borderWidth = 1
         listenCount.translatesAutoresizingMaskIntoConstraints = false
         listenCount.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        
         
         chartPosition.setFont(with: 10)
         chartPosition.textColor = .secondaryLabel
@@ -184,8 +189,6 @@ class TrendingSection: UICollectionViewCell, Cell{
             image.heightAnchor.constraint(equalToConstant: 100),
             image.widthAnchor.constraint(equalToConstant: 50),
             
-            
-            
             stackview.topAnchor.constraint(equalTo: topAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -203,6 +206,10 @@ class TrendingSection: UICollectionViewCell, Cell{
     }
     
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        
+        vc = rootVc!
+        tapGesture?.id = catalog.id
+        
         chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
         title.text = catalog.title
@@ -212,6 +219,10 @@ class TrendingSection: UICollectionViewCell, Cell{
     
     func didTap(_sender: CustomGestureRecognizer) {
         
+//        let view = OverViewController()
+//        view.albumId = _sender.id
+        
+//        vc?.present(view, animated: true)
     }
 }
 class MediumImageSlider: UICollectionViewCell, Cell{
@@ -397,11 +408,22 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
     static var reuseIdentifier: String = "track"
     
     var tapGesture: CustomGestureRecognizer?
+    var vc: UINavigationController?
     
     var image = UIImageView()
     var artist = UILabel()
     var name = UILabel()
-    let trackNumber = UILabel()
+    let trackPrice = UILabel()
+    
+    
+    let view: UIView = {
+        let view = UIView()
+        view.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20).isActive = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .red
+        return view
+    }()
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -415,24 +437,24 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         
 //        backgroundColor = .red
         name.textColor = .label
-        name.setFont(with: 15)
+        name.setFont(with: 12)
         
         artist.textColor = .secondaryLabel
         artist.setFont(with: 10)
         
-        trackNumber.translatesAutoresizingMaskIntoConstraints = false
-        trackNumber.setFont(with: 10)
-        trackNumber.textColor = .secondaryLabel
-//        trackNumber.backgroundColor = .red
+        trackPrice.translatesAutoresizingMaskIntoConstraints = false
+        trackPrice.setFont(with: 10)
+        trackPrice.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+
         
         let labelStack = UIStackView(arrangedSubviews: [name, artist])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [trackNumber, image, labelStack])
+        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, trackPrice])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
-        horizontalStack.distribution = .fillProportionally
+        horizontalStack.distribution = .fill
         
         horizontalStack.spacing = 10
 
@@ -444,9 +466,11 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
             image.heightAnchor.constraint(equalToConstant: 50),
             image.widthAnchor.constraint(equalToConstant: 50),
             
-            image.leadingAnchor.constraint(equalTo: trackNumber.trailingAnchor, constant: 7),
+            image.leadingAnchor.constraint(equalTo: trackPrice.trailingAnchor, constant: 7),
             
-            trackNumber.widthAnchor.constraint(equalToConstant: 18 ),
+            trackPrice.widthAnchor.constraint(equalToConstant: 30 ),
+//            trackPrice.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            
             horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             horizontalStack.topAnchor.constraint(equalTo: topAnchor),
@@ -460,14 +484,22 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
     
     
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
-        let index = Int(indexPath!) + 1
+        
+//        let index = Int(indexPath!) + 1
+        vc = rootVc!
         image.image = UIImage(named: item.imageURL)
         name.text = item.title
         artist.text = item.name
-        trackNumber.text = String(index)
+        trackPrice.text = "$0.99"
+        
+        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!)
+        
+        tapGesture?.track = track
     }
     @objc func didTap(_sender: CustomGestureRecognizer){
-//        backgroundColor = .red
+//        print("Sender: ", _sender.track)
+        
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.track!])
     }
     
 }
@@ -489,17 +521,17 @@ class DetailHeader: UICollectionReusableView, GestureAction{
     let datePublished = UILabel()
     
     // Images
-    let albumImage = UIImageView()
+    let imageContainer = UIView()
+    let imageLayer = UIView()
+    let image = UIImageView()
     let artistAviImage = UIImageView()
     
     // buttons
     let playBtn = UIButton()
     let shuffleBtn = UIButton()
-    let saveBtn = UIButton()
     let buyBtn = UIButton()
+    let priceLabel = UIButton()
     let optionsBtn = UIButton()
-    
-    
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -522,34 +554,53 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         artistAviImage.layer.cornerRadius = 20
         artistAviImage.isUserInteractionEnabled = true
 
-        
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         artistAviImage.addGestureRecognizer(tapGesture!)
         
-        albumImage.translatesAutoresizingMaskIntoConstraints = false
-        albumImage.contentMode = .scaleAspectFill
-        albumImage.clipsToBounds = true
-        albumImage.layer.cornerRadius = 10
+        image.contentMode = .scaleAspectFill
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 10
+        image.translatesAutoresizingMaskIntoConstraints = false
         
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        imageContainer.clipsToBounds = true
+        imageContainer.layer.cornerRadius = 10
+        imageContainer.backgroundColor = .red
+        imageContainer.addSubview(image)
+//        imageContainer.addSubview(imageLayer)
+        
+//        playBtn.setTitle("Play All", for: .normal)
+//        let btnImage = UIImage(systemName: "play.circle.fill")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+//        
+//        playBtn.setImage(btnImage, for: .normal)
+//        playBtn.layer.borderWidth = 1
+//        playBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+////        playBtn.layer.cornerRadius = 5
+//        playBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+//        
+//        playBtn.titleLabel?.setFont(with: 50)
+//        playBtn.translatesAutoresizingMaskIntoConstraints = false
+////        
+//        imageLayer.backgroundColor = .red
+//        imageLayer.layer.zPosition = 2
+//        imageLayer.translatesAutoresizingMaskIntoConstraints = false
+//        imageLayer.addSubview(playBtn)
+//
         // btns
-        saveBtn.setImage(UIImage(systemName: "heart"), for: .normal)
-        saveBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-        saveBtn.titleLabel?.setFont(with: 35)
-        saveBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        saveBtn.translatesAutoresizingMaskIntoConstraints = false
-        
-        buyBtn.setImage(UIImage(systemName: "dollarsign.circle"), for: .normal)
-        buyBtn.setTitle(" 9.99", for: .normal)
+        buyBtn.setTitle("Buy | $9.99", for: .normal)
         buyBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-        buyBtn.titleLabel?.setFont(with: 15)
+        buyBtn.titleLabel?.setFont(with: 10)
         buyBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        buyBtn.layer.borderWidth = 1
+        buyBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+        buyBtn.layer.cornerRadius = 5
+        buyBtn.translatesAutoresizingMaskIntoConstraints = false
+        buyBtn.widthAnchor.constraint(equalToConstant: 75).isActive = true
         
-        playBtn.setTitle("Play All", for: .normal)
-        playBtn.layer.borderWidth = 1
-        playBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-        playBtn.layer.cornerRadius = 3
-        playBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-        playBtn.titleLabel?.setFont(with: 15)
+        priceLabel.setTitle(" $9.99", for: .normal)
+        priceLabel.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+        priceLabel.titleLabel?.setFont(with: 10)
+        priceLabel.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         shuffleBtn.setTitle("Shuffle", for: .normal)
         shuffleBtn.layer.borderWidth = 1
@@ -575,48 +626,54 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
         TirtiaryStack.distribution = .equalSpacing
         
-        let SecondaryStack = UIStackView(arrangedSubviews: [artistAviImage, artist, saveBtn, buyBtn])
+        let SecondaryStack = UIStackView(arrangedSubviews: [artistAviImage, artist, buyBtn])
         SecondaryStack.axis = .horizontal
         SecondaryStack.alignment = .center
         SecondaryStack.distribution = .fill
         SecondaryStack.spacing = 10
         
-        let playBtnStack = UIStackView(arrangedSubviews: [playBtn, shuffleBtn])
-        playBtnStack.alignment = .center
-        playBtnStack.axis = .horizontal
-        playBtnStack.distribution = .fillProportionally
-        playBtnStack.spacing = 10
+//        let playBtnStack = UIStackView(arrangedSubviews: [,huffleBtn])
+//        playBtnStack.alignment = .center
+//        playBtnStack.axis = .horizontal
+//        playBtnStack.distribution = .fillProportionally
+//        playBtnStack.spacing = 10
         
-        let ContainerStack = UIStackView(arrangedSubviews: [playBtnStack, title, SecondaryStack, datePublished, seperator, TirtiaryStack ])
+        let ContainerStack = UIStackView(arrangedSubviews: [imageContainer, title, SecondaryStack, datePublished, seperator, TirtiaryStack ])
         ContainerStack.translatesAutoresizingMaskIntoConstraints = false
         ContainerStack.axis = .vertical
         ContainerStack.spacing = 17
         
         
-        addSubview(albumImage)
+//        addSubview(imageContainer)
         
         addSubview(ContainerStack)
         
         NSLayoutConstraint.activate([
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            albumImage.heightAnchor.constraint(equalToConstant: 355),
-            albumImage.widthAnchor.constraint(equalToConstant: 350),
-            albumImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            albumImage.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            albumImage.topAnchor.constraint(equalTo: topAnchor),
-
+            imageContainer.heightAnchor.constraint(equalToConstant: 355),
+            imageContainer.widthAnchor.constraint(equalToConstant: 350),
+//
+            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            imageContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+//
+            image.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
+            image.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
+//
+//            imageLayer.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
+//            imageLayer.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
+//
             artistAviImage.heightAnchor.constraint(equalToConstant: 40),
             artistAviImage.widthAnchor.constraint(equalToConstant: 40),
+//            
+//            playBtn.leadingAnchor.constraint(equalTo: imageLayer.leadingAnchor, constant: 20),
+//            playBtn.bottomAnchor.constraint(equalTo: imageLayer.bottomAnchor, constant: -20),
+//            
+            ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+//            ContainerStack.topAnchor.constraint(equalTo: imageContainer.bottomAnchor, constant: 20),
+//            ContainerStack.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             
-//            saveBtn.widthAnchor.constraint(equalToConstant: 70),
-//            saveBtn.leadingAnchor.constraint(equalTo: artist.trailingAnchor),
-            
-            ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            ContainerStack.topAnchor.constraint(equalTo: albumImage.bottomAnchor, constant: 20),
-            ContainerStack.trailingAnchor.constraint(equalTo: albumImage.trailingAnchor),
-            
-            btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
+            btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
 //            optionsBtn.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
         ])
     }
@@ -826,7 +883,7 @@ class CollectionCell: UICollectionViewCell, Cell{
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.translatesAutoresizingMaskIntoConstraints = false
         
-        title.setFont(with: 15)
+        title.setFont(with: 12)
         
         artist.setFont(with: 10)
         artist.textColor = .secondaryLabel

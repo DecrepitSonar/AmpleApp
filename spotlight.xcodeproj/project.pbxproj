@@ -7,22 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		223D30C0272456FE00E799A7 /* TrackOverviewController in Sources */ = {isa = PBXBuildFile; fileRef = 223D30BF272456FE00E799A7 /* TrackOverviewController */; };
 		225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2253148926E523EE00D1F496 /* AppDelegate.swift */; };
-		225314D226E523EF00D1F496 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AA26E523EF00D1F496 /* HomeViewController.swift */; };
 		225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AB26E523EF00D1F496 /* bundle-decodable.swift */; };
 		225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AE26E523EF00D1F496 /* SceneDelegate.swift */; };
 		225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314F826E5241300D1F496 /* UtilityFunctions.swift */; };
 		229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F559E26E5288D00D10B36 /* NetworkManager.swift */; };
 		229F55F626E52E9900D10B36 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C326E52E9900D10B36 /* ViewController.swift */; };
 		229F55F726E52E9900D10B36 /* Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C526E52E9900D10B36 /* Cells.swift */; };
-		229F55F826E52E9900D10B36 /* TrackHistoryScrollTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C626E52E9900D10B36 /* TrackHistoryScrollTableViewCell.swift */; };
-		229F55F926E52E9900D10B36 /* PlaylistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C726E52E9900D10B36 /* PlaylistCell.swift */; };
-		229F55FA26E52E9900D10B36 /* DiscoverCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C826E52E9900D10B36 /* DiscoverCell.swift */; };
-		229F55FB26E52E9900D10B36 /* TrackStripCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C926E52E9900D10B36 /* TrackStripCell.swift */; };
-		229F55FC26E52E9900D10B36 /* GenreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CA26E52E9900D10B36 /* GenreCell.swift */; };
-		229F55FD26E52E9900D10B36 /* ArtistScrollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CB26E52E9900D10B36 /* ArtistScrollCell.swift */; };
-		229F55FE26E52E9900D10B36 /* HeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CC26E52E9900D10B36 /* HeaderTableViewCell.swift */; };
 		229F55FF26E52E9900D10B36 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CD26E52E9900D10B36 /* PlayerViewController.swift */; };
 		229F560026E52E9900D10B36 /* TrackHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CE26E52E9900D10B36 /* TrackHistoryViewController.swift */; };
 		229F560126E52E9900D10B36 /* ArtistProfileVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55CF26E52E9900D10B36 /* ArtistProfileVc.swift */; };
@@ -37,13 +28,11 @@
 		229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561726E5300000D10B36 /* AlbumDetail.json */; };
 		229F561C26E5300000D10B36 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561826E5300000D10B36 /* catalog.json */; };
 		229F561D26E5300000D10B36 /* overview.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561926E5300000D10B36 /* overview.json */; };
-		229F561F26E6CB2B00D10B36 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F561E26E6CB2B00D10B36 /* DetailViewController.swift */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
 		D942194226DC7F6E00F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194026DC7F6E00F1DC78 /* Info.plist */; };
 		D942194B26DC7FB500F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194926DC7FB500F1DC78 /* Info.plist */; };
 		D942194C26DC7FB500F1DC78 /* spotlightUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */; };
 		D991782D2677DEA600961969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D991782C2677DEA600961969 /* Assets.xcassets */; };
-		D99178302677DEA600961969 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D991782E2677DEA600961969 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,23 +53,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		223D30BF272456FE00E799A7 /* TrackOverviewController */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrackOverviewController; sourceTree = "<group>"; };
 		2253148926E523EE00D1F496 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		225314AA26E523EF00D1F496 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		225314AB26E523EF00D1F496 /* bundle-decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "bundle-decodable.swift"; sourceTree = "<group>"; };
 		225314AE26E523EF00D1F496 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		225314F826E5241300D1F496 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
 		229F559E26E5288D00D10B36 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		229F55A026E528A300D10B36 /* History.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = History.json; sourceTree = "<group>"; };
 		229F55C326E52E9900D10B36 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		229F55C526E52E9900D10B36 /* Cells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cells.swift; sourceTree = "<group>"; };
-		229F55C626E52E9900D10B36 /* TrackHistoryScrollTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackHistoryScrollTableViewCell.swift; sourceTree = "<group>"; };
-		229F55C726E52E9900D10B36 /* PlaylistCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistCell.swift; sourceTree = "<group>"; };
-		229F55C826E52E9900D10B36 /* DiscoverCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCell.swift; sourceTree = "<group>"; };
-		229F55C926E52E9900D10B36 /* TrackStripCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackStripCell.swift; sourceTree = "<group>"; };
-		229F55CA26E52E9900D10B36 /* GenreCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenreCell.swift; sourceTree = "<group>"; };
-		229F55CB26E52E9900D10B36 /* ArtistScrollCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArtistScrollCell.swift; sourceTree = "<group>"; };
-		229F55CC26E52E9900D10B36 /* HeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderTableViewCell.swift; sourceTree = "<group>"; };
 		229F55CD26E52E9900D10B36 /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		229F55CE26E52E9900D10B36 /* TrackHistoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackHistoryViewController.swift; sourceTree = "<group>"; };
 		229F55CF26E52E9900D10B36 /* ArtistProfileVc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArtistProfileVc.swift; sourceTree = "<group>"; };
@@ -95,14 +74,12 @@
 		229F561726E5300000D10B36 /* AlbumDetail.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AlbumDetail.json; sourceTree = "<group>"; };
 		229F561826E5300000D10B36 /* catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		229F561926E5300000D10B36 /* overview.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = overview.json; sourceTree = "<group>"; };
-		229F561E26E6CB2B00D10B36 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightTests.swift; sourceTree = "<group>"; };
 		D942194026DC7F6E00F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D942194926DC7FB500F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightUITests.swift; sourceTree = "<group>"; };
 		D99178202677DEA100961969 /* spotlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = spotlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D991782C2677DEA600961969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D991782F2677DEA600961969 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D99178312677DEA600961969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D99178362677DEA600961969 /* spotlightTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spotlightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D99178412677DEA700961969 /* spotlightUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spotlightUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,22 +110,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2253148426E5237E00D1F496 /* Depricated */ = {
-			isa = PBXGroup;
-			children = (
-				229F55C626E52E9900D10B36 /* TrackHistoryScrollTableViewCell.swift */,
-				229F55C726E52E9900D10B36 /* PlaylistCell.swift */,
-				229F55C826E52E9900D10B36 /* DiscoverCell.swift */,
-				229F55C926E52E9900D10B36 /* TrackStripCell.swift */,
-				229F55CA26E52E9900D10B36 /* GenreCell.swift */,
-				229F55CB26E52E9900D10B36 /* ArtistScrollCell.swift */,
-				229F55CC26E52E9900D10B36 /* HeaderTableViewCell.swift */,
-				225314AA26E523EF00D1F496 /* HomeViewController.swift */,
-				229F55A026E528A300D10B36 /* History.json */,
-			);
-			path = Depricated;
-			sourceTree = "<group>";
-		};
 		225314F726E5241300D1F496 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,9 +140,10 @@
 		229F55C226E52E9900D10B36 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				229F55C326E52E9900D10B36 /* ViewController.swift */,
-				229F55C426E52E9900D10B36 /* Cells */,
+				229F55D326E52E9900D10B36 /* components.swift */,
+				229F55C526E52E9900D10B36 /* Cells.swift */,
 				229F55CD26E52E9900D10B36 /* PlayerViewController.swift */,
+				229F55C326E52E9900D10B36 /* ViewController.swift */,
 				229F55CE26E52E9900D10B36 /* TrackHistoryViewController.swift */,
 				229F55CF26E52E9900D10B36 /* ArtistProfileVc.swift */,
 				229F55D026E52E9900D10B36 /* LoginViewController.swift */,
@@ -189,19 +151,9 @@
 				229F55D226E52E9900D10B36 /* ReleasesVc.swift */,
 				229F55D426E52E9900D10B36 /* OverViewController.swift */,
 				229F55D526E52E9900D10B36 /* SettingsViewController.swift */,
-				223D30BF272456FE00E799A7 /* TrackOverviewController */,
 			);
 			name = View;
 			path = Data/ViewModel/View;
-			sourceTree = "<group>";
-		};
-		229F55C426E52E9900D10B36 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				229F55D326E52E9900D10B36 /* components.swift */,
-				229F55C526E52E9900D10B36 /* Cells.swift */,
-			);
-			path = Cells;
 			sourceTree = "<group>";
 		};
 		22D25BC727235F31007FB889 /* Utility */ = {
@@ -239,14 +191,11 @@
 				22D25BC727235F31007FB889 /* Utility */,
 				229F55C226E52E9900D10B36 /* View */,
 				229F55BC26E52E9900D10B36 /* Data */,
-				2253148426E5237E00D1F496 /* Depricated */,
 				225314F726E5241300D1F496 /* Controller */,
 				D991782C2677DEA600961969 /* Assets.xcassets */,
 				2253148926E523EE00D1F496 /* AppDelegate.swift */,
 				225314AB26E523EF00D1F496 /* bundle-decodable.swift */,
 				225314AE26E523EF00D1F496 /* SceneDelegate.swift */,
-				229F561E26E6CB2B00D10B36 /* DetailViewController.swift */,
-				D991782E2677DEA600961969 /* LaunchScreen.storyboard */,
 				D99178312677DEA600961969 /* Info.plist */,
 			);
 			path = spotlight;
@@ -374,7 +323,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D99178302677DEA600961969 /* LaunchScreen.storyboard in Resources */,
 				229F561C26E5300000D10B36 /* catalog.json in Resources */,
 				229F561A26E5300000D10B36 /* profileData.json in Resources */,
 				229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */,
@@ -407,32 +355,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				229F561126E52EFC00D10B36 /* Models.swift in Sources */,
-				229F55FA26E52E9900D10B36 /* DiscoverCell.swift in Sources */,
 				229F560026E52E9900D10B36 /* TrackHistoryViewController.swift in Sources */,
-				229F55FE26E52E9900D10B36 /* HeaderTableViewCell.swift in Sources */,
-				229F55F826E52E9900D10B36 /* TrackHistoryScrollTableViewCell.swift in Sources */,
 				229F560126E52E9900D10B36 /* ArtistProfileVc.swift in Sources */,
-				229F55FD26E52E9900D10B36 /* ArtistScrollCell.swift in Sources */,
 				225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */,
-				229F55F926E52E9900D10B36 /* PlaylistCell.swift in Sources */,
 				229F560526E52E9900D10B36 /* components.swift in Sources */,
 				229F560626E52E9900D10B36 /* OverViewController.swift in Sources */,
 				225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */,
 				229F560226E52E9900D10B36 /* LoginViewController.swift in Sources */,
-				229F561F26E6CB2B00D10B36 /* DetailViewController.swift in Sources */,
 				225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */,
 				229F55FF26E52E9900D10B36 /* PlayerViewController.swift in Sources */,
-				229F55FB26E52E9900D10B36 /* TrackStripCell.swift in Sources */,
 				229F55F626E52E9900D10B36 /* ViewController.swift in Sources */,
 				229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */,
 				229F560726E52E9900D10B36 /* SettingsViewController.swift in Sources */,
 				225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */,
 				229F55F726E52E9900D10B36 /* Cells.swift in Sources */,
-				225314D226E523EF00D1F496 /* HomeViewController.swift in Sources */,
-				223D30C0272456FE00E799A7 /* TrackOverviewController in Sources */,
 				229F560326E52E9900D10B36 /* ProfileViewController.swift in Sources */,
 				229F560426E52E9900D10B36 /* ReleasesVc.swift in Sources */,
-				229F55FC26E52E9900D10B36 /* GenreCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,17 +404,6 @@
 			targetProxy = D99178422677DEA700961969 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		D991782E2677DEA600961969 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D991782F2677DEA600961969 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D99178482677DEA700961969 /* Debug */ = {

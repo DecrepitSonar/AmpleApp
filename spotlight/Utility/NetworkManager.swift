@@ -71,16 +71,16 @@ class NetworkManager {
             DispatchQueue.main.async {
                 if error != nil {
                     completion(.failure(.servererr))
-                    print(error)
+                    print(error!)
                 }
 
                 guard let httpresponse = response as? HTTPURLResponse else {
-                    print(response)
+                    print(response!)
                     return
                 }
 
                 guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    print(httpresponse.mimeType)
+                    print(httpresponse.mimeType!)
                     completion(.failure(.servererr))
                     return
                 }
@@ -231,163 +231,163 @@ class NetworkManager {
     static func unsaveAlbum(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // removed album from saved
     
     // Tracks
-    static func getTracks(albumId: String, completion: @escaping (Result<[Song], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/tracks?albumId=\(albumId)")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-                  DispatchQueue.main.async {
-                      if error != nil {
-                          completion(.failure(.servererr))
-      //                    print(error)
-                      }
-      
-                      guard let httpresponse = response as? HTTPURLResponse else {
-      //                    print(response)
-                          return
-                      }
-      
-                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                          completion(.failure(.servererr))
-                          return
-                      }
-      
-                      let decoder = JSONDecoder()
-      
-                      let dataResponse = try? decoder.decode([Song].self, from: data!)
-      
-                      print("Tracks", dataResponse!)
-                      completion(.success(dataResponse!))
-                  }
-              }.resume()
-        
-    } // get track with ID
-    static func getTrack(trackId: String, completion: @escaping (Result<Song, NetworkError>) -> Void){
-        
-        let url = URL(string: "\(baseURL)/tracks?trackId=\(trackId)")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-//                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
-                    return
-                }
-                
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                let dataResponse = try? decoder.decode(Song.self, from: data!)
-                
-                print(dataResponse!)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-        
-    } // get track with ID
-    static func getTrackHistory(completion: @escaping (Result<[Song], NetworkError>) -> Void){
-        
-        let url = URL(string: "\(baseURL)/trackhistory")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-//                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
-                    return
-                }
-                
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                let dataResponse = try? decoder.decode([Song].self, from: data!)
-                
+//    static func getTracks(albumId: String, completion: @escaping (Result<[Song], NetworkError>) -> Void){
+//        let url = URL(string: "\(baseURL)/tracks?albumId=\(albumId)")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//                  DispatchQueue.main.async {
+//                      if error != nil {
+//                          completion(.failure(.servererr))
+//      //                    print(error)
+//                      }
+//      
+//                      guard let httpresponse = response as? HTTPURLResponse else {
+//      //                    print(response)
+//                          return
+//                      }
+//      
+//                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                          completion(.failure(.servererr))
+//                          return
+//                      }
+//      
+//                      let decoder = JSONDecoder()
+//      
+//                      let dataResponse = try? decoder.decode([Song].self, from: data!)
+//      
+//                      print("Tracks", dataResponse!)
+//                      completion(.success(dataResponse!))
+//                  }
+//              }.resume()
+//        
+//    } // get track with ID
+//    static func getTrack(trackId: String, completion: @escaping (Result<Song, NetworkError>) -> Void){
+//        
+//        let url = URL(string: "\(baseURL)/tracks?trackId=\(trackId)")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//            DispatchQueue.main.async {
+//                if error != nil {
+//                    completion(.failure(.servererr))
+////                    print(error)
+//                }
+//                
+//                guard let httpresponse = response as? HTTPURLResponse else {
+////                    print(response)
+//                    return
+//                }
+//                
+//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(.failure(.servererr))
+//                    return
+//                }
+//                
+//                let decoder = JSONDecoder()
+//                
+//                let dataResponse = try? decoder.decode(Song.self, from: data!)
+//                
 //                print(dataResponse!)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-        
-    } // get all items in track history
-    static func saveTrack(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // add track to saved
-    static func removeSaved(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // remove track from saved
-    static func getNewTracks(completion: @escaping (Result<[Album], NetworkError>) -> Void){
-        
-        let url = URL(string: "\(baseURL)/freshdrops")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-                  DispatchQueue.main.async {
-                      if error != nil {
-                          completion(.failure(.servererr))
-      //                    print(error)
-                      }
-      
-                      guard let httpresponse = response as? HTTPURLResponse else {
-      //                    print(response)
-                          return
-                      }
-      
-                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                          completion(.failure(.servererr))
-                          return
-                      }
-      
-                      let decoder = JSONDecoder()
-      
-                      let dataResponse = try? decoder.decode([Album].self, from: data!)
-      
-                      print(dataResponse!)
-                      completion(.success(dataResponse!))
-                  }
-              }.resume()
-    }
-    
-    // Playlists
-    static func getPlaylist(with url: String, id: String){} // Get playlist with id
-    static func getPlaylists(completion: @escaping (Result<[Playlist], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/playlists")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-                    DispatchQueue.main.async {
-                        if error != nil {
-                            completion(.failure(.servererr))
-        //                    print(error)
-                        }
-        
-                        guard let httpresponse = response as? HTTPURLResponse else {
-        //                    print(response)
-                            return
-                        }
-        
-                        guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                            completion(.failure(.servererr))
-                            return
-                        }
-        
-                        let decoder = JSONDecoder()
-        
-                        let dataResponse = try? decoder.decode([Playlist].self, from: data!)
-        
-//                        print(dataResponse!)
-                        completion(.success(dataResponse!))
-                    }
-                }.resume()
-        
-    } // Get all playlists
+//                completion(.success(dataResponse!))
+//            }
+//        }.resume()
+//        
+//    } // get track with ID
+//    static func getTrackHistory(completion: @escaping (Result<[Song], NetworkError>) -> Void){
+//        
+//        let url = URL(string: "\(baseURL)/trackhistory")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//            DispatchQueue.main.async {
+//                if error != nil {
+//                    completion(.failure(.servererr))
+////                    print(error)
+//                }
+//                
+//                guard let httpresponse = response as? HTTPURLResponse else {
+////                    print(response)
+//                    return
+//                }
+//                
+//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(.failure(.servererr))
+//                    return
+//                }
+//                
+//                let decoder = JSONDecoder()
+//                
+//                let dataResponse = try? decoder.decode([Song].self, from: data!)
+//                
+////                print(dataResponse!)
+//                completion(.success(dataResponse!))
+//            }
+//        }.resume()
+//        
+//    } // get all items in track history
+//    static func saveTrack(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // add track to saved
+//    static func removeSaved(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // remove track from saved
+//    static func getNewTracks(completion: @escaping (Result<[Album], NetworkError>) -> Void){
+//        
+//        let url = URL(string: "\(baseURL)/freshdrops")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//                  DispatchQueue.main.async {
+//                      if error != nil {
+//                          completion(.failure(.servererr))
+//      //                    print(error)
+//                      }
+//      
+//                      guard let httpresponse = response as? HTTPURLResponse else {
+//      //                    print(response)
+//                          return
+//                      }
+//      
+//                      guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                          completion(.failure(.servererr))
+//                          return
+//                      }
+//      
+//                      let decoder = JSONDecoder()
+//      
+//                      let dataResponse = try? decoder.decode([Album].self, from: data!)
+//      
+//                      print(dataResponse!)
+//                      completion(.success(dataResponse!))
+//                  }
+//              }.resume()
+//    }
+//    
+//    // Playlists
+//    static func getPlaylist(with url: String, id: String){} // Get playlist with id
+//    static func getPlaylists(completion: @escaping (Result<[Playlist], NetworkError>) -> Void){
+//        let url = URL(string: "\(baseURL)/playlists")
+//        
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//                    DispatchQueue.main.async {
+//                        if error != nil {
+//                            completion(.failure(.servererr))
+//        //                    print(error)
+//                        }
+//        
+//                        guard let httpresponse = response as? HTTPURLResponse else {
+//        //                    print(response)
+//                            return
+//                        }
+//        
+//                        guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                            completion(.failure(.servererr))
+//                            return
+//                        }
+//        
+//                        let decoder = JSONDecoder()
+//        
+//                        let dataResponse = try? decoder.decode([Playlist].self, from: data!)
+//        
+////                        print(dataResponse!)
+//                        completion(.success(dataResponse!))
+//                    }
+//                }.resume()
+//        
+//    } // Get all playlists
     static func savePlaylist(with url: String, id: String){} // add playlist to saved
     
     // Genres
@@ -452,35 +452,7 @@ class NetworkManager {
           return json
       }
     
-    static func loadTrackDetail(filename: String, id: String) -> [AlbumDetail] {
-        var response: [DetailSection]?
-        var json: [AlbumDetail]?
-        
-        let decoder = JSONDecoder()
-
-        if let path = Bundle.main.path(forResource: filename, ofType: "json"){
-            do {
-                let fileURL = URL(fileURLWithPath: path)
-                let data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
-
-                response = try decoder.decode([DetailSection].self, from: data)
-//                print(response!)
-            }
-            catch{
-                print(error)
-            }
-        }
-        
-        for x in 0..<response!.count {
-            if(response![x].id == id){
-                if(response![x].items != nil){
-                    json = response![x].items
-                }
-            }
-        }
-
-        return json!
-    }
+//   ?
     
     static func readProfileData(filename: String, id: String) -> [LibObject]{
         print("getting data")
