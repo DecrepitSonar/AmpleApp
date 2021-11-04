@@ -14,12 +14,12 @@ class AudioManager{
 
 //    var player: AVAudioPlayer?
     
-    static func getTrack(with track: String){
+    static func getTrack( track: String){
         
 //        let path = Bundle.main.path(forResource: "6LACK - Nonchalant (Official Music Video).mp3", ofType: nil)
 //        let url = URL(fileURLWithPath: path!)
-//
-        NetworkManager.getAudioTrack(with: track) { result in
+        print(track)
+        NetworkManager.getAudioTrack( track: track) { result in
             
             switch(result){
             case .success(let resData ):

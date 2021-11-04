@@ -26,7 +26,6 @@ struct LibItem: Codable ,Hashable{
     var title: String?
     var artistId: String?
     var albumId: String?
-//    var artist: String?
     var imageURL: String
     var playCount: Int32?
     var name: String?
@@ -35,6 +34,7 @@ struct LibItem: Codable ,Hashable{
     var isVerified: Bool?
 //    var bio: String?
 //    var dateJoined: String?
+    var audioURL: String?
 }
 
 struct AlbumDetail: Codable, Hashable {
@@ -74,6 +74,7 @@ struct Track: Decodable {
     var Artists: String
     var Image: String
     var AlbumId: String
+    var audioURL: String?
 }
 
 struct Album: Decodable {

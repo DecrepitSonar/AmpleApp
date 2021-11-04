@@ -216,8 +216,9 @@ class MiniPlayer: UIView {
                 img.image = UIImage(named: track.Image)
                 artistLabel.text = track.Artists
                 trackLabel.text = track.Title
+             
+                AudioManager.getTrack( track: track.audioURL!)
             }
-            AudioManager.getTrack(with: "")
         }
     }
     

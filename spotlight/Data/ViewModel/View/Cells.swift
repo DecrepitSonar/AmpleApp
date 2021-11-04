@@ -208,7 +208,7 @@ class TrendingSection: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc!
-        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!)
+        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!, audioURL: catalog.audioURL)
         
         tapGesture?.track = track
         
@@ -493,7 +493,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         artist.text = item.name
         trackPrice.text = "$0.99"
         
-        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!)
+        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!, audioURL: item.audioURL)
         
         tapGesture?.track = track
     }
@@ -937,7 +937,7 @@ class CollectionCell: UICollectionViewCell, Cell{
         artist.text = item.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)
         
-        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!)
+        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!, audioURL: item.audioURL)
         
         tapGesture?.track = track
         

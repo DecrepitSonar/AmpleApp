@@ -16,8 +16,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-    static let baseURL = "http://localhost:8080/api/v1/"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+//    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
@@ -158,9 +158,9 @@ class NetworkManager {
     // images
     static func getImage(with url: String, imgUrl: String){} // Get image with ImgUrl
     
-    static func getAudioTrack( with track: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
-        
-        let url = URL(string: "\(baseURL)track?audioname=6LACK-Nonchalant")
+    static func getAudioTrack(track: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
+    
+        let url = URL(string: "\(baseURL)track?audioURL=\(track)")
 //        let request = URLRequest(url: url!)
         
 //        print(url)
