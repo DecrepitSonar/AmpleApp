@@ -30,6 +30,7 @@ protocol PlayerConfiguration {
 class CustomGestureRecognizer: UITapGestureRecognizer{
     var id: String?
     var track: Track?
+    var tracks: [Track]?
 }
 
 class LayoutManager {

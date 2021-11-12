@@ -4,7 +4,7 @@
 //
 //  Created by Robert Aubow on 8/22/21.
 //
-
+import Foundation
 import UIKit
 
 class OverViewController: UIViewController, UICollectionViewDelegate {
@@ -111,7 +111,14 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 header.artistId = section.artistId!
                 header.vc = self?.navigationController
                 header.datePublished.text = "\(section.items!.count) Tracks, Published 2019, 45 minutes"
-
+                
+                
+                
+                for i in 0..<section.items!.count {
+                    header.tracks.append(section.items![i].id)
+                }
+                
+//                header.tracks = section.items as? Track
                 return header
 
             }

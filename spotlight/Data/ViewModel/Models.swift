@@ -68,12 +68,12 @@ struct Artist: Codable, Hashable {
 }
 
 struct Track: Decodable {
-    var Id: String
-    var Title: String
-    var ArtistId: String
-    var Artists: String
-    var Image: String
-    var AlbumId: String
+    var id: String
+    var title: String
+    var artistId: String
+    var name: String
+    var imageURL: String
+    var albumId: String
     var audioURL: String?
 }
 

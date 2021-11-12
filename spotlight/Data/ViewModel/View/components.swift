@@ -118,8 +118,86 @@ extension UILabel {
     }
 }
 
+class LargePlayer: UIView {
+    
+//    var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    
+    let image = UIImageView()
+    
+    let closeBtn = UIButton()
+    
+    let trackName = UILabel()
+    let totalTrackTime = UILabel()
+    let totalTimeLapsed = UILabel()
+    
+    let forwardBtn = UIButton()
+    let playBtn = UIButton()
+    let prevBtn = UIButton()
+    
+    let container = UIView()
+    
+    var animator: UIViewPropertyAnimator!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        NotificationCenter.default.addObserver(self, selector: #selector(setPlayer(_sender:)), name: Notification.Name("trackChange"), object: nil)
+        
+    
+        
+//        container.frame = frame
+//        addSubview(container)
+//        container.layer.zPosition = 2
+        
+        image.image = UIImage(named: "6lack")
+        image.translatesAutoresizingMaskIntoConstraints = false
+        
+        closeBtn.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        closeBtn.translatesAutoresizingMaskIntoConstraints = false
+        closeBtn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
+        
+        addSubview(closeBtn)
+        
+        closeBtn.layer.zPosition = 2
+        animator = UIViewPropertyAnimator(duration: 1.0, curve: .linear, animations: {
+            self.frame = CGRect(x: 100, y: 400, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        })
+        
+        animator.isReversed = true
+        animator.fractionComplete = 0
+//
+        NSLayoutConstraint.activate([
+//            image.centerXAnchor.constraint(equalTo: centerXAnchor),
+//            image.heightAnchor.constraint(equalToConstant: 100),
+//            image.widthAnchor.constraint(equalToConstant: 100),
+//
+            closeBtn.topAnchor.constraint(equalTo: topAnchor, constant: 50),
+            closeBtn.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20)
+            
+        ])
+        
+//        addSubview(effect)
+//        effect.frame = frame
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    @objc func closePlayer(){
+        animator.fractionComplete = 1
+        print("animator")
+    }
+    @objc func setPlayer(_sender: Notification){
+//        print(_sender.track!.Id)
+        print(_sender.userInfo?.keys)
+    }
+    
+    
+    
+}
 class MiniPlayer: UIView {
     
+    var timer = Timer()
     let img: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "6lack")
@@ -138,7 +216,7 @@ class MiniPlayer: UIView {
     let trackLabel = UILabel()
 
     let playBtn = UIButton()
-    let forwardBtn = UIButton()
+    let playNext = UIButton()
     let prevBtn = UIButton()
     
     override init(frame: CGRect) {
@@ -147,6 +225,8 @@ class MiniPlayer: UIView {
         NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: Notification.Name("update"), object: nil)
         
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -182,11 +262,11 @@ class MiniPlayer: UIView {
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
         
-        forwardBtn.setImage(UIImage(systemName: "forward.fill"), for: .normal)
-        forwardBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        playNext.setImage(UIImage(systemName: "forward.fill"), for: .normal)
+        playNext.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        playNext.addTarget(self, action: #selector(nextTrack), for: .touchUpInside)
         
-        
-        let buttonStack = UIStackView(arrangedSubviews: [prevBtn, playBtn, forwardBtn])
+        let buttonStack = UIStackView(arrangedSubviews: [playBtn, playNext])
         buttonStack.axis = .horizontal
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         buttonStack.spacing = 20
@@ -210,29 +290,65 @@ class MiniPlayer: UIView {
     }
     
     @objc func setTrack(sender: Notification){
-//        print(sender.userInfo)
+        
         if let object = sender.userInfo as NSDictionary? {
-            if let track = object["track"] as? Track {
-                img.image = UIImage(named: track.Image)
-                artistLabel.text = track.Artists
-                trackLabel.text = track.Title
-             
-                AudioManager.getTrack( track: track.audioURL!)
+            if let track = object["track"] {
+                
+                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
+                
+                AudioManager.initPlayer(track: track as? String, tracks: nil)
             }
         }
     }
     
-    @objc func togglePlayBtn(){
+    @objc func updateMiniPlayer(sender: Notification){
+
+        if let object = sender.userInfo as NSDictionary? {
+            if let id = object["track"]{
+                
+                NetworkManager.getTrack( id: id as! String, completion: {
+                    result in
+
+                    switch( result){
+                    case .success( let data):
+                        self.img.image = UIImage(named: data.imageURL)
+                        self.artistLabel.text = data.name
+                        self.trackLabel.text = data.title
+                        
+                    case .failure( let err):
+                        print(err)
+                    }
+                })
+                
+            }
+        }
+    }
+    
+    @objc func nextTrack(){
+        AudioManager.playerController(option: .next)
+        
+    }
+    
+    @objc func togglePlayBtn(sender: Notification){
     
         if (player!.isPlaying){
             playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            
         }else{
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
         }
     }
     
+    @objc func setPlayerInterval(){
+        print(Int(player!.currentTime))
+        if(player?.currentTime == player?.duration){
+            
+        }
+    }
+    
     @objc func togglePlayState(){
-        if(player!.isPlaying == false){ player!.play() } else{ player!.pause()}
+        if(player!.isPlaying){
+            AudioManager.playerController(option: .pause ) } else{ AudioManager.playerController(option: .resume)}
         print("pressed")
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }
@@ -241,12 +357,21 @@ class MiniPlayer: UIView {
 }
 class customTab: UITabBarController{
     
+    
+    
     let player = MiniPlayer()
+//    var player: LargePlayer?
     
     override func viewDidLoad() {
+//
+//        let player = LargePlayer(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
+//        player.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
+//        view.addSubview(player)
         
         tabBar.layer.zPosition = 2
-    
+//        tabBar.bottomAnchor.constraint(equalToConstant: view.bottomAnchor.val - 100).isActive = true
+                              
         view.addSubview(player)
 
         modalTransitionStyle = .crossDissolve

@@ -208,9 +208,9 @@ class TrendingSection: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc!
-        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!, audioURL: catalog.audioURL)
+//        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!, audioURL: catalog.audioURL)
         
-        tapGesture?.track = track
+        tapGesture?.id = catalog.id
         
         chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
@@ -222,7 +222,7 @@ class TrendingSection: UICollectionViewCell, Cell{
     
     func didTap(_sender: CustomGestureRecognizer) {
         
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: self, userInfo: ["track" : _sender.track!])
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.id!])
 
     }
 }
@@ -493,14 +493,12 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         artist.text = item.name
         trackPrice.text = "$0.99"
         
-        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!, audioURL: item.audioURL)
-        
-        tapGesture?.track = track
+        tapGesture!.id = item.id
     }
     @objc func didTap(_sender: CustomGestureRecognizer){
 //        print("Sender: ", _sender.track)
         
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.track!])
+    NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.id!])
     }
     
 }
@@ -509,6 +507,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
 class DetailHeader: UICollectionReusableView, GestureAction{
     
     static let reuseableIdentifier: String = "image Header"
+    var tracks = [String]()
     
     var vc: UINavigationController?
     var tapGesture: CustomGestureRecognizer?
@@ -533,6 +532,7 @@ class DetailHeader: UICollectionReusableView, GestureAction{
     let buyBtn = UIButton()
     let priceLabel = UIButton()
     let optionsBtn = UIButton()
+    let container = UIView()
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -568,24 +568,27 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         imageContainer.layer.cornerRadius = 10
         imageContainer.backgroundColor = .red
         imageContainer.addSubview(image)
-//        imageContainer.addSubview(imageLayer)
+        imageContainer.addSubview(imageLayer)
         
-//        playBtn.setTitle("Play All", for: .normal)
-//        let btnImage = UIImage(systemName: "play.circle.fill")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
-//        
-//        playBtn.setImage(btnImage, for: .normal)
+        let btnConfig = UIImage.SymbolConfiguration(pointSize: 50)
+        let btnImage = UIImage(systemName: "play.circle.fill", withConfiguration: btnConfig)
+        
+        
+        playBtn.setImage(btnImage, for: .normal)
 //        playBtn.layer.borderWidth = 1
 //        playBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-////        playBtn.layer.cornerRadius = 5
-//        playBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-//        
-//        playBtn.titleLabel?.setFont(with: 50)
-//        playBtn.translatesAutoresizingMaskIntoConstraints = false
+//        playBtn.layer.cornerRadius = 5
+        playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+        
+        playBtn.titleLabel?.setFont(with: 50)
+        playBtn.translatesAutoresizingMaskIntoConstraints = false
 ////        
 //        imageLayer.backgroundColor = .red
 //        imageLayer.layer.zPosition = 2
-//        imageLayer.translatesAutoresizingMaskIntoConstraints = false
-//        imageLayer.addSubview(playBtn)
+        imageLayer.translatesAutoresizingMaskIntoConstraints = false
+        imageLayer.addSubview(playBtn)
+        playBtn.layer.zPosition = 2
+        playBtn.addTarget(self, action: #selector(playAllTracks), for: .touchUpInside)
 //
         // btns
         buyBtn.setTitle("Buy | $9.99", for: .normal)
@@ -661,14 +664,14 @@ class DetailHeader: UICollectionReusableView, GestureAction{
             image.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
             image.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
 //
-//            imageLayer.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
-//            imageLayer.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
+            imageLayer.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
+            imageLayer.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
 //
             artistAviImage.heightAnchor.constraint(equalToConstant: 40),
             artistAviImage.widthAnchor.constraint(equalToConstant: 40),
 //            
-//            playBtn.leadingAnchor.constraint(equalTo: imageLayer.leadingAnchor, constant: 20),
-//            playBtn.bottomAnchor.constraint(equalTo: imageLayer.bottomAnchor, constant: -20),
+            playBtn.leadingAnchor.constraint(equalTo: imageLayer.leadingAnchor, constant: 10),
+            playBtn.bottomAnchor.constraint(equalTo: imageLayer.bottomAnchor, constant: -10),
 //            
             ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
 //            ContainerStack.topAnchor.constraint(equalTo: imageContainer.bottomAnchor, constant: 20),
@@ -677,6 +680,8 @@ class DetailHeader: UICollectionReusableView, GestureAction{
             btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
 //            optionsBtn.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
         ])
+        
+        setupGradient()
     }
     
     required init?(coder: NSCoder) {
@@ -690,6 +695,44 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         vc?.pushViewController(view, animated: true)
     }
 
+    @objc func playAllTracks(){
+        
+        AudioManager.initPlayer(track: nil, tracks: tracks)
+    }
+    
+    func setupGradient(){
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradientLayer.locations = [0.2, 1.3]
+        
+        gradientLayer.frame = frame
+        
+        imageContainer.layer.addSublayer(gradientLayer)
+//        container.frame = frame
+        
+//        addSubview(container)
+//        container.layer.addSublayer(gradientLayer)
+        
+//        let stack = UIStackView(arrangedSubviews: [name, verifiedIcon ])
+//        stack.axis = .horizontal
+//        stack.alignment = .center
+//        stack.spacing = 10
+
+//        let containerStack = UIStackView(arrangedSubviews: [stack, followBtn, listener ])
+//        containerStack.axis = .vertical
+//        containerStack.alignment = .leading
+//        containerStack.spacing = 7
+//        containerStack.translatesAutoresizingMaskIntoConstraints = false
+    
+        
+//        container.addSubview(containerStack)
+        
+//        containerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
+//        containerStack.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+//        containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
+
+    }
     
 }
 class SectionHeader: UICollectionReusableView, GestureAction {
@@ -937,13 +980,11 @@ class CollectionCell: UICollectionViewCell, Cell{
         artist.text = item.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)
         
-        let track = Track(Id: item.id, Title: item.title!, ArtistId: item.artistId!, Artists: item.name!, Image: item.imageURL, AlbumId: item.albumId!, audioURL: item.audioURL)
-        
-        tapGesture?.track = track
+        tapGesture?.id = item.id
         
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.track!])
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.id!])
     }
 }

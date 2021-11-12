@@ -16,8 +16,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-//    static let baseURL = "http://localhost:8080/api/v1/"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
+    static let baseURL = "http://localhost:8080/api/v1/"
     
     // Home page content
     static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
@@ -188,53 +188,108 @@ class NetworkManager {
             
     }
     
-    static func readJSONFromFile(fileName: String) -> [LibObject]?
-      {
-          var json: [LibObject]?
-        let decoder = JSONDecoder()
-          if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
-              do {
-                  let fileUrl = URL(fileURLWithPath: path)
-                  // Getting data from JSON file using the file URL
-                  let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
-                
-                json = try? decoder.decode([LibObject].self, from: data)
-              } catch {
-                  // Handle error here
-              }
-          }
-//        print("Section: ", json)
-        
-          return json
-      }
+    static func getTracks(completion: @escaping (Result<[Track], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)tracks")
     
-//   ?
-    
-    static func readProfileData(filename: String, id: String) -> [LibObject]{
-        print("getting data")
+                      
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+                   DispatchQueue.main.async {
+                       if error != nil {
+                           completion(.failure(.servererr))
+//                           print(error)
+                       }
+       
+                       guard let httpresponse = response as? HTTPURLResponse else {
+//                           print(response)
+                           return
+                       }
+       
+                       guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                           completion(.failure(.servererr))
+                           return
+                       }
+                    do{
+                        let decoder = JSONDecoder()
         
-        var json: [LibObject]?
-        let decoder = JSONDecoder()
+                        let dataResponse = try decoder.decode([Track].self, from: data!)
+
+                        completion(.success(dataResponse))
+                    }
+                    catch{
+                        print(error)
+                    }
+                   }
+               }.resume()
+    }
+    static func getTrack(id: String, completion: @escaping (Result<Track, NetworkError>) -> Void) {
         
-        if let path = Bundle.main.path(forResource: filename, ofType: "json"){
-            do {
-                print("not nil")
-                let fileURL = URL(fileURLWithPath: path)
-                let data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
-                
-                 json = try decoder.decode([LibObject].self, from: data)
-                
-//                print(json!)
-            }
-            catch{
-//                print(error)
-            }
-        }
+        let url = URL(string: "\(baseURL)track?id=\(id)")
+        print("requested id:", id)
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+                   DispatchQueue.main.async {
+                       if error != nil {
+                           completion(.failure(.servererr))
+//                           print(error)
+                       }
+       
+                       guard let httpresponse = response as? HTTPURLResponse else {
+//                           print(response)
+                           return
+                       }
+       
+                       guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                           completion(.failure(.servererr))
+                           return
+                       }
+                    do{
+                        let decoder = JSONDecoder()
         
-//        print(json!)
-        
-        return json!
+                        let dataResponse = try decoder.decode(Track.self, from: data!)
+
+                        completion(.success(dataResponse))
+                    }
+                    catch{
+                        print(error)
+                    }
+                   }
+               }.resume()
     }
     
+    static func getRandomAudioTrack( completion: @escaping (Result<Track, NetworkError>) -> Void){
+    
+        let url = URL(string: "\(baseURL)track?isRandom=true")
+//        let request = URLRequest(url: url!)
+        
+//        print(url)
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+                   DispatchQueue.main.async {
+                       if error != nil {
+                           completion(.failure(.servererr))
+//                           print(error)
+                       }
+       
+                       guard let httpresponse = response as? HTTPURLResponse else {
+//                           print(response)
+                           return
+                       }
+       
+                       guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                           completion(.failure(.servererr))
+                           return
+                       }
+                    do{
+                        let decoder = JSONDecoder()
+        
+                        let dataResponse = try decoder.decode(Track.self, from: data!)
+
+                        completion(.success(dataResponse))
+                    }
+                    catch{
+                        print(error)
+                    }
+                   }
+               }.resume()
+        
+    }
     
 }
