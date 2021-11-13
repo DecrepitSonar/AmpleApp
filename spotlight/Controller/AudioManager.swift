@@ -147,8 +147,8 @@ class AudioManager{
         return false
     }
     @objc static func checkTrackIsEnded(){
-        print("Duration: ", Int(player!.duration))
-        print("CurrentDuration:", Int(player!.currentTime) + 1)
+//        print("Duration: ", Int(player!.duration))
+//        print("CurrentDuration:", Int(player!.currentTime) + 1)
         print("\n")
         
         if(trackIsComplete()){

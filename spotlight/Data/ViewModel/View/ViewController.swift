@@ -30,6 +30,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         // Do any additional setup after loading the view.
         
         NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
         
         NetworkManager.loadHomeContent { result in
             switch(result){
@@ -41,8 +42,6 @@ class ViewController: UIViewController, UISearchResultsUpdating {
                 print(error)
             }
         }
-        
-        
         
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browes"
@@ -60,8 +59,16 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         view.queue = AudioManager.getAudioQueue()
         
         print("queue")
-        navigationController?.present(view, animated: true)
+        navigationController!.present(view, animated: true)
                 
+    }
+    @objc func openPlayer(){
+        let player = PlayerViewController()
+        
+        print("presenting player")
+        player.modalPresentationStyle = .overFullScreen
+        
+        navigationController!.present(player, animated: true)
     }
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
