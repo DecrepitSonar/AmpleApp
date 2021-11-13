@@ -7,6 +7,7 @@
 //
 import Foundation
 import UIKit
+import AudioToolbox
 
 class AViCard: UIView {
 
@@ -120,63 +121,180 @@ extension UILabel {
 
 class LargePlayer: UIView {
     
-//    var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
     
     let image = UIImageView()
     
     let closeBtn = UIButton()
     
-    let trackName = UILabel()
     let totalTrackTime = UILabel()
     let totalTimeLapsed = UILabel()
+    
+    let optionBtn = UIButton()
+    let likeBtn = UIButton()
+    let shareBtn = UIButton()
+    
+    let artist = UILabel()
+    let trackTitle = UILabel()
     
     let forwardBtn = UIButton()
     let playBtn = UIButton()
     let prevBtn = UIButton()
     
-    let container = UIView()
+    let shuffleBtn = UIButton()
+    let repeatBtn = UIButton()
+    
+    let queue = UIButton()
     
     var animator: UIViewPropertyAnimator!
     
+    let player = MiniPlayer()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
+//
+        self.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        
+        addSubview(effect)
+        effect.frame = self.frame
+        
+//        addSubview(player)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(setPlayer(_sender:)), name: Notification.Name("trackChange"), object: nil)
-        
-    
-        
-//        container.frame = frame
-//        addSubview(container)
-//        container.layer.zPosition = 2
-        
+        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+
         image.image = UIImage(named: "6lack")
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 10
+        addSubview(image)
+        
+        let prevbtnImg = UIImage(systemName: "backward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+        let playbtnImg = UIImage(systemName: "play.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
+        let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+        
+        let optionBtnImg = UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        let sharebtnImg = UIImage(systemName: "square.and.arrow.up", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        let likeBtnImg = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let shuffleImg = UIImage(systemName: "shuffle", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        let repeatImg = UIImage(systemName: "repeat", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        prevBtn.setImage(prevbtnImg, for: .normal)
+        prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        playBtn.setImage(playbtnImg, for: .normal)
+        playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        forwardBtn.setImage(forwardbtnImg, for: .normal)
+        forwardBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        shuffleBtn.setImage(shuffleImg, for: .normal)
+        shuffleBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        repeatBtn.setImage(repeatImg, for: .normal)
+        repeatBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        artist.text = "6lack"
+        artist.textColor = .label
+        artist.setFont(with: 15)
+        
+        trackTitle.text = "East Atlanta Love Letter"
+        
+        optionBtn.setImage(optionBtnImg, for: .normal)
+        optionBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        shareBtn.setImage(sharebtnImg, for: .normal)
+        shareBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        likeBtn.setImage(likeBtnImg, for: .normal)
+        likeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        let optionStack = UIStackView(arrangedSubviews: [likeBtn, shareBtn, optionBtn])
+        optionStack.axis = .horizontal
+        optionStack.alignment = .leading
+        optionStack.spacing = 20
+        optionStack.distribution = .equalSpacing
+        
+        let labelStack = UIStackView(arrangedSubviews: [artist, trackTitle])
+        labelStack.axis = .vertical
+        labelStack.distribution = .equalSpacing
+        labelStack.spacing = 10
+        
+        let buttonStack = UIStackView(arrangedSubviews: [shuffleBtn, prevBtn, playBtn, forwardBtn, repeatBtn])
+        buttonStack.axis = .horizontal
+        buttonStack.distribution = .fillProportionally
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let slider = UISlider()
+        slider.setThumbImage(UIImage(), for: .normal)
+        slider.value = 0.3
+        slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        totalTrackTime.text = "3:13"
+        totalTrackTime.setFont(with: 12)
+        
+        totalTimeLapsed.text = "0:42"
+        totalTimeLapsed.setFont(with: 12)
+    
+        let sliderStack = UIStackView(arrangedSubviews: [ totalTrackTime, slider, totalTimeLapsed])
+        sliderStack.axis = .horizontal
+        sliderStack.spacing = 10
+        sliderStack.distribution = .equalSpacing
+        
+        let queueImag = UIImage(systemName: "list.number", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        queue.setImage(queueImag, for: .normal)
+        queue.translatesAutoresizingMaskIntoConstraints = false
+        queue.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        queue.addTarget(self, action: #selector(openQueueList), for: .touchUpInside)
+        
+        let stackControls = UIStackView(arrangedSubviews: [optionStack, labelStack, sliderStack, buttonStack, queue])
+        
+        stackControls.axis = .vertical
+        stackControls.spacing = 25
+        stackControls.distribution = .equalSpacing
+        stackControls.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(stackControls)
         
         closeBtn.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         closeBtn.translatesAutoresizingMaskIntoConstraints = false
         closeBtn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
+        closeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         addSubview(closeBtn)
-        
-        closeBtn.layer.zPosition = 2
-        animator = UIViewPropertyAnimator(duration: 1.0, curve: .linear, animations: {
-            self.frame = CGRect(x: 100, y: 400, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        })
-        
-        animator.isReversed = true
-        animator.fractionComplete = 0
 //
+//        closeBtn.layer.zPosition = 2
+//        animator = UIViewPropertyAnimator(duration: 1.0, curve: .linear, animations: {
+//            self.layer.opacity = 1
+//        })
+//
+//        animator.isReversed = true
+//        animator.fractionComplete = 0
+////
         NSLayoutConstraint.activate([
-//            image.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            image.heightAnchor.constraint(equalToConstant: 100),
-//            image.widthAnchor.constraint(equalToConstant: 100),
-//
+            
+//            player.topAnchor.constraint(equalTo: topAnchor, constant: 75),
+//            player.centerXAnchor.constraint(equalTo: centerXAnchor),
+//            
+    
+            image.centerXAnchor.constraint(equalTo: centerXAnchor),
+            image.heightAnchor.constraint(equalToConstant: 320),
+            image.widthAnchor.constraint(equalToConstant: 340),
+            
+            
+            slider.widthAnchor.constraint(equalToConstant:  250),
+            slider.heightAnchor.constraint(equalToConstant: 10),
+            
+            stackControls.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackControls.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
+            
+            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -50),
+            
             closeBtn.topAnchor.constraint(equalTo: topAnchor, constant: 50),
             closeBtn.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20)
-            
+//
         ])
-        
-//        addSubview(effect)
-//        effect.frame = frame
+      
     }
     
     required init?(coder: NSCoder) {
@@ -184,14 +302,23 @@ class LargePlayer: UIView {
     }
     
     @objc func closePlayer(){
-        animator.fractionComplete = 1
+//        animator.fractionComplete = 1
         print("animator")
     }
     @objc func setPlayer(_sender: Notification){
 //        print(_sender.track!.Id)
-        print(_sender.userInfo?.keys)
+        
+        if let object = _sender.userInfo as NSDictionary? {
+            if let track = object["track"] {
+                print( track)
+            }
+        }
+//        print(_sender.userInfo?.keys)
     }
-    
+
+    @objc func openQueueList(){
+        NotificationCenter.default.post(name: NSNotification.Name("queue"), object: nil)
+    }
     
     
 }
@@ -218,6 +345,7 @@ class MiniPlayer: UIView {
     let playBtn = UIButton()
     let playNext = UIButton()
     let prevBtn = UIButton()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -353,33 +481,45 @@ class MiniPlayer: UIView {
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }
     
+   
     
 }
 class customTab: UITabBarController{
     
     
+    let animate = CABasicAnimation()
     
-    let player = MiniPlayer()
-//    var player: LargePlayer?
+    var tapgesture: CustomGestureRecognizer!
+    let miniPlayer = MiniPlayer()
+    var playerContainer =  LargePlayer()
     
     override func viewDidLoad() {
-//
-//        let player = LargePlayer(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
-//        player.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
-//        view.addSubview(player)
+        tabBar.frame.origin.y = 500
+        // initialize playerContainer
         
-        tabBar.layer.zPosition = 2
-//        tabBar.bottomAnchor.constraint(equalToConstant: view.bottomAnchor.val - 100).isActive = true
-                              
-        view.addSubview(player)
+//        playerContainer.addSubview(miniPlayer)
+//        miniPlayer.topAnchor.constraint(equalTo: playerContainer.topAnchor, constant: 100).isActive = true
+//        miniPlayer.centerXAnchor.constraint(equalTo: playerContainer.centerXAnchor).isActive = true
 
+//        playerContainer.layer.opacity = 0
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .fullScreen
         
+//        tapgesture = CustomGestureRecognizer(target: self, action: #selector(animatePlayer))
         
-        player.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
-        player.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor, constant: 10).isActive = true
+//        player.addGestureRecognizer(tapgesture)
+        
+//        tabBar.layer.position = CGPoint(x: UIScreen.main.bounds.width / 2, y: 200)
+        
+        
+//        tabBar.layer.zPosition = 2
+                              
+        view.addSubview(playerContainer)
+
+        
+//        playerContainer.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
+//        playerContainer.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor, constant: 10).isActive = true
         
     }
     
@@ -392,11 +532,38 @@ class customTab: UITabBarController{
         profile.tabBarItem = UITabBarItem(title: "Library", image: UIImage(systemName: "books.vertical"), tag: 0)
         tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
+        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+    
+        tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
         //setViewControllers([homeVc, profile], animated: true)
 
         self.viewControllers = [homeVc, profile]
     
     }
     
+    @objc func openPlayer(){
+   
+        animate.keyPath = "position.y"
+        animate.fromValue = UIScreen.main.bounds.height - (self.tabBar.bounds.height - 10)
+        animate.toValue = 200
+        animate.duration = 0.5
+
+        playerContainer.layer.add(animate, forKey: "basic")
+        playerContainer.layer.position = CGPoint(x: (UIScreen.main.bounds.width / 2), y: 200)
+        
+        print("player tapped")
+    }
+    
+    @objc func closePlayer(){
+        
+        animate.keyPath = "position.y"
+        animate.fromValue = 0
+        animate.toValue = CGFloat(UIScreen.main.bounds.height - (self.tabBar.bounds.height - 10))
+        animate.duration = 0.5
+
+        playerContainer.layer.add(animate, forKey: "basic")
+        playerContainer.layer.position = CGPoint(x: (UIScreen.main.bounds.width / 2), y: 200)
+        
+    }
     
 }

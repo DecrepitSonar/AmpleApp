@@ -29,6 +29,8 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
+        
         NetworkManager.loadHomeContent { result in
             switch(result){
             case .success(let data):
@@ -38,7 +40,9 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             case .failure(let error):
                 print(error)
             }
-        } 
+        }
+        
+        
         
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browes"
@@ -50,6 +54,15 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
     }
     
+    @objc func openQueue(){
+        
+        let view = TrackQueueListViewController()
+        view.queue = AudioManager.getAudioQueue()
+        
+        print("queue")
+        navigationController?.present(view, animated: true)
+                
+    }
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)

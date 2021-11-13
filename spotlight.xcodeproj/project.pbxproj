@@ -11,6 +11,7 @@
 		225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AB26E523EF00D1F496 /* bundle-decodable.swift */; };
 		225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AE26E523EF00D1F496 /* SceneDelegate.swift */; };
 		225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314F826E5241300D1F496 /* UtilityFunctions.swift */; };
+		2282DC9527401BCF005E22C7 /* TrackQueueListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2282DC9427401BCE005E22C7 /* TrackQueueListViewController.swift */; };
 		229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F559E26E5288D00D10B36 /* NetworkManager.swift */; };
 		229F55F626E52E9900D10B36 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C326E52E9900D10B36 /* ViewController.swift */; };
 		229F55F726E52E9900D10B36 /* Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F55C526E52E9900D10B36 /* Cells.swift */; };
@@ -59,6 +60,7 @@
 		225314AB26E523EF00D1F496 /* bundle-decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "bundle-decodable.swift"; sourceTree = "<group>"; };
 		225314AE26E523EF00D1F496 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		225314F826E5241300D1F496 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
+		2282DC9427401BCE005E22C7 /* TrackQueueListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackQueueListViewController.swift; sourceTree = "<group>"; };
 		229F559E26E5288D00D10B36 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		229F55C326E52E9900D10B36 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		229F55C526E52E9900D10B36 /* Cells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cells.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				229F55D326E52E9900D10B36 /* components.swift */,
+				2282DC9427401BCE005E22C7 /* TrackQueueListViewController.swift */,
 				229F55C526E52E9900D10B36 /* Cells.swift */,
 				229F55CD26E52E9900D10B36 /* PlayerViewController.swift */,
 				229F55C326E52E9900D10B36 /* ViewController.swift */,
@@ -375,6 +378,7 @@
 				229F55F626E52E9900D10B36 /* ViewController.swift in Sources */,
 				229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */,
 				229F560726E52E9900D10B36 /* SettingsViewController.swift in Sources */,
+				2282DC9527401BCF005E22C7 /* TrackQueueListViewController.swift in Sources */,
 				225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */,
 				229F55F726E52E9900D10B36 /* Cells.swift in Sources */,
 				229F560326E52E9900D10B36 /* ProfileViewController.swift in Sources */,

@@ -136,6 +136,9 @@ class AudioManager{
             playTrack(track: audioQueue[currentQueue!])
         }
     }
+    static func getAudioQueue() -> [String]{
+        return audioQueue
+    }
    
     static func trackIsComplete() -> Bool{
         if(Int(player!.currentTime) == Int(player!.duration)){

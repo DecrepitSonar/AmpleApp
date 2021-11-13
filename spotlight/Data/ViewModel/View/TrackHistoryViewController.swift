@@ -36,7 +36,6 @@
 ////        navigationController?.navigationBar.barTintColor = .white
 //        title = "Recently played"
 //        
-//        
 //        tableview.delegate = self
 //        tableview.dataSource = self
 //
@@ -86,13 +85,13 @@
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return 75
 //    }
-////    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//////        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-//////        cell.textLabel?.text = tracks[indexPath.row].artist
-////
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+//        cell.textLabel?.text = tracks[indexPath.row].artist
+//
 ////        let cell = tableview.dequeueReusableCell(withIdentifier: "trackcell", for: indexPath) as! TrackStripCell
 ////        cell.configure(with: tracks[indexPath.row].Artists ?? "", trackname: tracks[indexPath.row].Title ?? "", img: tracks[indexPath.row].Image ?? "")
-////
-////        return cell
-////    }
+//
+//        return cell
+//    }
 //}
