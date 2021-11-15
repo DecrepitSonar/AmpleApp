@@ -148,10 +148,8 @@ class MiniPlayer: UIView {
         super.init(frame: frame)
         
         NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: Notification.Name("update"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: NSNotification.Name("update"), object: nil)
         
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlayer)))
         
@@ -224,32 +222,44 @@ class MiniPlayer: UIView {
                 
                 NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
                 
-                AudioManager.initPlayer(track: track as? String, tracks: nil)
+                AudioManager.initPlayer(track: track as? Track, tracks: nil)
+                return 
             }
         }
     }
     
     @objc func updateMiniPlayer(sender: Notification){
 
+        
         if let object = sender.userInfo as NSDictionary? {
-            if let id = object["track"]{
-                
-                NetworkManager.getTrack( id: id as! String, completion: {
-                    result in
-
-                    switch( result){
-                    case .success( let data):
-                        self.img.image = UIImage(named: data.imageURL)
-                        self.artistLabel.text = data.name
-                        self.trackLabel.text = data.title
-                        
-                    case .failure( let err):
-                        print(err)
-                    }
-                })
-                
-            }
+                  if let track = object["track"]{
+                      let track = track as? Track
+                      
+                      img.image = UIImage(named: track!.imageURL)
+                      artistLabel.text = track!.name
+                      trackLabel.text = track!.title
+                  }
         }
+
+//        if let object = sender.userInfo as NSDictionary? {
+//            if let id = object["track"]{
+//
+//                NetworkManager.getTrack( id: id as! String, completion: {
+//                    result in
+//
+//                    switch( result){
+//                    case .success( let data):
+//                        self.img.image = UIImage(named: data.imageURL)
+//                        self.artistLabel.text = data.name
+//                        self.trackLabel.text = data.title
+//
+//                    case .failure( let err):
+//                        print(err)
+//                    }
+//                })
+//
+//            }
+//        }
     }
     
     @objc func nextTrack(){
@@ -258,7 +268,7 @@ class MiniPlayer: UIView {
     }
     
     @objc func togglePlayBtn(sender: Notification){
-    
+        
         if (player!.isPlaying){
             playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             
@@ -268,8 +278,10 @@ class MiniPlayer: UIView {
     }
     
     @objc func setPlayerInterval(){
-        print(Int(player!.currentTime))
-        if(player?.currentTime == player?.duration){
+        
+        
+        print(Int(player.currentTime))
+        if(player.currentTime == player.duration){
             
         }
     }

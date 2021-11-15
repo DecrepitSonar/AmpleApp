@@ -62,13 +62,15 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         navigationController!.present(view, animated: true)
                 
     }
-    @objc func openPlayer(){
+    @objc func openPlayer(sender: Notification){
         let player = PlayerViewController()
-        
+        print("opening player")
+           
         print("presenting player")
         player.modalPresentationStyle = .overFullScreen
-        
+      
         navigationController!.present(player, animated: true)
+
     }
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())

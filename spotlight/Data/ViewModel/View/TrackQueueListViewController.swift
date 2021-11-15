@@ -10,7 +10,7 @@ import UIKit
 class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
 
-    var queue: [String]?
+    var queue: [Track]?
     
     var tableview: UITableView!
     override func viewDidLoad() {
@@ -43,7 +43,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = queue![indexPath.row]
+        cell.textLabel?.text = queue![indexPath.row].title
         
         return cell
     }

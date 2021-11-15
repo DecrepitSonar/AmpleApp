@@ -115,7 +115,11 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 
                 
                 for i in 0..<section.items!.count {
-                    header.tracks.append(section.items![i].id)
+                    let item  = section.items![i]
+                    
+                    let track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
+                        
+                    header.tracks.append(track)
                 }
                 
 //                header.tracks = section.items as? Track

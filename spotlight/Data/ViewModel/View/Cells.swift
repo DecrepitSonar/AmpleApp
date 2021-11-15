@@ -208,9 +208,10 @@ class TrendingSection: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc!
-//        let track = Track(Id: catalog.id, Title: catalog.title!, ArtistId: catalog.artistId!, Artists: catalog.name!, Image: catalog.imageURL, AlbumId: catalog.albumId!, audioURL: catalog.audioURL)
         
-        tapGesture?.id = catalog.id
+        let track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
+        
+        tapGesture?.track = track
         
         chartPosition.text = String(indexPath! + 1)
         image.image = UIImage(named: catalog.imageURL)
@@ -218,11 +219,12 @@ class TrendingSection: UICollectionViewCell, Cell{
         artist.text = catalog.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
+    
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
         
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.id!])
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
 
     }
 }
@@ -493,12 +495,12 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         artist.text = item.name
         trackPrice.text = "$0.99"
         
-        tapGesture!.id = item.id
+        tapGesture!.track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
     }
     @objc func didTap(_sender: CustomGestureRecognizer){
 //        print("Sender: ", _sender.track)
         
-    NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.id!])
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
     }
     
 }
@@ -507,7 +509,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
 class DetailHeader: UICollectionReusableView, GestureAction{
     
     static let reuseableIdentifier: String = "image Header"
-    var tracks = [String]()
+    var tracks = [Track]()
     
     var vc: UINavigationController?
     var tapGesture: CustomGestureRecognizer?

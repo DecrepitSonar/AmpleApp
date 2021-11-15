@@ -32,8 +32,6 @@
 		22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FAAF422732D6D20021F67C /* AudioManager.swift */; };
 		22FAAF452732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
-		D942194226DC7F6E00F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194026DC7F6E00F1DC78 /* Info.plist */; };
-		D942194B26DC7FB500F1DC78 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D942194926DC7FB500F1DC78 /* Info.plist */; };
 		D942194C26DC7FB500F1DC78 /* spotlightUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */; };
 		D991782D2677DEA600961969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D991782C2677DEA600961969 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -291,7 +289,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1310;
 				TargetAttributes = {
 					D991781F2677DEA100961969 = {
 						CreatedOnToolsVersion = 12.4;
@@ -345,7 +343,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D942194226DC7F6E00F1DC78 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,7 +350,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D942194B26DC7FB500F1DC78 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

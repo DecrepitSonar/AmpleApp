@@ -8,7 +8,9 @@
 import UIKit
 
 class PlayerViewController: UIViewController {
-
+    
+    var currentTrack: Track!
+    
     var collectionView: UICollectionView!
 //    var datasource: UICollectionViewDiffableDataSource<Player, TrackQueue>?
     
@@ -39,23 +41,30 @@ class PlayerViewController: UIViewController {
     
     var animator: UIViewPropertyAnimator!
     
+    let playbtnImg = UIImage(systemName: "play.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
+    let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.systemRed
         
+       currentTrack = AudioManager.getCurrentTrack()
+        
         view.addSubview(effect)
         effect.frame = view.bounds
         
-        NotificationCenter.default.addObserver(self, selector: #selector(setPlayer(_sender:)), name: Notification.Name("trackChange"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePlayer), name: Notification.Name("update"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
+        
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
 
-        image.image = UIImage(named: "6lack")
+        image.image = UIImage(named: currentTrack.imageURL)
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 10
         view.addSubview(image)
         
         let prevbtnImg = UIImage(systemName: "backward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
-        let playbtnImg = UIImage(systemName: "play.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
+       
         let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
         
         let optionBtnImg = UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
@@ -67,24 +76,33 @@ class PlayerViewController: UIViewController {
         
         prevBtn.setImage(prevbtnImg, for: .normal)
         prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        prevBtn.addTarget(self, action: #selector(prev), for: .touchUpInside)
         
-        playBtn.setImage(playbtnImg, for: .normal)
+        if( player.isPlaying){
+            playBtn.setImage(pauseBtnImg, for: .normal)
+        }
+        else{
+            playBtn.setImage(playbtnImg, for: .normal)
+        }
+            
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+        playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
         
         forwardBtn.setImage(forwardbtnImg, for: .normal)
         forwardBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        forwardBtn.addTarget(self, action: #selector(playnext), for: .touchUpInside)
         
         shuffleBtn.setImage(shuffleImg, for: .normal)
         shuffleBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
+    
         repeatBtn.setImage(repeatImg, for: .normal)
         repeatBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
-        artist.text = "6lack"
+        artist.text = currentTrack.name
         artist.textColor = .label
         artist.setFont(with: 15)
         
-        trackTitle.text = "East Atlanta Love Letter"
+        trackTitle.text = currentTrack.title
         
         optionBtn.setImage(optionBtnImg, for: .normal)
         optionBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
@@ -179,17 +197,50 @@ class PlayerViewController: UIViewController {
         
     }
     
-        @objc func closePlayer(){
-            dismiss(animated: true)
-            print("animator")
+    @objc func togglePlayState(){
+        if(player!.isPlaying){
+            AudioManager.playerController(option: .pause)
         }
-        @objc func setPlayer(_sender: Notification){
-    //        print(_sender.track!.Id)
+        else{
+            AudioManager.playerController(option: .resume)
+        }
+    }
+    
+    @objc func playnext(){
+        AudioManager.playerController(option: .next)
+    }
+    
+    @objc func prev(){
+        AudioManager.playerController(option: .previous)
+    }
+    @objc func togglePlayBtn(sender: Notification){
+        
+        if (player!.isPlaying){
+            playBtn.setImage(pauseBtnImg, for: .normal)
             
-            if let object = _sender.userInfo as NSDictionary? {
-                if let track = object["track"] {
-                    print( track)
-                }
+        }else{
+            playBtn.setImage(playbtnImg, for: .normal)
+        }
+    }
+    
+    @objc func closePlayer(){
+        dismiss(animated: true)
+        print("animator")
+    }
+        @objc func updatePlayer(sender: Notification){
+//            print(_sender.track!.Id)
+            
+            if let object = sender.userInfo as NSDictionary? {
+                      if let track = object["track"]{
+                          let track = track as? Track
+
+//                          print(track!.audioURL)
+                          image.image = UIImage(named: track!.imageURL)
+                          artist.text = track!.name
+                          trackTitle.text = track!.title
+
+
+                      }
             }
     //        print(_sender.userInfo?.keys)
         }
