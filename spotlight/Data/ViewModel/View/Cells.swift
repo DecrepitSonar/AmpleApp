@@ -990,3 +990,86 @@ class CollectionCell: UICollectionViewCell, Cell{
         NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.id!])
     }
 }
+
+
+class TrackStrip: UITableViewCell{
+    static var reuseIdentifier: String = "track"
+    
+    var image = UIImageView()
+    var artist = UILabel()
+    var name = UILabel()
+    let trackPrice = UILabel()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        image.contentMode = .scaleAspectFill
+        image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        backgroundColor = .clear
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 5
+        
+//        backgroundColor = .red
+        name.textColor = .label
+        name.setFont(with: 12)
+        
+        artist.textColor = .secondaryLabel
+        artist.setFont(with: 10)
+        
+        trackPrice.translatesAutoresizingMaskIntoConstraints = false
+        trackPrice.setFont(with: 10)
+        trackPrice.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+
+        
+        let labelStack = UIStackView(arrangedSubviews: [name, artist])
+        labelStack.axis = .vertical
+        
+        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, trackPrice])
+        horizontalStack.axis = .horizontal
+        horizontalStack.alignment = .center
+        horizontalStack.translatesAutoresizingMaskIntoConstraints = false
+        horizontalStack.distribution = .fill
+        
+        horizontalStack.spacing = 10
+
+        
+        addSubview(horizontalStack)
+        
+        NSLayoutConstraint.activate([
+            
+            image.heightAnchor.constraint(equalToConstant: 50),
+            image.widthAnchor.constraint(equalToConstant: 50),
+            
+            image.leadingAnchor.constraint(equalTo: trackPrice.trailingAnchor, constant: 7),
+            
+            trackPrice.widthAnchor.constraint(equalToConstant: 30 ),
+//            trackPrice.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            
+            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            horizontalStack.topAnchor.constraint(equalTo: topAnchor),
+            horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        
+    }
+    
+    func configure(track: Track){
+        
+        image.image = UIImage(named: track.imageURL)
+        name.text = track.title
+        artist.text = track.name
+        
+//        tapGesture!.track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+//    @objc func didTap(_sender: CustomGestureRecognizer){
+////        print("Sender: ", _sender.track)
+//
+//        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
+//    }
+    
+}

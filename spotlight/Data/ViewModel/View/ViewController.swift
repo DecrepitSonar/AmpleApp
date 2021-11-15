@@ -29,7 +29,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
         
         NetworkManager.loadHomeContent { result in
@@ -52,16 +52,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
         
     }
-    
-    @objc func openQueue(){
-        
-        let view = TrackQueueListViewController()
-        view.queue = AudioManager.getAudioQueue()
-        
-        print("queue")
-        navigationController!.present(view, animated: true)
-                
-    }
+
     @objc func openPlayer(sender: Notification){
         let player = PlayerViewController()
         print("opening player")

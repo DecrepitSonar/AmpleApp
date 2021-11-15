@@ -103,6 +103,7 @@ class PlayerViewController: UIViewController {
         artist.setFont(with: 15)
         
         trackTitle.text = currentTrack.title
+        trackTitle.widthAnchor.constraint(equalToConstant: 340).isActive = true
         
         optionBtn.setImage(optionBtnImg, for: .normal)
         optionBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
@@ -149,7 +150,7 @@ class PlayerViewController: UIViewController {
         queue.setImage(queueImag, for: .normal)
         queue.translatesAutoresizingMaskIntoConstraints = false
         queue.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        queue.addTarget(self, action: #selector(openQueueList), for: .touchUpInside)
+        queue.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
         
         let stackControls = UIStackView(arrangedSubviews: [optionStack, labelStack, sliderStack, buttonStack, queue])
         
@@ -221,6 +222,17 @@ class PlayerViewController: UIViewController {
         }else{
             playBtn.setImage(playbtnImg, for: .normal)
         }
+    }
+    
+    
+    @objc func openQueue(){
+        
+        let view = TrackQueueListViewController()
+        view.queue = AudioManager.getAudioQueue()
+        
+        print("queue")
+        present(view, animated: true)
+                
     }
     
     @objc func closePlayer(){
