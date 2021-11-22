@@ -276,19 +276,20 @@ class MiniPlayer: UIView {
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
         }
     }
-    
-    @objc func setPlayerInterval(){
-        
-        
-        print(Int(player.currentTime))
-        if(player.currentTime == player.duration){
-            
-        }
-    }
+
     
     @objc func togglePlayState(){
-        if(player!.isPlaying){
-            AudioManager.playerController(option: .pause ) } else{ AudioManager.playerController(option: .resume)}
+        if(player!.isPlaying && player! != nil){
+            AudioManager.playerController(option: .pause )
+            
+        } else {
+            AudioManager.playerController(option: .resume)
+            
+        }
+        
+        
+        
+        
         print("pressed")
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }

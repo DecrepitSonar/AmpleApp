@@ -21,8 +21,10 @@ enum PlayerControls{
 
 class AudioManager {
    
- // track queue array
+ // track queue arrays
     static var audioQueue = [Track]()
+    
+    static var timer: Timer!
     
     // current index of track in queue
     static var currentQueue: Int?
@@ -51,7 +53,7 @@ class AudioManager {
         playerController(option: .play)
         
         // keep track of current playback state
-        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(checkTrackIsEnded), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(checkTrackIsEnded), userInfo: nil, repeats: true)
         
         
     }
@@ -100,11 +102,18 @@ class AudioManager {
             player!.pause()
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
             
+            guard timer != nil else {
+                invalidateTimer()
+                return
+            }
+            
         case .resume:
             player!.play()
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
             
         case .next:
+            
+            invalidateTimer()
             
             currentQueue! += 1
             if(currentQueue! >= audioQueue.count){
@@ -131,12 +140,20 @@ class AudioManager {
             
         case .previous:
             
-            if(currentQueue == 0){
+            guard timer != nil else {
+                invalidateTimer()
+                print("Time is valid ")
+                print(timer.isValid)
+                
+                if(currentQueue == 0){
+                    return
+                }
+                
+                currentQueue! -= 1
+                getTrack(track: audioQueue[currentQueue!])
+                
                 return
             }
-            
-            currentQueue! -= 1
-            getTrack(track: audioQueue[currentQueue!])
         }
     }
     static func getAudioQueue() -> [Track]{
@@ -153,27 +170,39 @@ class AudioManager {
         return Track(id: "", title: "Title", artistId: "", name: "Artist", imageURL: "", albumId: "", audioURL: "")
         
     }
-   
-    static func trackIsComplete() -> Bool{
-        if(Int(player!.currentTime) == Int(player!.duration)){
-            return true
-        }
-        return false
-    }
-    @objc static func checkTrackIsEnded(){
-        print("Duration: ", Int(player!.duration))
-        print("CurrentDuration:", Int(player!.currentTime) + 1)
+    
+    @objc static func checkTrackIsEnded() -> Bool{
+         let formater = DateComponentsFormatter()
+        print("time: ", player.duration)
+        print("remainder: ", 1000 % Int(player!.duration)  )
+        print("Duration: ", formater.string(from: player!.duration)!)
+        print("CurrentDuration:", formater.string(from: player!.currentTime)!)
         print("\n")
         
-        if(trackIsComplete()){
+        if(Int(player!.currentTime - 1) == Int(player!.duration)){
             
             
             playerController(option: .next)
+            timer = nil
             
             print("track Ended")
             
+            return true
             //TODO: // add track to play history
         }
+    
+        return false
+    }
+    
+    static func setTimer(time: Timer){
+        timer = time
+    }
+    
+    static func invalidateTimer(){
+        guard timer != nil else {
+            return
+        }
+        timer.invalidate()
     }
 }
 
