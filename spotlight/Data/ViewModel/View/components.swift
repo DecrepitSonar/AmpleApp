@@ -279,6 +279,9 @@ class MiniPlayer: UIView {
 
     
     @objc func togglePlayState(){
+        guard player != nil else {
+            return
+        }
         if(player!.isPlaying && player! != nil){
             AudioManager.playerController(option: .pause )
             

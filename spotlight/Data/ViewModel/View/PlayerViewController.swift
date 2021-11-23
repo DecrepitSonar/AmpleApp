@@ -56,10 +56,11 @@ class PlayerViewController: UIViewController {
         effect.frame = view.bounds
         
         NotificationCenter.default.addObserver(self, selector: #selector(updatePlayer), name: Notification.Name("update"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTrackTiming), name: Notification.Name("update"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
 //        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         
-        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+        timer =  Timer.scheduledTimer(timeInterval: 0.10, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
         AudioManager.setTimer(time: timer)
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
@@ -84,13 +85,10 @@ class PlayerViewController: UIViewController {
         prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         prevBtn.addTarget(self, action: #selector(prev), for: .touchUpInside)
         
-        if( player!.isPlaying && player != nil){
-            playBtn.setImage(pauseBtnImg, for: .normal)
+        if( player != nil){
+            player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
         }
-        else{
-            playBtn.setImage(playbtnImg, for: .normal)
-        }
-            
+    
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
         playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
         
@@ -147,7 +145,16 @@ class PlayerViewController: UIViewController {
         totalTimeLapsed.setFont(with: 12)
         totalTrackTime.text = formatter.string(from: player.currentTime)
         
-    
+        if( player.currentTime > 60 ){
+            self.totalTrackTime.text = self.formatter.string(from: player.duration )
+            
+        }else if( player.currentTime >= 10){
+            self.totalTrackTime.text = "0:\(self.formatter.string(from: player.duration )!)"
+            
+        }else{
+            self.totalTrackTime.text = "0:0\(self.formatter.string(from: player.duration )!)"
+        }
+        
         let sliderStack = UIStackView(arrangedSubviews: [ totalTrackTime, totalTimeLapsed])
         sliderStack.axis = .horizontal
         sliderStack.spacing = 10
@@ -208,7 +215,7 @@ class PlayerViewController: UIViewController {
             AudioManager.playerController(option: .pause)
         }
         else{
-            timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+            timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
             AudioManager.setTimer(time: timer)
             AudioManager.playerController(option: .resume)
             
@@ -217,13 +224,13 @@ class PlayerViewController: UIViewController {
     
     @objc func playnext(){
         AudioManager.playerController(option: .next)
-        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+        timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
         AudioManager.setTimer(time: timer)
     }
     
     @objc func prev(){
         AudioManager.playerController(option: .previous)
-        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+        timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
         AudioManager.setTimer(time: timer)
     }
     @objc func togglePlayBtn(sender: Notification){
@@ -238,15 +245,19 @@ class PlayerViewController: UIViewController {
     
     @objc func updateTrackTiming(){
         
-        if( player.currentTime > 60 && !AudioManager.checkTrackIsEnded()){
+        AudioManager.checkTrackIsEnded()
+        
+        if( player.currentTime > 60 ){
             self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
+            
         }else if( player.currentTime >= 10){
             self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
+            
         }else{
             self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
         }
         
-        print(round(Float(player.currentTime / player.duration)))
+//        print(round(Float(player.currentTime / player.duration)))
         slider.setValue(Float(player.currentTime / player.duration), animated: true)
         
     }
@@ -270,11 +281,15 @@ class PlayerViewController: UIViewController {
         
         totalTrackTime.text = formatter.string(from: player.duration)
         
+            AudioManager.checkTrackIsEnded()
+        
 //            print(player.currentTime)
-            if( player.currentTime > 60 && AudioManager.checkTrackIsEnded()){
+            if( player.currentTime > 60){
                 self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
+                
             }else if( player.currentTime >= 10){
                 self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
+                
             }else{
                 self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
             }

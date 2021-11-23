@@ -998,7 +998,7 @@ class TrackStrip: UITableViewCell{
     var image = UIImageView()
     var artist = UILabel()
     var name = UILabel()
-    let trackPrice = UILabel()
+    let options = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -1009,27 +1009,25 @@ class TrackStrip: UITableViewCell{
         image.clipsToBounds = true
         image.layer.cornerRadius = 5
         
-//        backgroundColor = .red
         name.textColor = .label
         name.setFont(with: 12)
         
         artist.textColor = .secondaryLabel
         artist.setFont(with: 10)
         
-        trackPrice.translatesAutoresizingMaskIntoConstraints = false
-        trackPrice.setFont(with: 10)
-        trackPrice.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        options.translatesAutoresizingMaskIntoConstraints = false
+        options.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        options.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
 
         
         let labelStack = UIStackView(arrangedSubviews: [name, artist])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, trackPrice])
+        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, options])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
         horizontalStack.distribution = .fill
-        
         horizontalStack.spacing = 10
 
         
@@ -1040,16 +1038,20 @@ class TrackStrip: UITableViewCell{
             image.heightAnchor.constraint(equalToConstant: 50),
             image.widthAnchor.constraint(equalToConstant: 50),
             
-            image.leadingAnchor.constraint(equalTo: trackPrice.trailingAnchor, constant: 7),
+            image.leadingAnchor.constraint(equalTo: options.trailingAnchor, constant: 7),
             
-            trackPrice.widthAnchor.constraint(equalToConstant: 30 ),
-//            trackPrice.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            options.widthAnchor.constraint(equalToConstant: 30 ),
+            options.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             
-            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 20),
             horizontalStack.topAnchor.constraint(equalTo: topAnchor),
-            horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            horizontalStack.widthAnchor.constraint(equalToConstant: bounds.width - 40),
+            
+            horizontalStack.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
+        
         
     }
     

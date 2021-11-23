@@ -23,23 +23,21 @@ class AudioManager {
    
  // track queue arrays
     static var audioQueue = [Track]()
+    static var previousTracks = [Track]()
+    static var currentQueue: Track?
     
     static var timer: Timer!
     
     // current index of track in queue
-    static var currentQueue: Int?
+    
     
     // initialize player with track queue or track
     static func initPlayer( track: Track?, tracks: [Track]?){
         
-        currentQueue = 0
-        
         guard tracks != nil else {
-            print("Track", track!)
             
             audioQueue = []
-            audioQueue.append(track!)
-            print("audioQueue", audioQueue)
+            currentQueue = track
             
             playerController(option: .play)
             return
@@ -47,14 +45,9 @@ class AudioManager {
         
         audioQueue = []
         audioQueue = tracks!
-        
-        print("Tracks", tracks!)
+        currentQueue = audioQueue[0]
         
         playerController(option: .play)
-        
-        // keep track of current playback state
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(checkTrackIsEnded), userInfo: nil, repeats: true)
-        
         
     }
     
@@ -81,6 +74,20 @@ class AudioManager {
         do{
             player = try AVAudioPlayer(data: data)
             player!.play()
+//            audioQueue.removeFirst()
+            
+//            NetworkManager.getRandomAudioTrack( completion: { result in
+//                switch( result){
+//                case .success( let data):
+//                    print(data)
+//                    self.audioQueue.append(data)
+////                    getTrack(track: audioQueue[self.currentQueue!])
+//
+//
+//                case .failure( let err):
+//                    print(err)
+//                }
+//            })
             
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }
@@ -94,9 +101,23 @@ class AudioManager {
         
         switch(option){
         case .play:
-            getTrack(track: audioQueue[self.currentQueue!])
-                                    
-//            print(audioQueue[currentQueue!])
+            
+            getTrack(track: currentQueue!)
+            
+            if audioQueue.count >= 1 {
+                return
+            }
+            
+            NetworkManager.getRandomAudioTrack( completion: { result in
+                switch( result){
+                case .success( let data):
+                    print(data)
+                    self.audioQueue.append(data)
+                    
+                case .failure( let err):
+                    print(err)
+                }
+            })
             
         case .pause:
             player!.pause()
@@ -115,42 +136,42 @@ class AudioManager {
             
             invalidateTimer()
             
-            currentQueue! += 1
-            if(currentQueue! >= audioQueue.count){
-                
+            previousTracks.insert(currentQueue!, at: 0)
+            currentQueue = audioQueue[0]
+            audioQueue.remove(at: 0)
+            
+            
+            NetworkManager.getRandomAudioTrack( completion: { result in
+                switch( result){
+                case .success( let data):
+                    print(data)
+                    self.audioQueue.append(data)
+//                    getTrack(track: audioQueue[0])
 
-                NetworkManager.getRandomAudioTrack( completion: { result in
-                    switch( result){
-                    case .success( let data):
-                        print(data)
-                        self.audioQueue.append(data)
-                        getTrack(track: audioQueue[self.currentQueue!])
-                        
-                        
-                    case .failure( let err):
-                        print(err)
-                    }
-                })
-                
-            }else{
-                getTrack(track: audioQueue[currentQueue!])
-                
-                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : audioQueue[currentQueue!]])
-            }
+                case .failure( let err):
+                    print(err)
+                }
+            })
+            
+            getTrack(track: currentQueue!)
+//            previousTracks.insert(audioQueue.popLast()!, at: 0)
+            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue!])
             
         case .previous:
             
             guard timer != nil else {
                 invalidateTimer()
-                print("Time is valid ")
-                print(timer.isValid)
+//                print("Time is valid ")
+//                print(timer.isValid)
                 
-                if(currentQueue == 0){
+                if(previousTracks.count == 0){
                     return
                 }
                 
-                currentQueue! -= 1
-                getTrack(track: audioQueue[currentQueue!])
+                currentQueue! = previousTracks[0]
+                previousTracks.remove(at: 0)
+                
+                getTrack(track: currentQueue!)
                 
                 return
             }
@@ -163,7 +184,7 @@ class AudioManager {
     static func getCurrentTrack() -> Track{
         guard audioQueue.isEmpty else{
             print( "queue is empty")
-            return audioQueue[currentQueue!]
+            return currentQueue!
         }
         
         print("queue is not empty")
@@ -171,15 +192,15 @@ class AudioManager {
         
     }
     
-    @objc static func checkTrackIsEnded() -> Bool{
+    @objc static func checkTrackIsEnded(){
          let formater = DateComponentsFormatter()
-        print("time: ", player.duration)
-        print("remainder: ", 1000 % Int(player!.duration)  )
-        print("Duration: ", formater.string(from: player!.duration)!)
-        print("CurrentDuration:", formater.string(from: player!.currentTime)!)
-        print("\n")
+//        print("time: ", player.duration)
+//        print("remainder: ", 1000 % Int(player!.duration)  )
+//        print("Duration: ", formater.string(from: player!.duration)!)
+//        print("CurrentDuration:", formater.string(from: player!.currentTime)!)
+//        print("\n")
         
-        if(Int(player!.currentTime - 1) == Int(player!.duration)){
+        if(Int(player!.currentTime) >= Int(player!.duration - 1)){
             
             
             playerController(option: .next)
@@ -187,11 +208,9 @@ class AudioManager {
             
             print("track Ended")
             
-            return true
             //TODO: // add track to play history
         }
     
-        return false
     }
     
     static func setTimer(time: Timer){
