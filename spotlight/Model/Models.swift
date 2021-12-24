@@ -7,6 +7,16 @@
 
 import Foundation
 
+struct UserCredentials: Decodable {
+    var username: String
+    var apiKey: String
+}
+
+struct credentials: Codable{
+    var username: String
+    var password: String
+}
+
 struct LibObject: Codable, Hashable {
     var id: String
     var artistId: String?
@@ -117,8 +127,6 @@ struct DetailSection: Codable, Hashable {
     var items: [AlbumDetail]
 }
 
-
-
 // Artist Profile data model
 struct ArtistDetail: Codable, Hashable{
     var id: String
@@ -142,7 +150,21 @@ struct ProfileItem: Codable, Hashable {
     var imageURL: String
 }
 
+struct SearchObj: Codable, Hashable{
+    var id: String
+    var type: String
+    var tagline: String
+    var items: [SearchItem]
+}
 
+struct SearchItem: Codable, Hashable{
+    var id: String
+    var type: String
+    var title: String
+    var name: String?
+    var imageURL: String?
+    var count: String?
+}
 //
 
 struct Player: Codable, Hashable {
@@ -162,8 +184,8 @@ struct Queue: Codable, Hashable{
 //    var saved: Bool
 }
 
-struct User: Decodable{
-    var id: String?
-    var username: String
-    var imgURL: String?
+struct settings{
+    let name: String
+    let image: String
+    let description: String
 }

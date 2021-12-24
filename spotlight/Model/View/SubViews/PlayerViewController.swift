@@ -47,10 +47,12 @@ class PlayerViewController: UIViewController {
     let playbtnImg = UIImage(systemName: "play.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.systemRed
         
+        navigationController?.isToolbarHidden = true
         currentTrack = AudioManager.getCurrentTrack()
         view.addSubview(effect)
         effect.frame = view.bounds
@@ -67,7 +69,7 @@ class PlayerViewController: UIViewController {
 
         image.image = UIImage(named: currentTrack.imageURL)
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.layer.cornerRadius = 10
+//        image.layer.cornerRadius = 10
         view.addSubview(image)
         
         let prevbtnImg = UIImage(systemName: "backward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
@@ -204,6 +206,7 @@ class PlayerViewController: UIViewController {
         ])
         
     }
+
     
     @objc func togglePlayState(){
 //        print(slider)

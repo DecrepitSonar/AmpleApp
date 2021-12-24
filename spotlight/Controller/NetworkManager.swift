@@ -7,11 +7,14 @@
 
 import Foundation
 import Combine
+import CoreMedia
+import AVFoundation
 
 enum NetworkError: Error{
     case notfound
     case sucess
     case servererr
+    case authenticationError
 }
  
 class NetworkManager {
@@ -19,9 +22,101 @@ class NetworkManager {
 //    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
     static let baseURL = "http://localhost:8080/api/v1/"
     
+    // Authentication
+    static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
+        
+        let url = URL(string: "\(baseURL)authenticate")
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+//        print(user)
+        
+        guard let credentials = try? JSONEncoder().encode(user) else {
+            print("could not encode user credentials for authentication request")
+            return
+        }
+        
+        request.httpBody = credentials
+        
+        DispatchQueue.main.async {
+            let task = URLSession.shared.uploadTask(with: request, from: credentials) { data, response, error in
+                if error != nil {
+//                    print( error)
+                }
+                
+                guard let response = response as? HTTPURLResponse else {
+    //                print(response)
+                    return
+                }
+                
+                print(response)
+                
+    //            switch(httpresponse.statusCode){
+    //            case 404:
+    //                completion(.failure(.notfound))
+    //
+    //            case 500:
+    //                completion(.failure(.servererr))
+    //
+    //            case 403:
+    //                completion(.failure(.authenticationError))
+    //
+    //            default:
+    //                print("Requst completed successfully")
+    //            }
+    //
+                do {
+                    let data = try JSONDecoder().decode(UserCredentials.self, from: data!)
+    //                print(data)
+                    completion(.success(data))
+                }
+                catch{
+                    return
+                }
+
+            }
+            
+            task.resume()
+        }
+        
+    }
+    
     // Home page content
-    static func loadHomeContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)")
+    static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)home")
+        
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.servererr))
+//                    print(error)
+                }
+                
+                guard let httpresponse = response as? HTTPURLResponse else {
+//                    print(response)
+                    return
+                }
+                
+                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                    completion(.failure(.servererr))
+//                    print()
+                    return
+                }
+                
+                let decoder = JSONDecoder()
+                
+                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
+                
+                print(dataResponse)
+                completion(.success(dataResponse!))
+            }
+        }.resume()
+        
+    }
+
+    static func loadBrowesPageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)browse")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
@@ -158,6 +253,7 @@ class NetworkManager {
     // images
     static func getImage(with url: String, imgUrl: String){} // Get image with ImgUrl
     
+    // Audio
     static func getAudioTrack(track: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
     
         let url = URL(string: "\(baseURL)track?audioURL=\(track)")
@@ -187,7 +283,6 @@ class NetworkManager {
         }.resume()
             
     }
-    
     static func getTracks(completion: @escaping (Result<[Track], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)tracks")
     
@@ -254,7 +349,6 @@ class NetworkManager {
                    }
                }.resume()
     }
-    
     static func getRandomAudioTrack( completion: @escaping (Result<Track, NetworkError>) -> Void){
     
         let url = URL(string: "\(baseURL)track?isRandom=true")

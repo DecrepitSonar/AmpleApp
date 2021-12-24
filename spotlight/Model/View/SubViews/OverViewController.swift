@@ -19,6 +19,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.isHidden = true
 //        print(albumId)
         NetworkManager.getAlbum(id: albumId!) { Result in
             switch Result {
@@ -44,7 +45,8 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         
         // register items
         collectionView.register(TrackDetailStrip.self, forCellWithReuseIdentifier: TrackDetailStrip.reuseIdentifier)
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+//        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
 
         // Headers
         collectionView.register(DetailHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DetailHeader.reuseableIdentifier)
@@ -78,7 +80,18 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     func createDataSource() {
         dataSource = UICollectionViewDiffableDataSource<LibObject, LibItem> (collectionView: collectionView) {
             collectionview, IndexPath, item in
-            return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, TrackDetailStrip.self, with: item, indexPath: IndexPath)
+            let section = self.section![IndexPath.section].type
+//            print("Section", section)
+            
+            print(item)
+            
+            switch(section){
+            case "Tracks":
+                return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, TrackDetailStrip.self, with: item, indexPath: IndexPath)
+            default:
+                return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, MediumImageSlider.self, with: item, indexPath: IndexPath)
+            }
+
 //
         }
 
@@ -103,6 +116,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 }
                 
                 header.image.image = UIImage(named: section.imageURL!)
+                header.imageContainer.image = UIImage(named: section.imageURL!)
 
                 header.title.text = section.title
                 header.artist.text = section.name
@@ -111,8 +125,6 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 header.artistId = section.artistId!
                 header.vc = self?.navigationController
                 header.datePublished.text = "\(section.items!.count) Tracks, Published 2019, 45 minutes"
-                
-                
                 
                 for i in 0..<section.items!.count {
                     let item  = section.items![i]
@@ -148,19 +160,17 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     func createCompositionalLayout() -> UICollectionViewLayout {
         let compositionalLayout = UICollectionViewCompositionalLayout {
             index, layoutEnvironment in
+ 
+            switch(self.section![index].type){
+            case "Tracks":
+                return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
             
-//
-//            let section = self.section![index]
-//
-//            switch section.type{
-//            case "Tracks":
-            return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
-//            case "Artists":
-//                return LayoutManager.createAviSliderSection(using: section)
-//            default:
-//                print("configureing header detail")
-//                return LayoutManager.createMediumImageSliderSection(using: section)
-//            }
+//            case "Video":
+//                return LayoutManager.createWideLayout(using: self.section ?? LibItem.self)
+                
+            default:
+                return LayoutManager.createMediumImageSliderSection(using: self.section ?? LibItem.self)
+            }
         }
 
         return compositionalLayout

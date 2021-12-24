@@ -42,7 +42,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         
         switch section{
         case 0:
-            return AudioManager.audioQueue.count - 1
+            return AudioManager.audioQueue.count
         
         case 2:
             return AudioManager.previousTracks.count

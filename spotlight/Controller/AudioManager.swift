@@ -44,8 +44,8 @@ class AudioManager {
         }
         
         audioQueue = []
-        audioQueue = tracks!
-        currentQueue = audioQueue[0]
+        audioQueue = tracks!.reversed()
+        currentQueue = audioQueue.popLast()
         
         playerController(option: .play)
         
@@ -74,20 +74,6 @@ class AudioManager {
         do{
             player = try AVAudioPlayer(data: data)
             player!.play()
-//            audioQueue.removeFirst()
-            
-//            NetworkManager.getRandomAudioTrack( completion: { result in
-//                switch( result){
-//                case .success( let data):
-//                    print(data)
-//                    self.audioQueue.append(data)
-////                    getTrack(track: audioQueue[self.currentQueue!])
-//
-//
-//                case .failure( let err):
-//                    print(err)
-//                }
-//            })
             
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }
@@ -104,7 +90,7 @@ class AudioManager {
             
             getTrack(track: currentQueue!)
             
-            if audioQueue.count >= 1 {
+            if currentQueue != nil {
                 return
             }
             
@@ -112,7 +98,7 @@ class AudioManager {
                 switch( result){
                 case .success( let data):
                     print(data)
-                    self.audioQueue.append(data)
+                    self.currentQueue = data
                     
                 case .failure( let err):
                     print(err)
@@ -137,25 +123,30 @@ class AudioManager {
             invalidateTimer()
             
             previousTracks.insert(currentQueue!, at: 0)
-            currentQueue = audioQueue[0]
-            audioQueue.remove(at: 0)
+            currentQueue = audioQueue.popLast()
+            print(audioQueue.count)
             
             
-            NetworkManager.getRandomAudioTrack( completion: { result in
-                switch( result){
-                case .success( let data):
-                    print(data)
-                    self.audioQueue.append(data)
-//                    getTrack(track: audioQueue[0])
+           if audioQueue.count < 1 {
+                NetworkManager.getRandomAudioTrack( completion: { result in
+                    switch( result){
+                    case .success( let data):
+//                        print(data)
+                        self.audioQueue.append(data)
+                        print(audioQueue)
+                        
+                        getTrack(track: currentQueue!)
+                        
 
-                case .failure( let err):
-                    print(err)
-                }
-            })
-            
-            getTrack(track: currentQueue!)
-//            previousTracks.insert(audioQueue.popLast()!, at: 0)
-            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue!])
+                    case .failure( let err):
+                        print(err)
+                    }
+                })
+           }else{
+               getTrack(track: currentQueue!)
+
+           }
+           
             
         case .previous:
             

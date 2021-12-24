@@ -1,68 +1,38 @@
 //
-//  ViewController.swift
-//  compositionalLayout
+//  HomeVc.swift
+//  spotlight
 //
-//  Created by Robert Aubow on 8/13/21.
+//  Created by bajo on 2021-11-29.
 //
 
 import UIKit
-import Combine
 
-class RVC: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-    }
-}
+class HomeVc: UIViewController {
 
-class ViewController: UIViewController, UISearchResultsUpdating {
-
-//    var section = NetworkManager.readJSONFromFile(fileName: "catalog")!
-    var section = [LibObject]()
+    var section: [LibObject]!
     
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     var collectionView: UICollectionView!
     
     override func viewDidLoad() {
-        
-
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Home"
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
-        
-        NetworkManager.loadHomeContent { result in
-            switch(result){
-            case .success(let data):
-                print(data)
+        NetworkManager.loadHomePageContent { result in
+            switch( result ){
+            case .success(let data ):
                 self.section = data
+                
                 self.initCollectionView()
-            case .failure(let error):
-                print(error)
+            case .failure(let err ):
+                print(err)
             }
         }
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Browes"
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        let searchController = UISearchController(searchResultsController: RVC())
-        searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
-        
-        
     }
-
-    @objc func openPlayer(sender: Notification){
-        let player = PlayerViewController()
-        print("opening player")
-           
-        print("presenting player")
-        player.modalPresentationStyle = .overFullScreen
-      
-        navigationController!.present(player, animated: true)
-
-    }
+    
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -72,9 +42,6 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
-        collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
-        collectionView.register(TrackHistorySlider.self, forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         
@@ -89,14 +56,8 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
             print("creating datasource")
             switch self.section[IndexPath.section].type {
-            case "Featured":
+            case "History":
                 print("Adding Featured Section")
-                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, FeaturedHeader.self, with: item, indexPath: IndexPath)
-            case "Artists":
-                print("Adding Artist section")
-                return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, ArtistSection.self, with: item, indexPath: IndexPath)
-            case "Trending":
-                print("Adding Trending section")
                 return LayoutManager.configureCell(collectionView: self.collectionView, navigationController: self.navigationController, TrendingSection.self, with: item, indexPath: IndexPath)
             default:
                 print("Adding default section")
@@ -142,13 +103,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             print("Creating compositinal layout")
 
             switch(section.type){
-            case "Featured":
-                print("configuring featured section layout")
-                return LayoutManager.createFeaturedHeader(using: section)
-            case "Artists":
-                print("configuring aritst layout")
-                return LayoutManager.createAviSliderSection(using: section)
-            case "Trending":
+            case "History":
                 print("configuring trending section layout")
                 return LayoutManager.createTrendingSection(using: section)
             default:
@@ -163,18 +118,6 @@ class ViewController: UIViewController, UISearchResultsUpdating {
         
         return layout
     }
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else {
-            return
-        }
-        
-        let vc = searchController.searchResultsController as? RVC
-        vc?.view.backgroundColor = .systemRed
-        print(text)
-    }
+
 }
-enum NetworkErr: Error{
-    case ServerError
-    case ResponseError
-}
+

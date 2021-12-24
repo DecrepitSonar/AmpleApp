@@ -75,7 +75,7 @@ class LargePrimaryButton: UIButton{
         self.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1), for: .normal)
         self.heightAnchor.constraint(equalToConstant: 50).isActive = true
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.layer.cornerRadius = 25
+        self.layer.cornerRadius = 10
     }
 }
 
@@ -105,7 +105,7 @@ extension UITextField {
         bottomLine.frame = CGRect(x: 0, y: self.frame.size.height - 1, width: self.frame.size.width, height: 1)
 //        backgroundColor = .white
 //        textColor = .black
-        bottomLine.cornerRadius = 25
+        bottomLine.cornerRadius = 10
         borderStyle = .none
         layer.addSublayer(bottomLine)
     }
@@ -131,7 +131,7 @@ class MiniPlayer: UIView {
         view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         view.clipsToBounds = true
-        view.layer.cornerRadius = 5
+//        view.layer.cornerRadius = 5
         
         return view
     }()
@@ -198,7 +198,7 @@ class MiniPlayer: UIView {
         
         addSubview(buttonStack)
         
-        layer.cornerRadius = 10
+//        layer.cornerRadius = 10
         
         img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
@@ -325,44 +325,29 @@ class customTab: UITabBarController{
     
     override func viewWillAppear(_ animated: Bool) {
         
-        let homeVc = UINavigationController(rootViewController: ViewController())
+        let homeVc = UINavigationController(rootViewController: HomeVc())
         homeVc.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
-            
-        let profile = UINavigationController(rootViewController: ProfileViewController())
-        profile.tabBarItem = UITabBarItem(title: "Library", image: UIImage(systemName: "books.vertical"), tag: 0)
-        tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        let musicVc = UINavigationController(rootViewController: MusicViewController())
+        musicVc.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "waveform.path.ecg"), tag: 1)
+        
+        let videoVc = UINavigationController(rootViewController: VideoViewController())
+        videoVc.tabBarItem = UITabBarItem(title: "Video", image: UIImage(systemName: "play.tv"), tag: 2)
+        
+        let searchVc = UINavigationController(rootViewController: SearchViewController())
+        searchVc.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 3)
+                                           
+        let library = UINavigationController(rootViewController: Library())
+        library.tabBarItem = UITabBarItem(title: "Library", image: UIImage(systemName: "books.vertical"), tag: 4)
+        
+                                           tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [homeVc, profile]
+        self.viewControllers = [homeVc, musicVc, library]
     
     }
-    
-//    @objc func openPlayer(){
-//   
-//        animate.keyPath = "position.y"
-//        animate.fromValue = UIScreen.main.bounds.height - (self.tabBar.bounds.height - 10)
-//        animate.toValue = 200
-//        animate.duration = 0.5
-//
-//        playerContainer.layer.add(animate, forKey: "basic")
-//        playerContainer.layer.position = CGPoint(x: (UIScreen.main.bounds.width / 2), y: 200)
-//        
-//        print("player tapped")
-//    }
-//    
-//    @objc func closePlayer(){
-//        
-//        animate.keyPath = "position.y"
-//        animate.fromValue = 0
-//        animate.toValue = CGFloat(UIScreen.main.bounds.height - (self.tabBar.bounds.height - 10))
-//        animate.duration = 0.5
-//
-//        playerContainer.layer.add(animate, forKey: "basic")
-//        playerContainer.layer.position = CGPoint(x: (UIScreen.main.bounds.width / 2), y: 200)
-//        
-//    }
-//    
+
 }
