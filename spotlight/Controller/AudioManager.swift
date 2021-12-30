@@ -53,7 +53,7 @@ class AudioManager {
     
     static func getTrack( track: Track){
 
-        NetworkManager.getAudioTrack( track: track.audioURL!) { result in
+        NetworkManager.getAudioTrack(track: track.audioURL!) { result in
             
             switch(result){
             case .success(let data ):
