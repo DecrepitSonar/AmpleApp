@@ -21,6 +21,8 @@ class NetworkManager {
     
 //    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
     static let baseURL = "http://localhost:8080/api/v1/"
+//    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
+    static let audioBaseUrl = "https://prophile.nyc3.digitaloceanspaces.com/";
     
     // Authentication
     static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
@@ -256,23 +258,24 @@ class NetworkManager {
     // Audio
     static func getAudioTrack(track: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
     
-        let url = URL(string: "\(baseURL)track?audioURL=\(track)")
+        let url = URL(string: "\(audioBaseUrl)\(track).mp3")
+        
 //        let request = URLRequest(url: url!)
         
-//        print(url)
+        print(url)
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
                 if error != nil {
                     completion(.failure(.ServerError))
-//                    print(error)
+                    print(error)
                 }
 
                 guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
+                    print(response)
                     return
                 }
-//                print( httpresponse)
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/octet-stream" else {
+                print( httpresponse)
+                guard let mimeType = httpresponse.mimeType, mimeType == "audio/mpeg" else {
                     completion(.failure(.ServerError))
 //                    print("mime err")
                     return

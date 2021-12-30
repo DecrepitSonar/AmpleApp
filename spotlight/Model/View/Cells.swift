@@ -467,7 +467,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
 //        let index = Int(indexPath!) + 1
-        vc = rootVc!
+//        vc = rootVc!
         image.image = UIImage(named: item.imageURL)
         name.text = item.title
         artist.text = item.name
@@ -518,17 +518,16 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         let seperator = UIView(frame: .zero)
         seperator.backgroundColor = .quaternaryLabel
         
-//        addSubview(imageContainer)
-//        imageContainer.backgroundColor = .red
+        setupGradient()
         
         title.textColor = .white
         title.setFont(with: 25)
         title.numberOfLines = 0
-        
+
         artist.textColor = .label
         artist.setFont(with: 15)
         artist.translatesAutoresizingMaskIntoConstraints = false
-        
+
         artistAviImage.layer.borderWidth = 1
         artistAviImage.contentMode = .scaleAspectFill
         artistAviImage.translatesAutoresizingMaskIntoConstraints = false
@@ -538,60 +537,60 @@ class DetailHeader: UICollectionReusableView, GestureAction{
 
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         artistAviImage.addGestureRecognizer(tapGesture!)
-        
+
         image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
-//        image.layer.cornerRadius = 10X
+        image.layer.cornerRadius = 5
         image.translatesAutoresizingMaskIntoConstraints = false
-        
+//
         let btnConfig = UIImage.SymbolConfiguration(pointSize: 20)
         let btnImage = UIImage(systemName: "play", withConfiguration: btnConfig)
-        
+
         let shuffleConfig = UIImage.SymbolConfiguration(pointSize: 20)
         let shuffleImg = UIImage(systemName: "shuffle", withConfiguration: shuffleConfig)
-        
-    
-        
+
+
+
         playBtn = UIButton()
         playBtn.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        
+
         playBtn.setImage(btnImage, for: .normal)
         playBtn.setTitle("Play", for: .normal)
         playBtn.layer.borderWidth = 1
         playBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-//        playBtn.layer.cornerRadius = 5
-        
+        playBtn.layer.cornerRadius = 5
+
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         playBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-        
+
         playBtn.titleLabel?.setFont(with: 20)
         playBtn.translatesAutoresizingMaskIntoConstraints = false
         playBtn.layer.zPosition = 2
         playBtn.addTarget(self, action: #selector(playAllTracks), for: .touchUpInside)
         playBtn.titleEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
-        
+
         shuffleBtn.setTitle("Shuffle", for: .normal)
         shuffleBtn.layer.borderWidth = 1
         shuffleBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-//        shuffleBtn.layer.cornerRadius = 3
+        shuffleBtn.layer.cornerRadius = 5
         shuffleBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
         shuffleBtn.titleLabel?.setFont(with: 20)
         shuffleBtn.setImage(shuffleImg, for: .normal)
         shuffleBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         shuffleBtn.titleEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
-        
+
         pageTag.textColor = .secondaryLabel
-        
+
         datePublished.text = "Published 2019, 10 Tracks ,45 minutes"
         datePublished.setFont(with: 12)
         datePublished.textColor = .secondaryLabel
-        
+
         let btnStack = UIStackView(arrangedSubviews: [playBtn,shuffleBtn])
         btnStack.axis = .horizontal
         btnStack.translatesAutoresizingMaskIntoConstraints = false
         btnStack.distribution = .fillEqually
         btnStack.spacing = 10
-        
+
         let TirtiaryStack = UIStackView(arrangedSubviews: [pageTag])
         TirtiaryStack.axis = .horizontal
         TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
@@ -602,52 +601,68 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         SecondaryStack.alignment = .center
         SecondaryStack.distribution = .fill
         SecondaryStack.spacing = 10
-        
-//        let playBtnStack = UIStackView(arrangedSubviews: [,huffleBtn])
+//
+//        let playBtnStack = UIStackView(arrangedSubviews: [playBtn,shuffleBtn])
 //        playBtnStack.alignment = .center
 //        playBtnStack.axis = .horizontal
 //        playBtnStack.distribution = .fillProportionally
 //        playBtnStack.spacing = 10
+//
         
-        let ContainerStack = UIStackView(arrangedSubviews: [image, btnStack, title, SecondaryStack, datePublished, seperator, TirtiaryStack ])
+        addSubview(imageContainer)
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        
+        container.translatesAutoresizingMaskIntoConstraints = false
+        
+       
+        
+//        let ContainerStack = UIStackView(arrangedSubviews: [image ])
+        let ContainerStack = UIStackView(arrangedSubviews: [image, btnStack, title, SecondaryStack, datePublished, seperator, TirtiaryStack])
+         
+//        let ContainerStack = UIStackView(arrangedSubviews: [image])
         ContainerStack.translatesAutoresizingMaskIntoConstraints = false
         ContainerStack.axis = .vertical
         ContainerStack.spacing = 17
         
-//        addSubview(imageContainer)
         
-        addSubview(ContainerStack)
+//        imageContainer.backgroundColor = .red
+        
+        container.addSubview(ContainerStack)
+
+        
+        
+        
         
         NSLayoutConstraint.activate([
 //            seperator.heightAnchor.constraint(equalToConstant: 1),
 
-            imageContainer.heightAnchor.constraint(equalToConstant: 200),
-            imageContainer.widthAnchor.constraint(equalToConstant: 200),
-//
+//            imageContainer.heightAnchor.constraint(equalToConstant: 200),r
+//            imageContainer.widthAnchor.constraint(equalToConstant: 200),
+            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -100),
+            imageContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 100),
+            imageContainer.topAnchor.constraint(equalTo: topAnchor, constant: -48),
+            imageContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
+////
+            container.topAnchor.constraint(equalTo: imageContainer.topAnchor),
+            container.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+            
             image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             image.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
 //
             image.heightAnchor.constraint(equalToConstant: 355),
             image.widthAnchor.constraint(equalToConstant:350),
-//
-//            imageLayer.heightAnchor.constraint(equalTo: imageContainer.heightAnchor),
-//            imageLayer.widthAnchor.constraint(equalTo: imageContainer.widthAnchor),
-//
+
             artistAviImage.heightAnchor.constraint(equalToConstant: 40),
             artistAviImage.widthAnchor.constraint(equalToConstant: 40),
-//
-            playBtn.leadingAnchor.constraint(equalTo: imageLayer.leadingAnchor, constant: 10),
-            playBtn.bottomAnchor.constraint(equalTo: imageLayer.bottomAnchor, constant: -10),
-//
-            ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            ContainerStack.topAnchor.constraint(equalTo: imageContainer.bottomAnchor, constant: 20),
-            ContainerStack.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
 
-            btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
+            ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            ContainerStack.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 75),
+            ContainerStack.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
+//
+            btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
 //            optionsBtn.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor)
         ])
         
-        setupGradient()
     }
     
     required init?(coder: NSCoder) {
@@ -669,31 +684,38 @@ class DetailHeader: UICollectionReusableView, GestureAction{
     func setupGradient(){
         
         let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1).cgColor]
         gradientLayer.locations = [0.2, 1.3]
         
         gradientLayer.frame = frame
         
-//        imageContainer.layer.addSublayer(gradientLayer)
-//        container.frame = frame
+        let blurEffect = UIBlurEffect(style: .regular)
+       let visualEffectView = UIVisualEffectView(effect: blurEffect)
+       
+        container.layer.addSublayer(gradientLayer)
+        container.frame = imageContainer.frame
         
-//        addSubview(container)
-//        container.layer.addSublayer(gradientLayer)
+        addSubview(container)
+        container.addSubview(visualEffectView)
+        visualEffectView.frame = frame
+//        container.backgroundColor = .red
+        container.layer.zPosition = 2
+        container.layer.addSublayer(gradientLayer)
         
 //        let stack = UIStackView(arrangedSubviews: [name, verifiedIcon ])
 //        stack.axis = .horizontal
 //        stack.alignment = .center
 //        stack.spacing = 10
-
+//
 //        let containerStack = UIStackView(arrangedSubviews: [stack, followBtn, listener ])
 //        containerStack.axis = .vertical
 //        containerStack.alignment = .leading
 //        containerStack.spacing = 7
 //        containerStack.translatesAutoresizingMaskIntoConstraints = false
-    
-        
+//
+//
 //        container.addSubview(containerStack)
-        
+//
 //        containerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
 //        containerStack.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 //        containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true

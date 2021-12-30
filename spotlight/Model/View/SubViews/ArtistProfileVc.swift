@@ -30,7 +30,6 @@ class Profile: UIViewController {
         }
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//        navigationController?.navigationBar.isHidden = true
         
     }
     

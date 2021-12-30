@@ -182,7 +182,7 @@ class LayoutManager {
         return supplementoryItem
     }
     static func createAlbumHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
-        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.72))
+        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.75))
         
         let supplementoyItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         

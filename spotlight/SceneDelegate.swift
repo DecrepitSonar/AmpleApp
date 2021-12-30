@@ -28,12 +28,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        navigationController.navigationBar.prefersLargeTitles = true
 //        navigationController.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
- 
-        
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = LoginViewController()
    
-
         window?.makeKeyAndVisible()
     }
 

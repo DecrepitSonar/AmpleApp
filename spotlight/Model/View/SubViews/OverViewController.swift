@@ -19,6 +19,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         navigationController?.navigationBar.isHidden = true
 //        print(albumId)
         NetworkManager.getAlbum(id: albumId!) { Result in
