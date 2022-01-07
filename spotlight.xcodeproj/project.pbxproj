@@ -141,11 +141,11 @@
 				222E8BBE277538B10016C62F /* SearchViewController.swift */,
 				222E8BBF277538B10016C62F /* Library.swift */,
 				222E8BC0277538B10016C62F /* MusicViewController.swift */,
-				222E8BC1277538B10016C62F /* SubViews */,
 				222E8BD1277538B10016C62F /* HomeVc.swift */,
 				222E8BD2277538B10016C62F /* LoginViewController.swift */,
 				222E8BD3277538B10016C62F /* VideoViewController.swift */,
 				222E8BD4277538B10016C62F /* components.swift */,
+				222E8BC1277538B10016C62F /* SubViews */,
 			);
 			name = View;
 			path = Model/View;

@@ -75,7 +75,7 @@ class LargePrimaryButton: UIButton{
         self.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1), for: .normal)
         self.heightAnchor.constraint(equalToConstant: 50).isActive = true
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.layer.cornerRadius = 10
+        self.layer.cornerRadius = 8
     }
 }
 
@@ -96,10 +96,12 @@ class TextFieldWithPadding: UITextField {
         let rect = super.editingRect(forBounds: bounds)
         return rect.inset(by: textPadding)
     }
+    
 }
 //
 //// Extentions
 extension UITextField {
+    
     func addBottomBorder(){
         let bottomLine = CALayer()
         bottomLine.frame = CGRect(x: 0, y: self.frame.size.height - 1, width: self.frame.size.width, height: 1)
@@ -109,16 +111,31 @@ extension UITextField {
         borderStyle = .none
         layer.addSublayer(bottomLine)
     }
+    
 }
 extension UILabel {
+    
     func setFont(with size: CGFloat){
         font = UIFont(name: "Helvetica Neue", size: size)
     }
     func setBoldFont(with size: CGFloat){
         font = UIFont.boldSystemFont(ofSize: size)
     }
+    
 }
-
+extension UIImageView {
+    func setUpImage(url: String){
+        NetworkManager.getImage(with: url) { result in
+            switch(result){
+            case .success(let data):
+                self.image = UIImage(data: data)
+            case .failure(let err):
+                print(err)
+                return
+            }
+        }
+    }
+}
 class MiniPlayer: UIView {
     
     var timer = Timer()
@@ -134,6 +151,7 @@ class MiniPlayer: UIView {
 //        view.layer.cornerRadius = 5
         
         return view
+        
     }()
     
     let artistLabel = UILabel()
@@ -346,7 +364,7 @@ class customTab: UITabBarController{
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [homeVc, musicVc, library]
+        self.viewControllers = [homeVc, musicVc, searchVc, library]
     
     }
 

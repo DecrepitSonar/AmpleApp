@@ -10,7 +10,7 @@ import UIKit
 class AccountSettingsVc: UIViewController {
     let tableview  = UITableView()
     
-    let settingOptions = [settings(name: "Account", image: "person.crop.circle", description: "Sign out")]
+    let settingOptions = [settings(name: "Account", image: "lock.circle.fill", description: "Sign out")]
     
     
     override func viewDidLoad() {
@@ -47,7 +47,8 @@ extension AccountSettingsVc: UITableViewDelegate, UITableViewDataSource{
         switch indexPath.row {
         case 0:
             UserDefaults.standard.removeObject(forKey: "userkey")
-            navigationController?.popViewController(animated: true)
+            navigationController?.popToRootViewController(animated: true)
+            
         default: return
         }
     }

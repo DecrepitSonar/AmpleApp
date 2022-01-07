@@ -10,40 +10,31 @@ import UIKit
 
 class FeaturedHeader: UICollectionViewCell, Cell{
 
-    
-  
     static var reuseIdentifier: String = "Featured Header"
-    
     var tapGesture = CustomGestureRecognizer()
     var NavVc: UINavigationController?
     
-    let tagline = UILabel()
-    let image = UIImageView()
-    let title = UILabel()
-    
     override init(frame: CGRect){
         super.init(frame: frame)
-        
-        image.clipsToBounds = true
-        image.layer.cornerRadius = 5
-        image.contentMode = .scaleAspectFill
-        image.isUserInteractionEnabled = true
         
         title.font = UIFont.boldSystemFont(ofSize: 20)
         
         let stackview = UIStackView(arrangedSubviews: [image])
         stackview.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(stackview)
         
+        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        
+        contentView.addSubview(image)
+        image.addGestureRecognizer(tapGesture)
         NSLayoutConstraint.activate([
-            stackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            stackview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            stackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            stackview.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            image.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor),
         ])
-        
-        stackview.axis = .vertical
-        stackview.spacing = 10
+//
+//        stackview.axis = .vertical
+//        stackview.spacing = 10
         
     }
     
@@ -52,14 +43,16 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     }
     
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        
         self.NavVc = rootVc
         
-        image.image = UIImage(named: catalog.imageURL)
-        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+//        image.image = UIImage(named: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL)
+       
         tapGesture.id = catalog.albumId
-        image.addGestureRecognizer(tapGesture)
         
         title.text = catalog.title
+        
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
@@ -71,6 +64,20 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         NavVc!.pushViewController(view, animated: true)
         
     }
+    
+    let tagline = UILabel()
+    let image: UIImageView = {
+        
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 5
+        image.contentMode = .scaleAspectFill
+        image.isUserInteractionEnabled = true
+        
+        return image
+    }()
+    let title = UILabel()
+    
 }
 class ArtistSection: UICollectionViewCell,  Cell{
     
@@ -214,7 +221,7 @@ class TrendingSection: UICollectionViewCell, Cell{
         tapGesture?.track = track
         
         chartPosition.text = String(indexPath! + 1)
-        image.image = UIImage(named: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
@@ -293,7 +300,7 @@ class MediumImageSlider: UICollectionViewCell, Cell{
         
         addGestureRecognizer(tapgesture!)
         
-        image.image = UIImage(named: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
     }
@@ -373,7 +380,7 @@ class TrackHistorySlider: UICollectionViewCell, Cell {
         
         addGestureRecognizer(tapgesture!)
         
-        image.image = UIImage(named: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
     }
@@ -468,7 +475,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         
 //        let index = Int(indexPath!) + 1
 //        vc = rootVc!
-        image.image = UIImage(named: item.imageURL)
+        image.setUpImage(url: item.imageURL)
         name.text = item.title
         artist.text = item.name
         

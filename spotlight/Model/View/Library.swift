@@ -21,9 +21,9 @@ class Library: UIViewController, UISearchResultsUpdating {
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         view.addSubview(navigation)
-        navigation.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
-        navigation.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
+//        navigation.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
+//        navigation.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        navigation.backgroundColor = .systemRed
 //        navigation.topAnchor.constraint(equalTo: view.topAnchor, constant: 135).isActive = true
         
         navigation.addSubview(saved)
@@ -33,7 +33,7 @@ class Library: UIViewController, UISearchResultsUpdating {
         view.addSubview(scrollContainer)
 //
 //
-//        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate([
 //            saved.leadingAnchor.constraint(equalTo: navigation.leadingAnchor, constant: 20),
 //            saved.centerYAnchor.constraint(equalTo: navigation.centerYAnchor),
 //
@@ -48,12 +48,9 @@ class Library: UIViewController, UISearchResultsUpdating {
 //            scrollContainer.widthAnchor.constraint(equalToConstant: view.bounds.width)
 //
 //
-//        ])
+        ])
 //
-        let searchController = UISearchController(searchResultsController: SearchResultViewController())
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = "Search Library"
-        navigationItem.searchController = searchController
+
     
         
     }
@@ -69,9 +66,9 @@ class Library: UIViewController, UISearchResultsUpdating {
     }
     
     let navigation: UIView = {
-        let view = UIView()
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100))
 //        view.backgroundColor = .red
-        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     

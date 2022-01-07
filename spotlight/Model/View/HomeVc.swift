@@ -26,7 +26,7 @@ class HomeVc: UIViewController {
             case .success(let data ):
                 self.section = data
                 
-                self.initCollectionView()
+            self.initCollectionView()
             case .failure(let err ):
                 print(err)
             }

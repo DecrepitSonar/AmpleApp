@@ -85,13 +85,13 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
 //            print("Section", section)
             
             print(item)
-            
-            switch(section){
-            case "Tracks":
+//
+//            switch(section){
+//            case "Tracks":
                 return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, TrackDetailStrip.self, with: item, indexPath: IndexPath)
-            default:
-                return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, MediumImageSlider.self, with: item, indexPath: IndexPath)
-            }
+//            default:
+//                return LayoutManager.configureCell(collectionView: collectionview, navigationController: self.navigationController, MediumImageSlider.self, with: item, indexPath: IndexPath)
+//            }
 
 //
         }
@@ -116,8 +116,8 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                     return nil
                 }
                 
-                header.image.image = UIImage(named: section.imageURL!)
-                header.imageContainer.image = UIImage(named: section.imageURL!)
+                header.image.setUpImage(url: section.imageURL!)
+                header.imageContainer.setUpImage(url: section.imageURL!)
 
                 header.title.text = section.title
                 header.artist.text = section.name
@@ -162,16 +162,16 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         let compositionalLayout = UICollectionViewCompositionalLayout {
             index, layoutEnvironment in
  
-            switch(self.section![index].type){
-            case "Tracks":
-                return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
+//            switch(self.section![index].type){
+//            case "Tracks":
+            return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
             
 //            case "Video":
 //                return LayoutManager.createWideLayout(using: self.section ?? LibItem.self)
                 
-            default:
-                return LayoutManager.createMediumImageSliderSection(using: self.section ?? LibItem.self)
-            }
+//            default:
+//                return LayoutManager.createMediumImageSliderSection(using: self.section ?? LibItem.self)
+//            }
         }
 
         return compositionalLayout

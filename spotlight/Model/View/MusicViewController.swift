@@ -42,10 +42,6 @@ class MusicViewController: UIViewController, UISearchResultsUpdating {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browse"
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-     
-        let searchController = UISearchController(searchResultsController: SearchResultViewController())
-        searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
         
     }
 

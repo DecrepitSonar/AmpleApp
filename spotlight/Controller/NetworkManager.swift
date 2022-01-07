@@ -22,9 +22,8 @@ class NetworkManager {
 //    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
     static let baseURL = "http://localhost:8080/api/v1/"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
-    static let audioBaseUrl = "https://prophile.nyc3.digitaloceanspaces.com/";
     
-    // Authentication
+    static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
         
         let url = URL(string: "\(baseURL)authenticate")
@@ -32,7 +31,7 @@ class NetworkManager {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         
-//        print(user)
+        print(user)
         
         guard let credentials = try? JSONEncoder().encode(user) else {
             print("could not encode user credentials for authentication request")
@@ -83,8 +82,6 @@ class NetworkManager {
         }
         
     }
-    
-    // Home page content
     static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)home")
         
@@ -116,7 +113,6 @@ class NetworkManager {
         }.resume()
         
     }
-
     static func loadBrowesPageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)browse")
         
@@ -148,8 +144,6 @@ class NetworkManager {
         }.resume()
         
     }
-
-//    // Artists
     static func getArtistsProfileData(artistId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)artist?id=\(artistId)")
         
@@ -181,8 +175,6 @@ class NetworkManager {
         }.resume()
 
     }
-    
-    // Albums
     static func getAlbum(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)album?albumId=\(id)")
         print(id)
@@ -218,7 +210,6 @@ class NetworkManager {
                }.resume()
 
     }
-    
     static func getAlbums(completion: @escaping (Result<[Album], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/albums")
         
@@ -248,21 +239,42 @@ class NetworkManager {
                    }
                }.resume()
     }
-    
 //    static func saveAlbum(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // add albums to saved
 //    static func unsaveAlbum(with url: String, id: String, completion: @escaping (Result<Bool, NetworkError>) -> Void){} // removed album from saved
 
     // images
-    static func getImage(with url: String, imgUrl: String){} // Get image with ImgUrl
+    static func getImage(with url: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
+        let url = URL(string: "\(CDN)images/\(url).jpg")
+        
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.ServerError))
+                    print(error)
+                }
+
+                guard let httpresponse = response as? HTTPURLResponse else {
+                    print(response)
+                    return
+                }
+                print( httpresponse)
+                guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
+                    completion(.failure(.ServerError))
+//                    print("mime err")
+                    return
+                }
+
+                completion(.success(Data(data!)))
+            }
+        }.resume()
+        
+    } // Get image with ImgUrl
     
     // Audio
     static func getAudioTrack(track: String, completion: @escaping (Result<Data, NetworkErr>) -> Void){
     
-        let url = URL(string: "\(audioBaseUrl)\(track).mp3")
+        let url = URL(string: "\(CDN)audio/\(track).mp3")
         
-//        let request = URLRequest(url: url!)
-        
-        print(url)
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
                 if error != nil {
@@ -388,5 +400,30 @@ class NetworkManager {
                }.resume()
         
     }
-    
+
+    static func getSearchResult(query: String, completion: @escaping (Result<LibItem, NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)search?q=\(query)")
+        
+        print(url)
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            if error != nil {
+                completion(.failure(.servererr))
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print(response)
+                return
+            }
+            
+            guard let mimeType = httpResponse.mimeType, mimeType == "application/json" else{
+                completion(.failure(.servererr))
+                return
+            }
+            
+//            do {
+//                let data = JSONDecoder().decode(<#T##type: Decodable.Protocol##Decodable.Protocol#>, from: <#T##Data#>)
+//            }
+            
+        }.resume()
+    }
 }
