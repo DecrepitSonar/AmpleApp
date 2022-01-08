@@ -19,14 +19,14 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1/"
-    static let baseURL = "http://localhost:8080/api/v1/"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
         
-        let url = URL(string: "\(baseURL)authenticate")
+        let url = URL(string: "\(baseURL)/authenticate")
         var request = URLRequest(url: url!)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
@@ -83,7 +83,7 @@ class NetworkManager {
         
     }
     static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)home")
+        let url = URL(string: "\(baseURL)/home")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
@@ -114,20 +114,21 @@ class NetworkManager {
         
     }
     static func loadBrowesPageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)browse")
+        let url = URL(string: "\(baseURL)/browse")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
                 if error != nil {
-                    completion(.failure(.servererr))
-//                    print(error)
+//                    completion(.failure(.servererr))
+                    print(error)
                 }
                 
                 guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
+                    
                     return
                 }
                 
+                print(httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
                     completion(.failure(.servererr))
 //                    print()
@@ -145,7 +146,7 @@ class NetworkManager {
         
     }
     static func getArtistsProfileData(artistId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)artist?id=\(artistId)")
+        let url = URL(string: "\(baseURL)/artist?id=\(artistId)")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
@@ -176,7 +177,7 @@ class NetworkManager {
 
     }
     static func getAlbum(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)album?albumId=\(id)")
+        let url = URL(string: "\(baseURL)/album?albumId=\(id)")
         print(id)
                       
         URLSession.shared.dataTask(with: url!){ data, response, error in
@@ -299,7 +300,7 @@ class NetworkManager {
             
     }
     static func getTracks(completion: @escaping (Result<[Track], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)tracks")
+        let url = URL(string: "\(baseURL)/tracks")
     
                       
         URLSession.shared.dataTask(with: url!){ data, response, error in
@@ -366,7 +367,7 @@ class NetworkManager {
     }
     static func getRandomAudioTrack( completion: @escaping (Result<Track, NetworkError>) -> Void){
     
-        let url = URL(string: "\(baseURL)track?isRandom=true")
+        let url = URL(string: "\(baseURL)/track?isRandom=true")
 //        let request = URLRequest(url: url!)
         
 //        print(url)
@@ -402,7 +403,7 @@ class NetworkManager {
     }
 
     static func getSearchResult(query: String, completion: @escaping (Result<LibItem, NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)search?q=\(query)")
+        let url = URL(string: "\(baseURL)/search?q=\(query)")
         
         print(url)
         URLSession.shared.dataTask(with: url!){ data, response, error in

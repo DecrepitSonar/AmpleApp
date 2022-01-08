@@ -61,18 +61,9 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         reloadData()
     }
 
-    func setupGradient(){
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.2).cgColor]
-        gradientLayer.frame = view.frame
-        gradientLayer.locations = [0.0,0.5]
-        
-        collectionView.layer.addSublayer(gradientLayer)
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = abs(collectionView.contentOffset.y)
-        print(contentOffsetY)
+//        print(contentOffsetY)
     }
     
  
@@ -116,10 +107,10 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                     return nil
                 }
                 
-                header.image.setUpImage(url: section.imageURL!)
+                header.albumImage.setUpImage(url: section.imageURL!)
                 header.imageContainer.setUpImage(url: section.imageURL!)
 
-                header.title.text = section.title
+                header.trackTitle.text = section.title
                 header.artist.text = section.name
                 header.pageTag.text = section.type
                 header.artistAviImage.image = UIImage(named: section.artistImgURL!)
@@ -162,16 +153,8 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         let compositionalLayout = UICollectionViewCompositionalLayout {
             index, layoutEnvironment in
  
-//            switch(self.section![index].type){
-//            case "Tracks":
             return LayoutManager.createTableLayout(using: self.section ?? LibItem.self)
-            
-//            case "Video":
-//                return LayoutManager.createWideLayout(using: self.section ?? LibItem.self)
-                
-//            default:
-//                return LayoutManager.createMediumImageSliderSection(using: self.section ?? LibItem.self)
-//            }
+           
         }
 
         return compositionalLayout

@@ -60,7 +60,6 @@ class AViCard: UIView {
     }
 } // User avitar image
 
-// Buttons
 class LargePrimaryButton: UIButton{
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -98,69 +97,10 @@ class TextFieldWithPadding: UITextField {
     }
     
 }
-//
-//// Extentions
-extension UITextField {
-    
-    func addBottomBorder(){
-        let bottomLine = CALayer()
-        bottomLine.frame = CGRect(x: 0, y: self.frame.size.height - 1, width: self.frame.size.width, height: 1)
-//        backgroundColor = .white
-//        textColor = .black
-        bottomLine.cornerRadius = 10
-        borderStyle = .none
-        layer.addSublayer(bottomLine)
-    }
-    
-}
-extension UILabel {
-    
-    func setFont(with size: CGFloat){
-        font = UIFont(name: "Helvetica Neue", size: size)
-    }
-    func setBoldFont(with size: CGFloat){
-        font = UIFont.boldSystemFont(ofSize: size)
-    }
-    
-}
-extension UIImageView {
-    func setUpImage(url: String){
-        NetworkManager.getImage(with: url) { result in
-            switch(result){
-            case .success(let data):
-                self.image = UIImage(data: data)
-            case .failure(let err):
-                print(err)
-                return
-            }
-        }
-    }
-}
+
 class MiniPlayer: UIView {
     
     var timer = Timer()
-    let img: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "6lack")
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        view.clipsToBounds = true
-//        view.layer.cornerRadius = 5
-        
-        return view
-        
-    }()
-    
-    let artistLabel = UILabel()
-    let trackLabel = UILabel()
-
-    let playBtn = UIButton()
-    let playNext = UIButton()
-    let prevBtn = UIButton()
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -177,18 +117,7 @@ class MiniPlayer: UIView {
         layer.borderWidth = 1
         layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
         
-        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20).isActive = true
-        heightAnchor.constraint(equalToConstant: 70).isActive = true
-        
         addSubview(img)
-        
-        artistLabel.text = "6lack"
-        artistLabel.textColor = .secondaryLabel
-        artistLabel.setFont(with: 10)
-        
-        trackLabel.text = "Nonchallant"
-        trackLabel.textColor = .label
-        trackLabel.setFont(with: 12)
         
         trackLabel.widthAnchor.constraint(equalToConstant: 120).isActive = true
         
@@ -198,35 +127,28 @@ class MiniPlayer: UIView {
         
         addSubview(trackInfoStack)
         
-        prevBtn.setImage(UIImage(systemName: "backward.fill"), for: .normal)
-        prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
-        playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
-        
-        playNext.setImage(UIImage(systemName: "forward.fill"), for: .normal)
-        playNext.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        playNext.addTarget(self, action: #selector(nextTrack), for: .touchUpInside)
-        
         let buttonStack = UIStackView(arrangedSubviews: [playBtn, playNext])
         buttonStack.axis = .horizontal
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         buttonStack.spacing = 20
         
         addSubview(buttonStack)
-        
-//        layer.cornerRadius = 10
-        
-        img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-        img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
-        img.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
-        buttonStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20).isActive = true
-        buttonStack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
-        trackInfoStack.leadingAnchor.constraint(equalTo: img.trailingAnchor, constant: 20).isActive = true
-        trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+
+        NSLayoutConstraint.activate([
+            
+            widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20),
+            heightAnchor.constraint(equalToConstant: 70),
+            
+            img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            img.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            buttonStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            buttonStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            trackInfoStack.leadingAnchor.constraint(equalTo: img.trailingAnchor, constant: 20),
+            trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -253,7 +175,7 @@ class MiniPlayer: UIView {
                   if let track = object["track"]{
                       let track = track as? Track
                       
-                      img.image = UIImage(named: track!.imageURL)
+                      img.setUpImage(url: track!.imageURL)
                       artistLabel.text = track!.name
                       trackLabel.text = track!.title
                   }
@@ -279,12 +201,10 @@ class MiniPlayer: UIView {
 //            }
 //        }
     }
-    
     @objc func nextTrack(){
         AudioManager.playerController(option: .next)
         
     }
-    
     @objc func togglePlayBtn(sender: Notification){
         
         if (player!.isPlaying){
@@ -294,8 +214,6 @@ class MiniPlayer: UIView {
             playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
         }
     }
-
-    
     @objc func togglePlayState(){
         guard player != nil else {
             return
@@ -314,11 +232,63 @@ class MiniPlayer: UIView {
         print("pressed")
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }
-    
     @objc func openPlayer(){
         NotificationCenter.default.post(name: NSNotification.Name("player"), object: nil)
     }
    
+    let img: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "6lack")
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        view.clipsToBounds = true
+//        view.layer.cornerRadius = 5
+        
+        return view
+        
+    }()
+    let artistLabel: UILabel = {
+        let label = UILabel()
+        label.text = "6lack"
+        label.textColor = .secondaryLabel
+        label.setFont(with: 10)
+        return label
+        
+    }()
+    let trackLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Nonchallant"
+        label.textColor = .label
+        label.setFont(with: 12)
+        return label
+    }()
+    let playBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
+        
+        return btn
+    }()
+    let playNext: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "forward.fill"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(nextTrack), for: .touchUpInside)
+        
+        return btn
+    }()
+    let prevBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "backward.fill"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        return btn
+    }()
+    
     
 }
 class customTab: UITabBarController{
@@ -358,7 +328,7 @@ class customTab: UITabBarController{
         let library = UINavigationController(rootViewController: Library())
         library.tabBarItem = UITabBarItem(title: "Library", image: UIImage(systemName: "books.vertical"), tag: 4)
         
-                                           tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
     

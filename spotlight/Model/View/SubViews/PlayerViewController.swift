@@ -205,6 +205,8 @@ class PlayerViewController: UIViewController {
 //
         ])
         
+        
+        
     }
 
     

@@ -33,12 +33,14 @@
 		225314D326E523EF00D1F496 /* bundle-decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AB26E523EF00D1F496 /* bundle-decodable.swift */; };
 		225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AE26E523EF00D1F496 /* SceneDelegate.swift */; };
 		225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314F826E5241300D1F496 /* UtilityFunctions.swift */; };
+		227A1B1C278A191B00314ED7 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227A1B1B278A191A00314ED7 /* extensions.swift */; };
 		229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F559E26E5288D00D10B36 /* NetworkManager.swift */; };
 		229F561126E52EFC00D10B36 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F561026E52EFC00D10B36 /* Models.swift */; };
 		229F561A26E5300000D10B36 /* profileData.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561626E5300000D10B36 /* profileData.json */; };
 		229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561726E5300000D10B36 /* AlbumDetail.json */; };
 		229F561C26E5300000D10B36 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561826E5300000D10B36 /* catalog.json */; };
 		229F561D26E5300000D10B36 /* overview.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561926E5300000D10B36 /* overview.json */; };
+		22ABF28F2789F78300D0F65F /* TrackOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ABF28E2789F78200D0F65F /* TrackOptionsViewController.swift */; };
 		22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FAAF422732D6D20021F67C /* AudioManager.swift */; };
 		22FAAF452732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
@@ -90,12 +92,14 @@
 		225314AB26E523EF00D1F496 /* bundle-decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "bundle-decodable.swift"; sourceTree = "<group>"; };
 		225314AE26E523EF00D1F496 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		225314F826E5241300D1F496 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
+		227A1B1B278A191A00314ED7 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		229F559E26E5288D00D10B36 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		229F561026E52EFC00D10B36 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		229F561626E5300000D10B36 /* profileData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = profileData.json; sourceTree = "<group>"; };
 		229F561726E5300000D10B36 /* AlbumDetail.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AlbumDetail.json; sourceTree = "<group>"; };
 		229F561826E5300000D10B36 /* catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		229F561926E5300000D10B36 /* overview.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = overview.json; sourceTree = "<group>"; };
+		22ABF28E2789F78200D0F65F /* TrackOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackOptionsViewController.swift; sourceTree = "<group>"; };
 		22FAAF422732D6D20021F67C /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		22FAAF442732D8F50021F67C /* 6LACK - Nonchalant (Official Music Video).mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "6LACK - Nonchalant (Official Music Video).mp3"; sourceTree = "<group>"; };
 		D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightTests.swift; sourceTree = "<group>"; };
@@ -162,6 +166,7 @@
 				222E8BCE277538B10016C62F /* ArtistProfileVc.swift */,
 				222E8BCF277538B10016C62F /* ReleasesVc.swift */,
 				222E8BD0277538B10016C62F /* OverViewController.swift */,
+				22ABF28E2789F78200D0F65F /* TrackOptionsViewController.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -213,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				225314F826E5241300D1F496 /* UtilityFunctions.swift */,
+				227A1B1B278A191A00314ED7 /* extensions.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -420,8 +426,10 @@
 				222E8BDC277538B10016C62F /* AccountSettingsVc.swift in Sources */,
 				222E8BD8277538B10016C62F /* MusicViewController.swift in Sources */,
 				222E8BE1277538B10016C62F /* PlayerViewController.swift in Sources */,
+				22ABF28F2789F78300D0F65F /* TrackOptionsViewController.swift in Sources */,
 				222E8BEA277538B10016C62F /* components.swift in Sources */,
 				225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */,
+				227A1B1C278A191B00314ED7 /* extensions.swift in Sources */,
 				222E8BDD277538B10016C62F /* PrivacySettingsVc.swift in Sources */,
 				222E8BDA277538B10016C62F /* NotificationSettingsVc.swift in Sources */,
 				225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */,
