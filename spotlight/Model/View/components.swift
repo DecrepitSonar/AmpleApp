@@ -116,7 +116,7 @@ class MiniPlayer: UIView {
         
         layer.borderWidth = 1
         layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
-        
+        layer.cornerRadius = 5
         addSubview(img)
         
         trackLabel.widthAnchor.constraint(equalToConstant: 120).isActive = true
@@ -233,6 +233,7 @@ class MiniPlayer: UIView {
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }
     @objc func openPlayer(){
+        print("pressed")
         NotificationCenter.default.post(name: NSNotification.Name("player"), object: nil)
     }
    

@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class MusicViewController: UIViewController, UISearchResultsUpdating {
+class MusicViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -45,15 +45,15 @@ class MusicViewController: UIViewController, UISearchResultsUpdating {
         
     }
 
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else {
-            return
-        }
-        
-        let vc = searchController.searchResultsController as? SearchResultViewController
-        vc?.view.backgroundColor = .systemRed
-        print(text)
-    }
+//    func updateSearchResults(for searchController: UISearchController) {
+//        guard let text = searchController.searchBar.text else {
+//            return
+//        }
+//
+//        let vc = searchController.searchResultsController as? SearchResultViewController
+//        vc?.view.backgroundColor = .systemRed
+//        print(text)
+//    }
     
     @objc func openPlayer(sender: Notification){
         let player = PlayerViewController()
@@ -61,7 +61,7 @@ class MusicViewController: UIViewController, UISearchResultsUpdating {
            
         print("presenting player")
         player.modalPresentationStyle = .overFullScreen
-      setNeedsStatusBarAppearanceUpdate()
+//      setNeedsStatusBarAppearanceUpdate()
         navigationController!.present(player, animated: true)
 
     }

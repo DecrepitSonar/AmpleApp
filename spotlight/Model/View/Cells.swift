@@ -1060,8 +1060,6 @@ class TrackStrip: UITableViewCell{
 //    }
     
 }
-
-// Settings
 class SettingsCell: UITableViewCell {
     static let identifier = "settingCell"
     

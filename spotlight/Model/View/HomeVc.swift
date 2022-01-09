@@ -21,7 +21,6 @@ class HomeVc: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Home"
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        Notification.default.addObserver(self, selector: #selector(), name: NSNotification.Name("player"), object: nil)
                                          
         NetworkManager.loadHomePageContent { result in
             switch( result ){
@@ -33,10 +32,6 @@ class HomeVc: UIViewController {
                 print(err)
             }
         }
-    }
-    
-    @objc func openPlayer(sender: U){
-        vc.
     }
     
     func initCollectionView(){

@@ -19,8 +19,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -421,10 +421,34 @@ class NetworkManager {
                 return
             }
             
-//            do {
-//                let data = JSONDecoder().decode(<#T##type: Decodable.Protocol##Decodable.Protocol#>, from: <#T##Data#>)
-//            }
-            
         }.resume()
     }
+    static func getSearchHistory(completion: @escaping (Result<[LibItem], NetworkError>) -> Void) {
+        
+        let url = URL(string: "\(baseURL)/search/history")
+        
+        URLSession.shared.dataTask(with: url!) { data, response, error in
+            
+            if error != nil {
+                print(error)
+                return
+            }
+            
+            guard let urlResponse = response as? HTTPURLResponse else{
+                return
+            }
+            
+            guard let mimeType = urlResponse.mimeType, mimeType == "application/json" else{
+                return
+            }
+            
+            do{
+                let decoder = JSONDecoder()
+                
+                let data =  try? decoder.decode([LibItem].self, from: data!)
+                completion(.success(data!))
+            }
+        }.resume()
+    }
+    
 }
