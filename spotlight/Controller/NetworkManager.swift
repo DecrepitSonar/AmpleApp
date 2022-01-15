@@ -19,8 +19,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
