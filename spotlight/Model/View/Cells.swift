@@ -408,7 +408,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         let labelStack = UIStackView(arrangedSubviews: [trackTitleLabel, artistNameLabel])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [trackImage, labelStack, optionsBtn])
+        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, optionsBtn])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
@@ -419,9 +419,9 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         
         NSLayoutConstraint.activate([
             
-            trackImage.heightAnchor.constraint(equalToConstant: 50),
-            trackImage.widthAnchor.constraint(equalToConstant: 50),
-            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
+//            trackImage.heightAnchor.constraint(equalToConstant: 50),
+//            trackImage.widthAnchor.constraint(equalToConstant: 50),
+//            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
             
             optionsBtn.widthAnchor.constraint(equalToConstant: 30 ),
             optionsBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
@@ -786,16 +786,6 @@ class ProfileHeader: UICollectionViewCell, Cell {
   
     static var reuseIdentifier: String =  "profile Header"
     
-    var image = UIImageView()
-    var name = UILabel()
-    var artistAvi = UIImageView()
-    
-    let followBtn = UIButton()
-    let optionsBtn = UIButton()
-    let verifiedIcon = UIButton()
-    
-    let listener = UILabel()
-
     let container = UIView(frame: .zero)
     
     var stack = UIStackView()
@@ -805,43 +795,23 @@ class ProfileHeader: UICollectionViewCell, Cell {
         
 //        let seperator = UIView(frame: .zero)
 //        seperator.backgroundColor = .quaternaryLabel
-//
-        name.setFont(with: 30)
-        name.translatesAutoresizingMaskIntoConstraints = false
-
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.contentMode = .scaleAspectFill
         
         addSubview(image)
         
-        image.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        image.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        image.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        image.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-         
-        followBtn.setTitle("Follow", for:  .normal)
-        followBtn.titleLabel!.setFont(with: 12)
-        followBtn.layer.borderWidth = 1
-        followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-        followBtn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
-        followBtn.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        followBtn.layer.cornerRadius = 5
-
-        optionsBtn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-
-        verifiedIcon.setImage(UIImage(systemName: "checkmark.seal.fill"), for: .normal)
-        verifiedIcon.titleLabel?.setFont(with: 5)
-        
-        listener.textColor = .secondaryLabel
-        listener.setFont(with: 10)
-        
-        self.stack = UIStackView(arrangedSubviews: [name, followBtn])
+        self.stack = UIStackView(arrangedSubviews: [name, followBtn, subscribersLabel])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .horizontal
         stack.alignment = .center
         stack.distribution = .equalCentering
     
-        backgroundColor = .red
+        NSLayoutConstraint.activate([
+            
+            image.topAnchor.constraint(equalTo: topAnchor),
+            image.leadingAnchor.constraint(equalTo: leadingAnchor),
+            image.trailingAnchor.constraint(equalTo: trailingAnchor),
+            image.bottomAnchor.constraint(equalTo: bottomAnchor)
+            
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -851,10 +821,10 @@ class ProfileHeader: UICollectionViewCell, Cell {
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
 
         name.text = item.name!
-        let listnersCount = NumberFormatter.localizedString(from: NSNumber(value: item.listeners!), number: NumberFormatter.Style.decimal)
-        listener.text = "Listeners: \(listnersCount)"
+        let subscribers = NumberFormatter.localizedString(from: NSNumber(value: item.subscribers!), number: NumberFormatter.Style.decimal)
+        subscribersLabel.text = "Subscribers: \(subscribers)"
 
-        image.image = UIImage(named: item.imageURL)
+        image.setUpImage(url: item.imageURL)
 
         setupGradient()
     }
@@ -877,7 +847,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
         stack.alignment = .center
         stack.spacing = 10
 
-        let containerStack = UIStackView(arrangedSubviews: [stack, followBtn, listener ])
+        let containerStack = UIStackView(arrangedSubviews: [stack, followBtn ])
         containerStack.axis = .vertical
         containerStack.alignment = .leading
         containerStack.spacing = 7
@@ -895,6 +865,56 @@ class ProfileHeader: UICollectionViewCell, Cell {
     func didTap(_sender: CustomGestureRecognizer) {
         
     }
+    
+    var image: UIImageView = {
+        
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.contentMode = .scaleAspectFill
+        return image
+        
+    }()
+    var name: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 30)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    var artistAvi: UIImageView = {
+        let image = UIImageView()
+        return image
+    }()
+    
+    let followBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Follow", for:  .normal)
+        btn.titleLabel!.setFont(with: 12)
+        btn.layer.borderWidth = 1
+        btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+        btn.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        btn.layer.cornerRadius = 5
+        return btn
+        
+    }()
+    let optionsBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        return btn
+    }()
+    let verifiedIcon: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "checkmark.seal.fill"), for: .normal)
+        btn.titleLabel?.setFont(with: 5)
+        return btn
+    }()
+    
+    let subscribersLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.setFont(with: 10)
+        return label
+    }()
 }
 class CollectionCell: UICollectionViewCell, Cell{
     
@@ -963,7 +983,7 @@ class CollectionCell: UICollectionViewCell, Cell{
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
 
         chartPosition.text = "1"
-        image.image = UIImage(named: item.imageURL)
+        image.setUpImage(url: item.imageURL)
         title.text = item.title
         artist.text = item.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)

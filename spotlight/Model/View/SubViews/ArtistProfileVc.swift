@@ -22,6 +22,7 @@ class Profile: UIViewController {
             switch( result) {
             case .success(let data):
                 self.section = data
+                
                 self.initCollection(
                 )
             case .failure(let err):

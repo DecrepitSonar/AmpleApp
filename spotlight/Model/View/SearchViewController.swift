@@ -48,7 +48,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 
         view.addSubview(tableview)
         
-        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+//        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         tableview.register(GenreColletionCell.self, forCellReuseIdentifier: GenreColletionCell.reuseableIdentifier)
         tableview.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
         
@@ -153,7 +153,7 @@ class GenreColletionCell: UITableViewCell, UICollectionViewDelegate, UICollectio
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
+//        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
         
         collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionview.dataSource = self

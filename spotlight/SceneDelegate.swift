@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        _ = UINavigationController(rootViewController: LoginViewController())
+        let vc = UINavigationController(rootViewController: MusicViewController())
 
 //        navigationController.navigationBar.tintColor = UIColor.init(displayP3Red: 0 / 255, green: 0 / 255, blue: 0 / 255, alpha: 1)
         

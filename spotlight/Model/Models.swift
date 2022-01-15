@@ -16,36 +16,75 @@ struct credentials: Codable{
     var username: String
     var password: String
 }
+//
+//struct LibObject: Codable, Hashable {
+//    var id: String
+//    var artistId: String?
+//    var type: String
+//    var title: String?
+//    var tagline: String?
+//    var name: String?
+//    var imageURL: String?
+//    var artistImgURL: String?
+//    var items: [LibItem]?
+//}
 
 struct LibObject: Codable, Hashable {
     var id: String
-    var artistId: String?
     var type: String
-    var title: String?
     var tagline: String?
-    var name: String?
-    var imageURL: String?
-    var artistImgURL: String?
     var items: [LibItem]?
+    var name: String?
+    var artistImgURL: String?
+    var title: String?
+    var imageURL: String?
+    var artistId: String?
+    var releaseDate: String?
 }
 
-struct LibItem: Codable ,Hashable{
+struct LibItem: Codable, Hashable {
+    
     var id: String
+    var trackNum: Int?
+    var genre: String?
     var type: String?
-    var trackNum: String?
     var title: String?
     var artistId: String?
-    var albumId: String?
-    var imageURL: String
-    var playCount: Int32?
     var name: String?
+    var imageURL: String
+    var audioURL: String?
+    var albumId: String?
+    var playCount: Int32?
 //    var followers: String?
-    var listeners: Int32?
+    var subscribers: Int32?
     var isVerified: Bool?
 //    var bio: String?
-//    var dateJoined: String?
-    var audioURL: String?
+    var joinDate: String?
+//    var audioURL: String?
 }
+//struct LibItem: Codable ,Hashable{
+//    
+////    var _id: String?
+//    var id: String
+////    var trackNum: Int?
+//    var genre: String?
+//    var type: String
+//    var title: String?
+//    var artistId: String?
+//    var name: String?
+//    var imageURL: String
+//    var audioURL: String?
+//    var albumId: String?
+//    var playCount: Int32?
+////    var followers: String?
+//    var listeners: Int32?
+//    var isVerified: Bool?
+////    var bio: String?
+//    var joinDate: String?
+////    var audioURL: String?
+////    var __v: Int?
+//
+//}
 
 struct AlbumDetail: Codable, Hashable {
     var id: String

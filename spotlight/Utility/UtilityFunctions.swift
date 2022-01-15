@@ -189,7 +189,7 @@ class LayoutManager {
         return supplementoyItem
     }
     static func createProfileHeaderLayout() -> NSCollectionLayoutBoundarySupplementaryItem {
-        let item = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.60))
+        let item = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.90))
         
         let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: item, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         

@@ -28,7 +28,7 @@ class AViCard: UIView {
         setupLabel(name: name)
     }
     func setupImg(img: String){
-        imgView.image = UIImage(named: img)
+        imgView.setUpImage(url: img)
         imgView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.layer.cornerRadius = 35

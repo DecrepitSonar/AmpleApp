@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class HomeVc: UIViewController {
 
@@ -20,19 +21,49 @@ class HomeVc: UIViewController {
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Home"
+        
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
                                          
         NetworkManager.loadHomePageContent { result in
             switch( result ){
             case .success(let data ):
-                self.section = data
                 
-            self.initCollectionView()
+                let date = Date()
+                print(date.formateDate(dateString: "2022-01-11T01:25:41.922Z"))
+                
+//                print( formattedDate)
+
+                if(data.isEmpty){
+                    self.setAsEmpty()
+                }
+                else{
+                    self.section = data
+                    self.initCollectionView()
+                }
+                
             case .failure(let err ):
                 print(err)
             }
         }
     }
+    
+    func setAsEmpty(){
+        
+        let label = UILabel()
+        label.text = "Your new here huh?"
+        label.setFont(with: 20)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .secondaryLabel
+        
+        view.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    
     
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())

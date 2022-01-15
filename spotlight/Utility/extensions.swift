@@ -64,4 +64,21 @@ extension UIImage {
         
     }
 }
-
+extension Date {
+    func formateDate(dateString: String) -> String {
+        
+        var date =  ""
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        
+        if let formattedDate = formatter.date(from: dateString){
+            let dateFormat = DateFormatter()
+            dateFormat.locale = Locale.current
+            dateFormat.dateStyle = .medium
+            date =  dateFormat.string(from: formattedDate)
+        }
+        
+        return date
+    }
+}

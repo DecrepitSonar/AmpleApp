@@ -113,10 +113,13 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 header.trackTitle.text = section.title
                 header.artist.text = section.name
                 header.pageTag.text = section.type
-                header.artistAviImage.image = UIImage(named: section.artistImgURL!)
+                header.artistAviImage.setUpImage(url: section.artistImgURL!)
                 header.artistId = section.artistId!
                 header.vc = self?.navigationController
-                header.datePublished.text = "\(section.items!.count) Tracks, Published 2019, 45 minutes"
+                
+                let date = Date()
+                let publishDate = date.formateDate(dateString: section.releaseDate!)
+                header.datePublished.text = "\(section.items!.count) \( section.items!.count > 1 ? "Tracks" : "Track"), Published \(publishDate)"
                 
                 for i in 0..<section.items!.count {
                     let item  = section.items![i]

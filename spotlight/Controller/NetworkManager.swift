@@ -19,8 +19,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -89,7 +89,7 @@ class NetworkManager {
             DispatchQueue.main.async {
                 if error != nil {
                     completion(.failure(.servererr))
-//                    print(error)
+                    print(error)
                 }
                 
                 guard let httpresponse = response as? HTTPURLResponse else {
@@ -136,11 +136,18 @@ class NetworkManager {
                 }
                 
                 let decoder = JSONDecoder()
+                do {
+                    let dataResponse = try decoder.decode([LibObject].self, from: data!)
+//                    print(dataResponse)
+                    completion(.success(dataResponse))
+                }
+                catch{
+                    print(error)
+                }
                 
-                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
                 
-//                print(dataResponse)
-                completion(.success(dataResponse!))
+                
+                
             }
         }.resume()
         
@@ -170,7 +177,7 @@ class NetworkManager {
 
                 let dataResponse = try? decoder.decode([LibObject].self, from: data!)
 
-//                print(dataResponse!)
+//                print(dataResponse)
                 completion(.success(dataResponse!))
             }
         }.resume()
@@ -192,6 +199,7 @@ class NetworkManager {
                            return
                        }
        
+                       print(httpresponse)
                        guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
                            completion(.failure(.servererr))
                            return
@@ -445,8 +453,14 @@ class NetworkManager {
             do{
                 let decoder = JSONDecoder()
                 
-                let data =  try? decoder.decode([LibItem].self, from: data!)
-                completion(.success(data!))
+                do{
+                    let data =  try decoder.decode([LibItem].self, from: data!)
+                    
+                    completion(.success(data))
+                }
+                catch{
+                    print(error)
+                }
             }
         }.resume()
     }
