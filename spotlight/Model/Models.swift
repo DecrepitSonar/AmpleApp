@@ -8,6 +8,7 @@
 import Foundation
 
 struct UserCredentials: Decodable {
+    var userId: String
     var username: String
     var apiKey: String
 }
@@ -42,8 +43,7 @@ struct LibObject: Codable, Hashable {
     var releaseDate: String?
 }
 
-struct LibItem: Codable, Hashable {
-    
+struct LibItem: Codable, Hashable {  
     var id: String
     var trackNum: Int?
     var genre: String?
@@ -62,29 +62,6 @@ struct LibItem: Codable, Hashable {
     var joinDate: String?
 //    var audioURL: String?
 }
-//struct LibItem: Codable ,Hashable{
-//    
-////    var _id: String?
-//    var id: String
-////    var trackNum: Int?
-//    var genre: String?
-//    var type: String
-//    var title: String?
-//    var artistId: String?
-//    var name: String?
-//    var imageURL: String
-//    var audioURL: String?
-//    var albumId: String?
-//    var playCount: Int32?
-////    var followers: String?
-//    var listeners: Int32?
-//    var isVerified: Bool?
-////    var bio: String?
-//    var joinDate: String?
-////    var audioURL: String?
-////    var __v: Int?
-//
-//}
 
 struct AlbumDetail: Codable, Hashable {
     var id: String

@@ -81,7 +81,7 @@ class LayoutManager {
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 50)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for collection Section")
         

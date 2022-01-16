@@ -8,9 +8,23 @@
 import UIKit
 import AVFoundation
 
+public class DynamicTableView: UITableView {
+    
+    public override var intrinsicContentSize: CGSize {
+        return contentSize
+    }
+    
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if( bounds.size != intrinsicContentSize ){
+            invalidateIntrinsicContentSize()
+        }
+    }
+}
 class SearchViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
 
-    var tableview: UITableView!
+    var tableview: DynamicTableView!
     
     let Genres = ["R&B", "Hip Hop", "Rap", "Soul"]
     var trackHistory = [LibItem](){
@@ -18,7 +32,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             tableview.reloadData()
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,7 +42,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
-        searchController.showsSearchResultsController = true
+//        searchController.showsSearchResultsController = true
         
         NetworkManager.getSearchHistory { result in
             switch(result){
@@ -40,19 +54,22 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             }
         }
         
-        tableview = UITableView()
+        tableview = DynamicTableView()
         tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame
+//        tableview.separatorColor = UIColor.clear
+        tableview.estimatedRowHeight = 50
 
         view.addSubview(tableview)
         
-//        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         tableview.register(GenreColletionCell.self, forCellReuseIdentifier: GenreColletionCell.reuseableIdentifier)
         tableview.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
         
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        
     }
     
 //
@@ -75,18 +92,22 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 //            case .failure(let err):
 //                vc.data = []
 //            }
+            
         }
     
         print(text)
     }
     
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
         switch(indexPath.section){
         case 0:
             return 150
         default:
             return 80
         }
+//        return UIT/ableView.automaticDimension
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch(section){
@@ -121,6 +142,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             let cell = tableview.dequeueReusableCell(withIdentifier: GenreColletionCell.reuseableIdentifier, for: indexPath) as! GenreColletionCell
             cell.configure(genres: Genres)
             return cell
+            
         default:
             if(trackHistory.count > 0 && trackHistory != nil){
                 let cell = tableview.dequeueReusableCell(withIdentifier: TrackStrip.reuseIdentifier, for: indexPath) as! TrackStrip
@@ -135,6 +157,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             cell.textLabel?.text = "No Recent Searchs"
             cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             return cell
+            
         }
     }
 }
@@ -153,7 +176,7 @@ class GenreColletionCell: UITableViewCell, UICollectionViewDelegate, UICollectio
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-//        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
         
         collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionview.dataSource = self

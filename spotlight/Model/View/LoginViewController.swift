@@ -201,8 +201,6 @@ class LoginViewController: UIViewController {
             logo.topAnchor.constraint(equalTo: viewLayer.topAnchor, constant:350),
             logo.centerXAnchor.constraint(equalTo: viewLayer.centerXAnchor),
 
-//
-//            loginForm.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 40 ),
             loginForm.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loginForm.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 150),
             loginForm.leadingAnchor.constraint(equalTo: viewLayer.leadingAnchor, constant: 20),
@@ -233,7 +231,7 @@ class LoginViewController: UIViewController {
                 case .success(let data):
     
                     UserDefaults.standard.set(data.apiKey , forKey: "userkey")
-                    UserDefaults.standard.set(data.username, forKey: "username")
+                    UserDefaults.standard.set(data.userId, forKey: "userId")
     
                     DispatchQueue.main.async {
                         self.present(self.tabVc, animated: true)
@@ -251,7 +249,7 @@ class LoginViewController: UIViewController {
             }
         }
         
-        print("Sending auth req")
+//        print("Sending auth req")
 
     }
 

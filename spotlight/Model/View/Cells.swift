@@ -224,7 +224,7 @@ class TrendingSection: UICollectionViewCell, Cell{
         image.setUpImage(url: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
-        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
+//        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
     
     }

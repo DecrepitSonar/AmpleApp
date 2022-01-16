@@ -314,7 +314,7 @@ class customTab: UITabBarController{
     
     override func viewWillAppear(_ animated: Bool) {
         
-        let homeVc = UINavigationController(rootViewController: HomeVc())
+        let homeVc = UINavigationController(rootViewController: MusicViewController())
         homeVc.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
         
         let musicVc = UINavigationController(rootViewController: MusicViewController())
@@ -335,7 +335,7 @@ class customTab: UITabBarController{
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [homeVc, musicVc, searchVc, library]
+        self.viewControllers = [homeVc, searchVc, library]
     
     }
 

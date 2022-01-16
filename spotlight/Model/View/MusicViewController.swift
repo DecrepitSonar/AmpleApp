@@ -27,8 +27,8 @@ class MusicViewController: UIViewController {
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
-        
-        NetworkManager.loadBrowesPageContent { result in
+        let user = UserDefaults.standard.object(forKey: "userId") as! String
+        NetworkManager.loadHomePageContent(userId: user ) { result in
             switch(result){
             case .success(let data):
                 print(data)
@@ -44,16 +44,6 @@ class MusicViewController: UIViewController {
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
     }
-
-//    func updateSearchResults(for searchController: UISearchController) {
-//        guard let text = searchController.searchBar.text else {
-//            return
-//        }
-//
-//        let vc = searchController.searchResultsController as? SearchResultViewController
-//        vc?.view.backgroundColor = .systemRed
-//        print(text)
-//    }
     
     @objc func openPlayer(sender: Notification){
         let player = PlayerViewController()
@@ -91,11 +81,11 @@ class MusicViewController: UIViewController {
         datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
 //            print("creating datasource")
             switch self.section[IndexPath.section].type {
-            case "Featured":
+            case "History":
 //                print("Adding Featured Section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
                                                    navigationController: self.navigationController,
-                                                   FeaturedHeader.self,
+                                                   TrendingSection.self,
                                                    with: item,
                                                    indexPath: IndexPath)
             case "Artists":
@@ -105,12 +95,7 @@ class MusicViewController: UIViewController {
                                                    ArtistSection.self,
                                                    with: item,
                                                    indexPath: IndexPath)
-//            case "Genre":
-//                return LayoutManager.configureCell(collectionView: self.collectionView,
-//                                                   navigationController: self.navigationController,
-//                                                   <#T##cellType: Cell.Protocol##Cell.Protocol#>,
-//                                                   with: item,
-//                                                   indexPath: IndexPath)
+                
             case "Trending":
 //                print("Adding Trending section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
@@ -166,15 +151,16 @@ class MusicViewController: UIViewController {
 //            print("Creating compositinal layout")
 
             switch(section.type){
-            case "Featured":
+            case "History":
 //                print("configuring featured section layout")
-                return LayoutManager.createFeaturedHeader(using: section)
+                return LayoutManager.createTrendingSection(using: section)
             case "Artists":
 //                print("configuring aritst layout")
                 return LayoutManager.createAviSliderSection(using: section)
             case "Trending":
 //                print("configuring trending section layout")
                 return LayoutManager.createTrendingSection(using: section)
+                
             case "":
                 return LayoutManager.createWideLayout(using: section)
             default:

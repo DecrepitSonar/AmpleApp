@@ -47,6 +47,7 @@ extension AccountSettingsVc: UITableViewDelegate, UITableViewDataSource{
         switch indexPath.row {
         case 0:
             UserDefaults.standard.removeObject(forKey: "userkey")
+            UserDefaults.standard.removeObject(forKey: "userId")
             navigationController?.popToRootViewController(animated: true)
             
         default: return

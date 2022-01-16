@@ -19,8 +19,8 @@ enum NetworkError: Error{
  
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -51,30 +51,36 @@ class NetworkManager {
                     return
                 }
                 
-                print(response)
+//                print(response)
                 
-    //            switch(httpresponse.statusCode){
-    //            case 404:
-    //                completion(.failure(.notfound))
-    //
-    //            case 500:
-    //                completion(.failure(.servererr))
-    //
-    //            case 403:
-    //                completion(.failure(.authenticationError))
-    //
-    //            default:
-    //                print("Requst completed successfully")
-    //            }
-    //
-                do {
-                    let data = try JSONDecoder().decode(UserCredentials.self, from: data!)
-    //                print(data)
-                    completion(.success(data))
+                switch(response.statusCode){
+                case 200:
+                    
+                    print("reponse ok")
+                    
+                    do {
+                        let data = try JSONDecoder().decode(UserCredentials.self, from: data!)
+                        print(data)
+                        completion(.success(data))
+                    }
+                    catch{
+                        return
+                    }
+                    
+                case 404:
+                    completion(.failure(.notfound))
+    
+                case 500:
+                    completion(.failure(.servererr))
+    
+                case 403:
+                    completion(.failure(.authenticationError))
+    
+                default:
+                    print("Requst completed successfully")
                 }
-                catch{
-                    return
-                }
+    //
+               
 
             }
             
@@ -82,39 +88,39 @@ class NetworkManager {
         }
         
     }
-    static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/home")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-//                    print(response)
-                    return
-                }
-                
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-//                    print()
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
-                
-                print(dataResponse)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-        
-    }
-    static func loadBrowesPageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/browse")
+//    static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+//        let url = URL(string: "\(baseURL)/home")
+//
+//        URLSession.shared.dataTask(with: url!){ data, response, error in
+//            DispatchQueue.main.async {
+//                if error != nil {
+//                    completion(.failure(.servererr))
+//                    print(error)
+//                }
+//
+//                guard let httpresponse = response as? HTTPURLResponse else {
+////                    print(response)
+//                    return
+//                }
+//
+//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(.failure(.servererr))
+////                    print()
+//                    return
+//                }
+//
+//                let decoder = JSONDecoder()
+//
+//                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
+//
+//                print(dataResponse)
+//                completion(.success(dataResponse!))
+//            }
+//        }.resume()
+//
+//    }
+    static func loadHomePageContent(userId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)/home?user=\(userId)")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
             DispatchQueue.main.async {
@@ -138,7 +144,7 @@ class NetworkManager {
                 let decoder = JSONDecoder()
                 do {
                     let dataResponse = try decoder.decode([LibObject].self, from: data!)
-//                    print(dataResponse)
+                    print(dataResponse)
                     completion(.success(dataResponse))
                 }
                 catch{

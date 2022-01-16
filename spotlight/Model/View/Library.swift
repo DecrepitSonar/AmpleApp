@@ -9,49 +9,38 @@ import UIKit
 
 class Library: UIViewController, UISearchResultsUpdating {
     
+    var tableView: UITableView!
+    
+    let header = HeaderNavView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let labels: [String] = ["Saved","History","Artists"]
         
         let button = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(loadSettings))
         navigationItem.rightBarButtonItem = button
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Library"
+        
+        
+        tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.frame = view.frame
+        
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        view.backgroundColor = .red
+        view.addSubview(tableView)
         
-        view.addSubview(navigation)
-//        navigation.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
-//        navigation.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        navigation.backgroundColor = .systemRed
-//        navigation.topAnchor.constraint(equalTo: view.topAnchor, constant: 135).isActive = true
-        
-        navigation.addSubview(saved)
-        navigation.addSubview(History)
-        navigation.addSubview(Artists)
-//
-        view.addSubview(scrollContainer)
-//
-//
-        NSLayoutConstraint.activate([
-//            saved.leadingAnchor.constraint(equalTo: navigation.leadingAnchor, constant: 20),
-//            saved.centerYAnchor.constraint(equalTo: navigation.centerYAnchor),
-//
-//            History.leadingAnchor.constraint(equalTo: saved.trailingAnchor, constant: 20),
-//            History.centerYAnchor.constraint(equalTo: navigation.centerYAnchor),
-//
-//            Artists.leadingAnchor.constraint(equalTo: History.trailingAnchor, constant: 20),
-//            Artists.centerYAnchor.constraint(equalTo: navigation.centerYAnchor),
-//
-//            scrollContainer.topAnchor.constraint(equalTo: navigation.bottomAnchor),
-//            scrollContainer.heightAnchor.constraint(equalToConstant: 600),
-//            scrollContainer.widthAnchor.constraint(equalToConstant: view.bounds.width)
-//
-//
-        ])
-//
+        view.addSubview(header)
 
-    
+//        navigation.backgroundColor = .systemRed
+
+//        navigation.addSubview(saved)
+//        navigation.addSubview(History)
+//        navigation.addSubview(Artists)
+
+//        view.addSubview(scrollContainer)
         
     }
     
@@ -116,3 +105,55 @@ class Library: UIViewController, UISearchResultsUpdating {
     }
 
 }
+
+class HeaderNavView: UIView {
+    
+    let labels: [String] = ["Saved","History","Artists"]
+    var scrollview: UIScrollView!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        scrollview = UIScrollView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+//        scrollview.backgroundColor = .red
+    
+        addSubview(scrollview)
+        
+        for i in 1..<labels.count {
+            
+            let label = UILabel()
+            label.text = labels[i]
+            label.textColor = .label
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            scrollview.addSubview(label)
+//            label.leadingAnchor.constraint(equalTo: scrollview.leadingAnchor, constant: 20).isActive = true
+            
+        }
+        
+        
+    }
+}
+
+extension Library: UITableViewDelegate, UITableViewDataSource {
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UIScreen.main.bounds.height
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return header
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
+        return cell
+    }
+    
+}
+
+
