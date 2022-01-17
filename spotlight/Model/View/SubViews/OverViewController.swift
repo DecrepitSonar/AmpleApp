@@ -20,7 +20,7 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
         super.viewDidLoad()
         
         
-//        navigationController?.navigationBar.isHidden = true
+        navigationController?.navigationBar.isHidden = true
 //        print(albumId)
         NetworkManager.getAlbum(id: albumId!) { Result in
             switch Result {

@@ -106,30 +106,34 @@ class Library: UIViewController, UISearchResultsUpdating {
 
 }
 
+class TabView: UIButton{
+//
+//
+//    btn.text = labels[i]
+//    btn.textColor = .label
+//    btn.translatesAutoresizingMaskIntoConstraints = false
+//
+//    return btn
+    
+}
 class HeaderNavView: UIView {
     
     let labels: [String] = ["Saved","History","Artists"]
     var scrollview: UIScrollView!
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+
+    
+    func setup(tabs: [TabView] ){
         
         scrollview = UIScrollView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
 //        scrollview.backgroundColor = .red
     
         addSubview(scrollview)
         
-        for i in 1..<labels.count {
-            
-            let label = UILabel()
-            label.text = labels[i]
-            label.textColor = .label
-            label.translatesAutoresizingMaskIntoConstraints = false
-            
-            scrollview.addSubview(label)
-//            label.leadingAnchor.constraint(equalTo: scrollview.leadingAnchor, constant: 20).isActive = true
-            
-        }
+        let label = UILabel()
+        
+        scrollview.addSubview(label)
+
         
         
     }

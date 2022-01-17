@@ -215,6 +215,12 @@ class LoginViewController: UIViewController {
 
     @objc func handleLogin(sender: Notification){
         
+        let alert = UIAlertController()
+        let alertOkAction = UIAlertAction(title: "OK", style: .cancel) { alert in
+            self.dismiss(animated: true)
+        }
+    
+        alert.addAction(alertOkAction)
         if let sender = sender.userInfo as NSDictionary?{
             if let formData = sender.object(forKey: "credentials") as? credentials{
              
@@ -237,10 +243,23 @@ class LoginViewController: UIViewController {
                         self.present(self.tabVc, animated: true)
                     }
     
-                    print("success")
-    
                 case .failure(let err):
-                    print("fail")
+                    
+                    DispatchQueue.main.async {
+                        
+                        switch(err){
+                            case .authenticationError:
+                                alert.message = "Username or Password incorrect"
+                            case .notfound:
+                                alert.message = "Server resource not found"
+                            case .servererr:
+                                alert.message = "Internal Server Error"
+                        }
+                        
+                        
+                        self.present(alert, animated: true)
+                    }
+                   
                 }
     
             }

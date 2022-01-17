@@ -26,7 +26,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 
     var tableview: DynamicTableView!
     
-    let Genres = ["R&B", "Hip Hop", "Rap", "Soul"]
+    let Genres = ["R&B", "Hip-Hop", "Rap", "Soul", "Jazz", "Pop"]
     var trackHistory = [LibItem](){
         didSet{
             tableview.reloadData()
@@ -42,7 +42,6 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
-//        searchController.showsSearchResultsController = true
         
         NetworkManager.getSearchHistory { result in
             switch(result){
@@ -74,6 +73,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
     
 //
     func updateSearchResults(for searchController: UISearchController) {
+        
         guard let text = searchController.searchBar.text else {
             return
         }
@@ -84,14 +84,18 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         if (text.isEmpty){
             return
         }
+        
         NetworkManager.getSearchResult(query: text){ result in
-//            switch(result) {
-//            case .success(let data):
-//                vc?.data = data
-//            }
-//            case .failure(let err):
-//                vc.data = []
-//            }
+            switch(result) {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    vc?.searchQuery = text
+                    vc?.data = data
+                }
+
+            case .failure(let err):
+                vc?.data = []
+            }
             
         }
     
@@ -203,6 +207,7 @@ class GenreColletionCell: UITableViewCell, UICollectionViewDelegate, UICollectio
 
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: GenreCell.reuseableidentifier, for: indexPath) as! GenreCell
         cell.label.text = data[indexPath.row]
+        cell.image.image = UIImage(named: data[indexPath.row])
         return cell
     }
     
@@ -229,35 +234,53 @@ class GenreCell: UICollectionViewCell {
     
     static let reuseableidentifier: String = "collectioncell"
     
-    let container: UIView = {
-        let view = UIView()
-        view.backgroundColor = .red
+    let image: UIImageView = {
+        let view = UIImageView()
+//        view.backgroundColor = .red
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    let containerOverlay: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view .layer.cornerRadius = 5
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+        view.layer.zPosition = 3
         return view
     }()
     
     let label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(container)
-        container.addSubview(label)
+        addSubview(image)
+        addSubview(containerOverlay)
+        
+        containerOverlay.addSubview(label)
         
         NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            image.leadingAnchor.constraint(equalTo: leadingAnchor),
+            image.topAnchor.constraint(equalTo: topAnchor),
+            image.bottomAnchor.constraint(equalTo: bottomAnchor),
+            image.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            label.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+            containerOverlay.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerOverlay.topAnchor.constraint(equalTo: topAnchor),
+            containerOverlay.bottomAnchor.constraint(equalTo: bottomAnchor),
+            containerOverlay.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            label.centerXAnchor.constraint(equalTo: containerOverlay.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: containerOverlay.centerYAnchor)
         ])
     }
     

@@ -997,7 +997,8 @@ class CollectionCell: UICollectionViewCell, Cell{
     }
 }
 
-class TrackStrip: UITableViewCell{
+class TrackStrip: UITableViewCell, TableCell{
+    
     static var reuseIdentifier: String = "track"
     
     var image = UIImageView()
@@ -1062,11 +1063,19 @@ class TrackStrip: UITableViewCell{
     
     func configure(track: Track){
         
-        image.image = UIImage(named: track.imageURL)
+        image.setUpImage(url: track.imageURL)
         name.text = track.title
         artist.text = track.name
         
 //        tapGesture!.track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
+    }
+    
+    func configureWithSet(image: String, name: String, artist: String, type: String) {
+
+        self.image.setUpImage(url: image)
+        self.name.text = "\(type) • \(name)"
+        self.artist.text = artist
+        
     }
     
     required init?(coder: NSCoder) {
@@ -1079,6 +1088,89 @@ class TrackStrip: UITableViewCell{
 //        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
 //    }
     
+}
+
+class AviTableCell: UITableViewCell, TableCell{
+    
+    static var reuseIdentifier: String = "AviCell"
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        let labelStack = UIStackView(arrangedSubviews: [name, artist])
+        labelStack.axis = .vertical
+        
+        let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, options])
+        horizontalStack.axis = .horizontal
+        horizontalStack.alignment = .center
+        horizontalStack.translatesAutoresizingMaskIntoConstraints = false
+        horizontalStack.distribution = .fill
+        horizontalStack.spacing = 10
+        
+        addSubview(horizontalStack)
+        
+        NSLayoutConstraint.activate([
+            
+            
+            image.leadingAnchor.constraint(equalTo: options.trailingAnchor, constant: 7),
+            
+            options.widthAnchor.constraint(equalToConstant: 30 ),
+            options.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            
+            horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 20),
+            horizontalStack.topAnchor.constraint(equalTo: topAnchor),
+            horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            horizontalStack.widthAnchor.constraint(equalToConstant: bounds.width - 40),
+            
+            horizontalStack.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configureWithSet(image: String, name: String, artist: String, type: String) {
+        self.image.setUpImage(url: image)
+        self.name.text = "\(type) • \(name)"
+        self.artist.text = artist
+    }
+    
+    let image: UIImageView = {
+        let image = UIImageView()
+        image.layer.cornerRadius = 25
+        image.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        image.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        image.contentMode = .scaleAspectFill
+//        image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        image.clipsToBounds = true
+//        image.layer.cornerRadius = 5
+        return image
+    }()
+    
+    var artist: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.setFont(with: 10)
+        return label
+    }()
+    var name: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setFont(with: 12)
+        
+        return label
+    }()
+    let options: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        return btn
+    }()
 }
 class SettingsCell: UITableViewCell {
     static let identifier = "settingCell"

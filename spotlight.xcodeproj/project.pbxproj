@@ -34,6 +34,8 @@
 		225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314AE26E523EF00D1F496 /* SceneDelegate.swift */; };
 		225314FA26E5241300D1F496 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225314F826E5241300D1F496 /* UtilityFunctions.swift */; };
 		227A1B1C278A191B00314ED7 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227A1B1B278A191A00314ED7 /* extensions.swift */; };
+		227A2D9F2795DD56005F7EE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 227A2D9E2795DD55005F7EE2 /* Assets.xcassets */; };
+		227A2DA52795FAD5005F7EE2 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227A2DA42795FAD5005F7EE2 /* Protocols.swift */; };
 		229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F559E26E5288D00D10B36 /* NetworkManager.swift */; };
 		229F561126E52EFC00D10B36 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F561026E52EFC00D10B36 /* Models.swift */; };
 		229F561A26E5300000D10B36 /* profileData.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561626E5300000D10B36 /* profileData.json */; };
@@ -44,7 +46,6 @@
 		22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FAAF422732D6D20021F67C /* AudioManager.swift */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
 		D942194C26DC7FB500F1DC78 /* spotlightUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */; };
-		D991782D2677DEA600961969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D991782C2677DEA600961969 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,8 @@
 		225314AE26E523EF00D1F496 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		225314F826E5241300D1F496 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
 		227A1B1B278A191A00314ED7 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
+		227A2D9E2795DD55005F7EE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = spotlight/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		227A2DA42795FAD5005F7EE2 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		229F559E26E5288D00D10B36 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		229F561026E52EFC00D10B36 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		229F561626E5300000D10B36 /* profileData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = profileData.json; sourceTree = "<group>"; };
@@ -105,7 +108,6 @@
 		D942194926DC7FB500F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightUITests.swift; sourceTree = "<group>"; };
 		D99178202677DEA100961969 /* spotlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = spotlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D991782C2677DEA600961969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D99178312677DEA600961969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D99178362677DEA600961969 /* spotlightTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spotlightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D99178412677DEA700961969 /* spotlightUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spotlightUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -216,6 +218,7 @@
 			children = (
 				225314F826E5241300D1F496 /* UtilityFunctions.swift */,
 				227A1B1B278A191A00314ED7 /* extensions.swift */,
+				227A2DA42795FAD5005F7EE2 /* Protocols.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -248,10 +251,10 @@
 				22D25BC727235F31007FB889 /* Utility */,
 				229F55BC26E52E9900D10B36 /* Data */,
 				225314F726E5241300D1F496 /* Controller */,
-				D991782C2677DEA600961969 /* Assets.xcassets */,
 				2253148926E523EE00D1F496 /* AppDelegate.swift */,
 				225314AB26E523EF00D1F496 /* bundle-decodable.swift */,
 				225314AE26E523EF00D1F496 /* SceneDelegate.swift */,
+				227A2D9E2795DD55005F7EE2 /* Assets.xcassets */,
 				D99178312677DEA600961969 /* Info.plist */,
 			);
 			path = spotlight;
@@ -382,8 +385,8 @@
 				229F561C26E5300000D10B36 /* catalog.json in Resources */,
 				229F561A26E5300000D10B36 /* profileData.json in Resources */,
 				229F561B26E5300000D10B36 /* AlbumDetail.json in Resources */,
-				D991782D2677DEA600961969 /* Assets.xcassets in Resources */,
 				229F561D26E5300000D10B36 /* overview.json in Resources */,
+				227A2D9F2795DD56005F7EE2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +426,7 @@
 				222E8BD8277538B10016C62F /* MusicViewController.swift in Sources */,
 				222E8BE1277538B10016C62F /* PlayerViewController.swift in Sources */,
 				22ABF28F2789F78300D0F65F /* TrackOptionsViewController.swift in Sources */,
+				227A2DA52795FAD5005F7EE2 /* Protocols.swift in Sources */,
 				222E8BEA277538B10016C62F /* components.swift in Sources */,
 				225314B526E523EF00D1F496 /* AppDelegate.swift in Sources */,
 				227A1B1C278A191B00314ED7 /* extensions.swift in Sources */,

@@ -12,16 +12,15 @@ import AVFoundation
 
 enum NetworkError: Error{
     case notfound
-    case sucess
     case servererr
     case authenticationError
 }
  
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
-//    static let baseURL = "https://app-server-savi4.ondigitalocean.app/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
@@ -269,7 +268,7 @@ class NetworkManager {
                 }
 
                 guard let httpresponse = response as? HTTPURLResponse else {
-                    print(response)
+//                    print(response)
                     return
                 }
                 print( httpresponse)
@@ -416,26 +415,38 @@ class NetworkManager {
         
     }
 
-    static func getSearchResult(query: String, completion: @escaping (Result<LibItem, NetworkError>) -> Void){
+    static func getSearchResult(query: String, completion: @escaping (Result<[LibItem], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/search?q=\(query)")
         
         print(url)
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            if error != nil {
-                completion(.failure(.servererr))
-            }
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print(response)
-                return
-            }
-            
-            guard let mimeType = httpResponse.mimeType, mimeType == "application/json" else{
-                completion(.failure(.servererr))
-                return
-            }
-            
-        }.resume()
+//        DispatchQueue.main.async {
+            URLSession.shared.dataTask(with: url!){ data, response, error in
+                if error != nil {
+                    completion(.failure(.servererr))
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+    //                print(response)
+                    return
+                }
+                
+                guard let mimeType = httpResponse.mimeType, mimeType == "application/json" else{
+                    completion(.failure(.servererr))
+                    return
+                }
+                
+                do{
+                    let deconder = JSONDecoder()
+                    
+                    let result = try deconder.decode([LibItem].self, from: data!)
+//                    print(result)
+                    completion(.success(result))
+                }
+                catch{ print( error)}
+                
+            }.resume()
+//        }
+        
     }
     static func getSearchHistory(completion: @escaping (Result<[LibItem], NetworkError>) -> Void) {
         

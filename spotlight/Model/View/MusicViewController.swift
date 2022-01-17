@@ -26,6 +26,7 @@ class MusicViewController: UIViewController {
         // Do any additional setup after loading the view.
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
+        navigationController?.navigationBar.isHidden = false
         NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
         let user = UserDefaults.standard.object(forKey: "userId") as! String
         NetworkManager.loadHomePageContent(userId: user ) { result in
@@ -40,7 +41,7 @@ class MusicViewController: UIViewController {
         }
         
         navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Browse"
+        title = "Home"
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
     }
@@ -51,7 +52,6 @@ class MusicViewController: UIViewController {
            
         print("presenting player")
         player.modalPresentationStyle = .overFullScreen
-//      setNeedsStatusBarAppearanceUpdate()
         navigationController!.present(player, animated: true)
 
     }
