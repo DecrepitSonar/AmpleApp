@@ -16,16 +16,21 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
     fileprivate var collectionView: UICollectionView!
     fileprivate var dataSource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     
+    override func loadView() {
+        super.loadView()
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        navigationController?.navigationBar.isHidden = true
-//        print(albumId)
         NetworkManager.getAlbum(id: albumId!) { Result in
             switch Result {
             case .success(let data ):
-                self.section = data
+//                self.section = data
                 print(data)
                 self.initCollectionView()
                 
@@ -33,11 +38,12 @@ class OverViewController: UIViewController, UICollectionViewDelegate {
                 print()
             }
         }
-        
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
     func initCollectionView(){
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]

@@ -15,22 +15,40 @@ class Profile: UIViewController {
     var collectionview: UICollectionView!
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     
+    let LoadingView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        view.backgroundColor = .red
+        return view
+    }()
+    
+    override func loadView() {
+        super.loadView()
+        
+        view.addSubview(LoadingView)
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.backButtonTitle = ""
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", image: UIImage(systemName: "chevron.left.circle.fill"), primaryAction: nil, menu: nil)
+        
+        let infoBtn = UIBarButtonItem(title: "", image: UIImage(systemName: "info.circle"), primaryAction: nil, menu: nil)
+                                      
+        navigationItem.rightBarButtonItem = infoBtn
+        
         
         NetworkManager.getArtistsProfileData(artistId: artistId!) { result in
             switch( result) {
             case .success(let data):
                 self.section = data
-                
-                self.initCollection(
-                )
+                self.LoadingView.removeFromSuperview()
+                self.initCollection()
             case .failure(let err):
                 print(err)
             }
         }
-        
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
     }
     

@@ -19,16 +19,24 @@ class MusicViewController: UIViewController {
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     var collectionView: UICollectionView!
     
-    override func viewDidLoad() {
+    override func loadView() {
+        super.loadView()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Browse"
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+    }
+    
+    override func viewDidLoad() {
 
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
-        navigationController?.navigationBar.isHidden = false
-        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
         let user = UserDefaults.standard.object(forKey: "userId") as! String
+        
         NetworkManager.loadHomePageContent(userId: user ) { result in
             switch(result){
             case .success(let data):
@@ -39,10 +47,6 @@ class MusicViewController: UIViewController {
                 print(error)
             }
         }
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Home"
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
     }
     
@@ -65,7 +69,7 @@ class MusicViewController: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
+//        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
         collectionView.register(TrackHistorySlider.self, forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
@@ -81,18 +85,11 @@ class MusicViewController: UIViewController {
         datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
 //            print("creating datasource")
             switch self.section[IndexPath.section].type {
-            case "History":
-//                print("Adding Featured Section")
+            case "Featured":
+////                print("Adding Featured Section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
                                                    navigationController: self.navigationController,
-                                                   TrendingSection.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
-            case "Artists":
-//                print("Adding Artist section")
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   ArtistSection.self,
+                                                   FeaturedHeader.self,
                                                    with: item,
                                                    indexPath: IndexPath)
                 
@@ -151,18 +148,19 @@ class MusicViewController: UIViewController {
 //            print("Creating compositinal layout")
 
             switch(section.type){
-            case "History":
-//                print("configuring featured section layout")
-                return LayoutManager.createTrendingSection(using: section)
-            case "Artists":
-//                print("configuring aritst layout")
-                return LayoutManager.createAviSliderSection(using: section)
+            case "Featured":
+////                print("configuring featured section layout")
+                return LayoutManager.createFeaturedHeader(using: section)
+                
+//            case "Artists":
+////                print("configuring aritst layout")
+//                return LayoutManager.createAviSliderSection(using: section)
             case "Trending":
 //                print("configuring trending section layout")
                 return LayoutManager.createTrendingSection(using: section)
                 
-            case "":
-                return LayoutManager.createWideLayout(using: section)
+//            case "":
+//                return LayoutManager.createWideLayout(using: section)
             default:
 //                print("configuring mediumSection header layout")
             return LayoutManager.createMediumImageSliderSection(using: self.section[sectionIndex])

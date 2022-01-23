@@ -87,37 +87,37 @@ class NetworkManager {
         }
         
     }
-//    static func loadHomePageContent(completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-//        let url = URL(string: "\(baseURL)/home")
-//
-//        URLSession.shared.dataTask(with: url!){ data, response, error in
-//            DispatchQueue.main.async {
-//                if error != nil {
-//                    completion(.failure(.servererr))
-//                    print(error)
-//                }
-//
-//                guard let httpresponse = response as? HTTPURLResponse else {
-////                    print(response)
-//                    return
-//                }
-//
-//                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-//                    completion(.failure(.servererr))
-////                    print()
-//                    return
-//                }
-//
-//                let decoder = JSONDecoder()
-//
-//                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
-//
-//                print(dataResponse)
-//                completion(.success(dataResponse!))
-//            }
-//        }.resume()
-//
-//    }
+    static func loadLibraryContent(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+        let url = URL(string: "\(baseURL)/library?user=\(id)")
+
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.servererr))
+                    print(error)
+                }
+
+                guard let httpresponse = response as? HTTPURLResponse else {
+//                    print(response)
+                    return
+                }
+
+                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+                    completion(.failure(.servererr))
+//                    print()
+                    return
+                }
+
+                let decoder = JSONDecoder()
+
+                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
+
+                print(dataResponse)
+                completion(.success(dataResponse!))
+            }
+        }.resume()
+
+    }
     static func loadHomePageContent(userId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/home?user=\(userId)")
         
@@ -188,7 +188,7 @@ class NetworkManager {
         }.resume()
 
     }
-    static func getAlbum(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
+    static func getAlbum(id: String, completion: @escaping (Result<LibObject, NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/album?albumId=\(id)")
         print(id)
                       
@@ -212,7 +212,7 @@ class NetworkManager {
                     do{
                         let decoder = JSONDecoder()
         
-                        let dataResponse = try decoder.decode([LibObject].self, from: data!)
+                        let dataResponse = try decoder.decode(LibObject.self, from: data!)
                         completion(.success(dataResponse))
                     }
                     catch{
@@ -290,7 +290,6 @@ class NetworkManager {
         let url = URL(string: "\(CDN)audio/\(track).mp3")
         
         URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
                 if error != nil {
                     completion(.failure(.ServerError))
                     print(error)
@@ -300,7 +299,7 @@ class NetworkManager {
                     print(response)
                     return
                 }
-                print( httpresponse)
+//                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "audio/mpeg" else {
                     completion(.failure(.ServerError))
 //                    print("mime err")
@@ -308,7 +307,6 @@ class NetworkManager {
                 }
 
                 completion(.success(Data(data!)))
-            }
         }.resume()
             
     }

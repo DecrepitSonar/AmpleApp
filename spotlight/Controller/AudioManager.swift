@@ -34,10 +34,13 @@ class AudioManager {
     // initialize player with track queue or track
     static func initPlayer( track: Track?, tracks: [Track]?){
         
+        print("init player")
         guard tracks != nil else {
             
             audioQueue = []
             currentQueue = track
+            
+            print("current track: ", currentQueue)
             
             playerController(option: .play)
             return
@@ -57,10 +60,11 @@ class AudioManager {
             
             switch(result){
             case .success(let data ):
+                print("requested track from network")
             
                 initPlayerData(data: data)
                 
-                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
+//                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
                 
             case .failure(let err):
                 print( err)
@@ -74,6 +78,8 @@ class AudioManager {
         do{
             player = try AVAudioPlayer(data: data)
             player!.play()
+            
+            print("initialize player")
             
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }

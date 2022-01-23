@@ -4,7 +4,7 @@
 ////
 ////  Created by Robert Aubow on 6/18/21.
 ////
-//
+
 import Foundation
 import UIKit
 import AudioToolbox
@@ -160,6 +160,7 @@ class MiniPlayer: UIView {
         if let object = sender.userInfo as NSDictionary? {
             if let track = object["track"] {
                 
+                print("settings track")
                 NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
                 
                 AudioManager.initPlayer(track: track as? Track, tracks: nil)
@@ -170,7 +171,7 @@ class MiniPlayer: UIView {
     
     @objc func updateMiniPlayer(sender: Notification){
 
-        
+        print("updated player")
         if let object = sender.userInfo as NSDictionary? {
                   if let track = object["track"]{
                       let track = track as? Track
@@ -314,15 +315,15 @@ class customTab: UITabBarController{
     
     override func viewWillAppear(_ animated: Bool) {
         
-        let homeVc = UINavigationController(rootViewController: MusicViewController())
-        homeVc.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+        let browse = UINavigationController(rootViewController: MusicViewController())
+        browse.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "globe.americas.fill"), tag: 0)
         
-        let musicVc = UINavigationController(rootViewController: MusicViewController())
-        musicVc.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "waveform.path.ecg"), tag: 1)
-        
-        let videoVc = UINavigationController(rootViewController: VideoViewController())
-        videoVc.tabBarItem = UITabBarItem(title: "Video", image: UIImage(systemName: "play.tv"), tag: 2)
-        
+//        let musicVc = UINavigationController(rootViewController: MusicViewController())
+//        musicVc.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "waveform.path.ecg"), tag: 1)
+//
+//        let videoVc = UINavigationController(rootViewController: VideoViewController())
+//        videoVc.tabBarItem = UITabBarItem(title: "Video", image: UIImage(systemName: "play.tv"), tag: 2)
+//
         let searchVc = UINavigationController(rootViewController: SearchViewController())
         searchVc.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 3)
                                            
@@ -335,7 +336,7 @@ class customTab: UITabBarController{
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [homeVc, searchVc, library]
+        self.viewControllers = [library, browse, searchVc]
     
     }
 

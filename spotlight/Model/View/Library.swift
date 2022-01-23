@@ -7,157 +7,160 @@
 
 import UIKit
 
-class Library: UIViewController, UISearchResultsUpdating {
+class Library: UIViewController {
     
-    var tableView: UITableView!
+    var section: [LibObject]!
     
-    let header = HeaderNavView()
+    var collectionView: UICollectionView!
+    var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>!
+    let user = UserDefaults.standard.object(forKey: "userId")
+    
+    override func loadView() {
+        super.loadView()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        title = "Library"
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let button = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(loadSettings))
-        navigationItem.rightBarButtonItem = button
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Library"
-        
-        
-        tableView = UITableView()
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.frame = view.frame
-        
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//        view.backgroundColor = .red
-        view.addSubview(tableView)
-        
-        view.addSubview(header)
-
-//        navigation.backgroundColor = .systemRed
-
-//        navigation.addSubview(saved)
-//        navigation.addSubview(History)
-//        navigation.addSubview(Artists)
-
-//        view.addSubview(scrollContainer)
+        NetworkManager.loadLibraryContent(id: user as! String) { result in
+            switch(result){
+            case .success(let data):
+                print(data)
+            case .failure(let err):
+                print(err)
+            }
+        }
+//        initDataSource()
         
     }
     
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else {
-            return
+    func initDataSource(){
+        
+        collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
+        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.showsVerticalScrollIndicator = false
+        
+        view.addSubview(collectionView)
+        
+        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
+        
+        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
+        collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
+        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        
+        createDataSource()
+        reloadData()
+        
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+    }
+    
+    func createDataSource(){
+        
+        
+        datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
+            
+            switch self.section[IndexPath.section].type {
+                
+            case "Artists":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   ArtistSection.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
+            case "History":
+
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   TrendingSection.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
+            case "Saved Tracks":
+
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   TrendingSection.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            default:
+
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   MediumImageSlider.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            }
         }
         
-        let vc = searchController.searchResultsController as? SearchResultViewController
-        vc?.view.backgroundColor = .systemRed
-        print(text)
-    }
-    
-    let navigation: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100))
-//        view.backgroundColor = .red
-//        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let saved: UIButton = {
-        let btn = UIButton()
-        btn.tintColor = .white
-        btn.setTitle("Saved", for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
-    }()
-    
-    let History: UIButton = {
-        let btn = UIButton()
-        btn.tintColor = .white
-        btn.setTitle("History", for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
-    }()
-  
-    let Artists: UIButton = {
-        let btn = UIButton()
-        btn.tintColor = .white
-        btn.setTitle("Artists", for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
-    }()
-    
-    let scrollContainer: UIScrollView = {
-        let scroll = UIScrollView()
-        scroll.backgroundColor = .red
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        return scroll
-    }()
-    func createButton(title: String) -> UIButton{
-        let btn = UIButton()
-        btn.tintColor = .white
-        btn.setTitle(title, for: .normal)
-        return btn
-    }
-    
-    @objc func loadSettings(){
-        let view =  SettingsViewController()
+        datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
+            
+            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
+                print("could not dequeue supplementory view")
+                return nil
+            }
+            
+            guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
+            guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
+            
+            if section.tagline!.isEmpty{return nil}
         
-        navigationController?.pushViewController(view, animated: true)
+            sectionHeader.tagline.text = section.tagline
+            sectionHeader.title.text = section.type
+            
+            return sectionHeader
+        }
+        
+    
+    }
+    
+    func reloadData(){
+        
+        var snapshot = NSDiffableDataSourceSnapshot<LibObject, LibItem>()
+        snapshot.appendSections(section)
+        
+        for section in section{
+            snapshot.appendItems(section.items!, toSection: section)
+        }
+        
+        datasource?.apply(snapshot)
+    }
+    
+    func createCompositionalLayout() -> UICollectionViewLayout {
+
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+
+            let section = self.section[sectionIndex]
+
+            switch(section.type){
+                
+                case "Artists":
+                    return LayoutManager.createAviSliderSection(using: section)
+                    
+                case "History":
+                    return LayoutManager.createTrendingSection(using: section)
+                    
+                case "Saved Tracks":
+                    return LayoutManager.createTrendingSection(using: section)
+                    
+                default:
+                    return LayoutManager.createMediumImageSliderSection(using: self.section[sectionIndex])
+            }
+        }
+
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.interSectionSpacing = 20
+        layout.configuration = config
+        
+        return layout
     }
 
 }
 
-class TabView: UIButton{
-//
-//
-//    btn.text = labels[i]
-//    btn.textColor = .label
-//    btn.translatesAutoresizingMaskIntoConstraints = false
-//
-//    return btn
-    
-}
-class HeaderNavView: UIView {
-    
-    let labels: [String] = ["Saved","History","Artists"]
-    var scrollview: UIScrollView!
-    
-
-    
-    func setup(tabs: [TabView] ){
-        
-        scrollview = UIScrollView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-//        scrollview.backgroundColor = .red
-    
-        addSubview(scrollview)
-        
-        let label = UILabel()
-        
-        scrollview.addSubview(label)
-
-        
-        
-    }
-}
-
-extension Library: UITableViewDelegate, UITableViewDataSource {
-    
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UIScreen.main.bounds.height
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return header
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
-        return cell
-    }
-    
-}
 
 
