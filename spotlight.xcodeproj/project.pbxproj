@@ -44,6 +44,7 @@
 		229F561D26E5300000D10B36 /* overview.json in Resources */ = {isa = PBXBuildFile; fileRef = 229F561926E5300000D10B36 /* overview.json */; };
 		22ABF28F2789F78300D0F65F /* TrackOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ABF28E2789F78200D0F65F /* TrackOptionsViewController.swift */; };
 		22B49448279DC547003EAFCB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49447279DC547003EAFCB /* DetailViewController.swift */; };
+		22B4944A279EAF16003EAFCB /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49449279EAF15003EAFCB /* ProfileViewController.swift */; };
 		22FAAF432732D6D20021F67C /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FAAF422732D6D20021F67C /* AudioManager.swift */; };
 		D942194126DC7F6E00F1DC78 /* spotlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */; };
 		D942194C26DC7FB500F1DC78 /* spotlightUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D942194A26DC7FB500F1DC78 /* spotlightUITests.swift */; };
@@ -104,6 +105,7 @@
 		229F561926E5300000D10B36 /* overview.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = overview.json; sourceTree = "<group>"; };
 		22ABF28E2789F78200D0F65F /* TrackOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackOptionsViewController.swift; sourceTree = "<group>"; };
 		22B49447279DC547003EAFCB /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		22B49449279EAF15003EAFCB /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		22FAAF422732D6D20021F67C /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		D942193F26DC7F6E00F1DC78 /* spotlightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = spotlightTests.swift; sourceTree = "<group>"; };
 		D942194026DC7F6E00F1DC78 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			children = (
 				222E8BBD277538B10016C62F /* Cells.swift */,
 				22B49447279DC547003EAFCB /* DetailViewController.swift */,
+				22B49449279EAF15003EAFCB /* ProfileViewController.swift */,
 				222E8BBE277538B10016C62F /* SearchViewController.swift */,
 				222E8BBF277538B10016C62F /* Library.swift */,
 				222E8BC0277538B10016C62F /* MusicViewController.swift */,
@@ -438,6 +441,7 @@
 				222E8BDA277538B10016C62F /* NotificationSettingsVc.swift in Sources */,
 				225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */,
 				222E8BE5277538B10016C62F /* ReleasesVc.swift in Sources */,
+				22B4944A279EAF16003EAFCB /* ProfileViewController.swift in Sources */,
 				222E8BD7277538B10016C62F /* Library.swift in Sources */,
 				222E8BE7277538B10016C62F /* HomeVc.swift in Sources */,
 				222E8BE0277538B10016C62F /* TrackQueueListViewController.swift in Sources */,

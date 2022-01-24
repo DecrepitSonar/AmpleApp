@@ -25,6 +25,7 @@ class Library: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        UserDefaults.standard.removeObject(forKey: "userkey")
         NetworkManager.loadLibraryContent(id: user as! String) { result in
             switch(result){
             case .success(let data):

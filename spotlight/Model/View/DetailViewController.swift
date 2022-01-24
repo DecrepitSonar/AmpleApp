@@ -10,7 +10,7 @@ import UIKit
 class DetailViewController: UIViewController {
 
     var albumId = String()
-    var data: LibObject?
+    var data: Album?
     var tableview: UITableView!
     
     var loadingView: UIView = {
@@ -36,19 +36,23 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NetworkManager.getAlbum(id: albumId) { Result in
-            switch Result {
-            case .success(let data ):
+        NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album, error: NetworkError) in
+            switch(error){
+            case .servererr:
+                print(error.localizedDescription)
+            
+            case .success:
+                
                 self.data = data
                 
-                print(self.data)
+                DispatchQueue.main.async {
+                    self.loadingView.removeFromSuperview()
+                    
+                    self.loadTableview()
+                }
                 
-                self.loadingView.removeFromSuperview()
-                
-                self.loadTableview()
-
-            case .failure(_):
-                print()
+            case .notfound:
+                print(error.localizedDescription)
             }
         }
     }
@@ -75,7 +79,7 @@ class DetailViewController: UIViewController {
     }
     func setupHeader(){
        
-        let header = DetailHeaders(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 630))
+        let header = DetailHeaders(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 640))
         header.artist.text = data?.name
         header.albumImage.setUpImage(url: data!.imageURL!)
         header.imageContainer.setUpImage(url: data!.imageURL!)
@@ -112,8 +116,7 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableview.dequeueReusableCell(withIdentifier: TrackCell.reuseIdentifier, for: indexPath) as! TrackCell
-        let item = data!.items![indexPath.row] as! LibItem
-        cell.configure(with: item)
+        cell.configure(with: data!.items![indexPath.row])
         cell.backgroundColor = .clear
         return cell
     }

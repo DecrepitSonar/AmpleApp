@@ -39,16 +39,16 @@ class Profile: UIViewController {
         navigationItem.rightBarButtonItem = infoBtn
         
         
-        NetworkManager.getArtistsProfileData(artistId: artistId!) { result in
-            switch( result) {
-            case .success(let data):
-                self.section = data
-                self.LoadingView.removeFromSuperview()
-                self.initCollection()
-            case .failure(let err):
-                print(err)
-            }
-        }
+//        NetworkManager.getArtistsProfileData(artistId: artistId!) { result in
+//            switch( result) {
+//            case .success(let data):
+////                self.section = data
+//                self.LoadingView.removeFromSuperview()
+//                self.initCollection()
+//            case .failure(let err):
+//                print(err)
+//            }
+//        }
         
     }
     

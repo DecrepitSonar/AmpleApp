@@ -11,82 +11,172 @@ import CoreMedia
 import AVFoundation
 
 enum NetworkError: Error{
+    case success
     case notfound
     case servererr
-    case authenticationError
+    
 }
- 
+
+enum AuthenticationStatus: Error{
+    case authenticationError
+    case serverError
+}
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
-    static func authenticateUser(user: credentials, completion: @escaping (Result<UserCredentials, NetworkError>) -> Void){
+    
+    static func Get<T: Decodable>(url: String, completion: @escaping (T, NetworkError) -> ()){
+        let url = URL(string: "\(baseURL)/\(url)")
         
-        let url = URL(string: "\(baseURL)/authenticate")
+        print(url)
+        URLSession.shared.dataTask(with: url!){ data, response, error in
+                if error != nil {
+//                    completion(.failure(.servererr))
+//                    print(error)
+                }
+                
+                guard let httpresponse = response as? HTTPURLResponse else {
+                    
+                    return
+                }
+                
+                print(httpresponse)
+                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+//                    completion(, .servererr)
+//                    print()
+                    return
+                }
+                
+                let decoder = JSONDecoder()
+                do {
+                    let dataResponse = try decoder.decode(T.self, from: data!)
+                    print(dataResponse)
+                    completion(dataResponse, .success)
+                }
+                catch{
+//                    print(error)
+                }
+        }.resume()
+        
+    }
+    static func Post<T: Decodable, D: Encodable>(url: String, data: D, completion: @escaping (T, NetworkError) -> ()){
+        
+        let url = URL(string: "\(baseURL)/\(url)")
         var request = URLRequest(url: url!)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         
-        print(user)
-        
-        guard let credentials = try? JSONEncoder().encode(user) else {
+        guard let encoded = try? JSONEncoder().encode(data) else {
             print("could not encode user credentials for authentication request")
             return
         }
         
-        request.httpBody = credentials
-        
-        DispatchQueue.main.async {
-            let task = URLSession.shared.uploadTask(with: request, from: credentials) { data, response, error in
-                if error != nil {
-//                    print( error)
-                }
-                
-                guard let response = response as? HTTPURLResponse else {
-    //                print(response)
-                    return
-                }
-                
-//                print(response)
-                
-                switch(response.statusCode){
-                case 200:
-                    
-                    print("reponse ok")
-                    
-                    do {
-                        let data = try JSONDecoder().decode(UserCredentials.self, from: data!)
-                        print(data)
-                        completion(.success(data))
-                    }
-                    catch{
-                        return
-                    }
-                    
-                case 404:
-                    completion(.failure(.notfound))
-    
-                case 500:
-                    completion(.failure(.servererr))
-    
-                case 403:
-                    completion(.failure(.authenticationError))
-    
-                default:
-                    print("Requst completed successfully")
-                }
-    //
-               
+        request.httpBody = encoded
 
+        let task = URLSession.shared.uploadTask(with: request, from: encoded) { data, response, error in
+            if error != nil {
+//                    print( error)
             }
             
-            task.resume()
-        }
+            guard let response = response as? HTTPURLResponse else {
+//                print(response)
+                return
+            }
+            
+//                print(response)
+            
+            switch(response.statusCode){
+            case 200:
+                
+                print("reponse ok")
+                print(data)
+                do {
+                    let resp = try JSONDecoder().decode(T.self, from: data!)
+//                    print("response",resp)
+                    completion(resp, .success)
+                }
+                catch{
+                    print( error)
+                }
+
+            case 500:
+//                completion( )
+                print("")
+
+            case 403:
+//                completion(.failure(.authenticationError))
+                print("")
+            default:
+                print("Requst completed successfully")
+            }
+//
+           
+
+        }.resume()
         
     }
+    
+    static func Put<T: Codable>(url: String, data: T, completion: @escaping (T, NetworkError) -> ()){
+        
+        let url = URL(string: "\(baseURL)/\(url)")
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "Put"
+        
+        guard let encoded = try? JSONEncoder().encode(data) else {
+            print("could not encode user credentials for authentication request")
+            return
+        }
+        
+        request.httpBody = encoded
+
+        let task = URLSession.shared.uploadTask(with: request, from: encoded) { data, response, error in
+            if error != nil {
+//                    print( error)
+            }
+            
+            guard let response = response as? HTTPURLResponse else {
+//                print(response)
+                return
+            }
+            
+//                print(response)
+            
+            switch(response.statusCode){
+            case 200:
+                
+                print("reponse ok")
+                
+                do {
+                    let data = try JSONDecoder().decode(T.self, from: data!)
+                    print(data)
+                    completion(data, .success)
+                }
+                catch{
+                    return
+                }
+
+            case 500:
+//                completion( )
+                print("")
+
+            case 403:
+//                completion(.failure(.authenticationError))
+                print("")
+            default:
+                print("Requst completed successfully")
+            }
+//
+           
+
+        }.resume()
+        
+    }
+//
     static func loadLibraryContent(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/library?user=\(id)")
 
@@ -118,112 +208,9 @@ class NetworkManager {
         }.resume()
 
     }
-    static func loadHomePageContent(userId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/home?user=\(userId)")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-//                    completion(.failure(.servererr))
-                    print(error)
-                }
-                
-                guard let httpresponse = response as? HTTPURLResponse else {
-                    
-                    return
-                }
-                
-                print(httpresponse)
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    completion(.failure(.servererr))
-//                    print()
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                do {
-                    let dataResponse = try decoder.decode([LibObject].self, from: data!)
-                    print(dataResponse)
-                    completion(.success(dataResponse))
-                }
-                catch{
-                    print(error)
-                }
-                
-                
-                
-                
-            }
-        }.resume()
-        
-    }
-    static func getArtistsProfileData(artistId: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/artist?id=\(artistId)")
-        
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-            DispatchQueue.main.async {
-                if error != nil {
-                    completion(.failure(.servererr))
-                    print(error!)
-                }
+    
 
-                guard let httpresponse = response as? HTTPURLResponse else {
-                    print(response!)
-                    return
-                }
-
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                    print(httpresponse.mimeType!)
-                    completion(.failure(.servererr))
-                    return
-                }
-
-                let decoder = JSONDecoder()
-
-                let dataResponse = try? decoder.decode([LibObject].self, from: data!)
-
-//                print(dataResponse)
-                completion(.success(dataResponse!))
-            }
-        }.resume()
-
-    }
-    static func getAlbum(id: String, completion: @escaping (Result<LibObject, NetworkError>) -> Void){
-        let url = URL(string: "\(baseURL)/album?albumId=\(id)")
-        print(id)
-                      
-        URLSession.shared.dataTask(with: url!){ data, response, error in
-                   DispatchQueue.main.async {
-                       if error != nil {
-                           completion(.failure(.servererr))
-//                           print(error)
-                       }
-       
-                       guard let httpresponse = response as? HTTPURLResponse else {
-//                           print(response)
-                           return
-                       }
-       
-                       print(httpresponse)
-                       guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-                           completion(.failure(.servererr))
-                           return
-                       }
-                    do{
-                        let decoder = JSONDecoder()
-        
-                        let dataResponse = try decoder.decode(LibObject.self, from: data!)
-                        completion(.success(dataResponse))
-                    }
-                    catch{
-                        print(error)
-                    }
-                       
-                       
-                   }
-               }.resume()
-
-    }
+    
     static func getAlbums(completion: @escaping (Result<[Album], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/albums")
         
@@ -271,7 +258,7 @@ class NetworkManager {
 //                    print(response)
                     return
                 }
-                print( httpresponse)
+//                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
                     completion(.failure(.ServerError))
 //                    print("mime err")

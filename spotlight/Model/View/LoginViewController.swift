@@ -133,10 +133,10 @@ class LoginForm: UIStackView{
         }
         
         print("loggin gin")
-        let formData = credentials(username: self.username!, password: self.password!)
-        print(formData)
+        let formData = LoginCredentials(username: self.username!, password: self.password!)
+//        print(formData)
         
-        NotificationCenter.default.post(name: Notification.Name("isLoggedIn"), object: nil, userInfo: ["credentials" : formData as? credentials])
+        NotificationCenter.default.post(name: Notification.Name("isLoggedIn"), object: nil, userInfo: ["credentials" : formData as? LoginCredentials])
     }
     
     @objc func updateUsernameTxtField(_sender: UITextField){
@@ -222,53 +222,33 @@ class LoginViewController: UIViewController {
     
         alert.addAction(alertOkAction)
         if let sender = sender.userInfo as NSDictionary?{
-            if let formData = sender.object(forKey: "credentials") as? credentials{
+            if let formData = sender.object(forKey: "credentials") as? LoginCredentials{
              
                 guard formData.username != nil && formData.password != nil else {
                    return
                 }
                 
     
-            let credentials = credentials(username: formData.username, password: formData.password)
-    
-            NetworkManager.authenticateUser(user: credentials) { result in
-    
-                switch( result){
-                case .success(let data):
-    
-                    UserDefaults.standard.set(data.apiKey , forKey: "userkey")
-                    UserDefaults.standard.set(data.userId, forKey: "userId")
-    
+            let credentials = LoginCredentials(username: formData.username, password: formData.password)
+//
+            NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData, error: NetworkError) in
+                switch(error){
+                case .servererr:
+                    print(error.localizedDescription)
+                
+                case .success:
+                    UserDefaults.standard.set(data.id, forKey: "userdata")
+                
                     DispatchQueue.main.async {
                         self.present(self.tabVc, animated: true)
                     }
-    
-                case .failure(let err):
-                    
-                    DispatchQueue.main.async {
-                        
-                        switch(err){
-                            case .authenticationError:
-                                alert.message = "Username or Password incorrect"
-                            case .notfound:
-                                alert.message = "Server resource not found"
-                            case .servererr:
-                                alert.message = "Internal Server Error"
-                        }
-                        
-                        
-                        self.present(alert, animated: true)
-                    }
-                   
+                case .notfound:
+                    print( error.localizedDescription)
                 }
-    
             }
-                
                 
             }
         }
-        
-//        print("Sending auth req")
 
     }
 
@@ -296,7 +276,7 @@ class LoginViewController: UIViewController {
         
         let tabVc = customTab()
         
-        if(UserDefaults.standard.object(forKey: "userkey") != nil ){
+        if(UserDefaults.standard.object(forKey: "userdata") != nil ){
             present(tabVc, animated: true)
         }
     }

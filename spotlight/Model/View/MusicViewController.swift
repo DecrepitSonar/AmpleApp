@@ -37,14 +37,21 @@ class MusicViewController: UIViewController {
 //        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
         let user = UserDefaults.standard.object(forKey: "userId") as! String
         
-        NetworkManager.loadHomePageContent(userId: user ) { result in
-            switch(result){
-            case .success(let data):
-                print(data)
+        NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject], error: NetworkError) in
+            switch(error){
+            case .success:
+                print("success",data)
                 self.section = data
-                self.initCollectionView()
-            case .failure(let error):
-                print(error)
+                
+                DispatchQueue.main.async {
+                    self.initCollectionView()
+                }
+
+                
+            case .notfound:
+                print("not found")
+            case .servererr:
+                print("Internal Server /err")
             }
         }
         
