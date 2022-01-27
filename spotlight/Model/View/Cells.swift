@@ -1268,11 +1268,13 @@ class ProfileHeader: UICollectionViewCell, Cell {
     }()
 } // Depricated
 
-class ProfileHead: UIView {
+class ProfileHead: UIView{
   
     static var reuseIdentifier: String =  "profile Header"
+    var user = UserDefaults.standard.object(forKey: "userdata")
     
     var isFollowed = false
+    var artist: Artist!
     
     let container = UIView(frame: .zero)
     
@@ -1282,8 +1284,6 @@ class ProfileHead: UIView {
         super.init( frame: frame)
         
         addSubview(image)
-        
-        setupGradient()
 
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor),
@@ -1296,6 +1296,38 @@ class ProfileHead: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("")
+    }
+    
+    func setupHeader(artist: Artist){
+        
+        self.artist = artist
+        NetworkManager.Get(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { ( result: Data, error: NetworkError ) in
+            switch(error){
+            case .notfound:
+            
+                self.isFollowed = false
+                DispatchQueue.main.async {
+                    self.followBtn.setTitle("Follow", for: .normal)
+                    self.followBtn.layer.borderWidth = 1
+                    self.followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+                }
+            
+            case .servererr:
+                print("server error: ", error.localizedDescription)
+            
+            case .success:
+                print("result")
+                self.isFollowed = true
+              
+                DispatchQueue.main.async {
+                    self.followBtn.setTitle("Following", for: .normal)
+                    self.followBtn.layer.borderWidth = 0
+                    self.followBtn.layer.borderColor = UIColor.clear.cgColor
+                }
+            }
+        }
+        
+        setupGradient()
     }
     
     func setupGradient(){
@@ -1340,18 +1372,52 @@ class ProfileHead: UIView {
     
     @objc func didTapFollowBtn() {
         
-        isFollowed = !isFollowed
         
-        if(isFollowed){
-            followBtn.setTitle("Following", for: .normal)
-            followBtn.layer.borderWidth = 0
-            followBtn.layer.borderColor = UIColor.clear.cgColor
+        
+        if(!isFollowed){
+            
+            NetworkManager.Post(url: "user/subscriptions?id=\(user!)", data: artist) { ( data: Data, error: NetworkError) in
+                switch(error){
+                case .notfound:
+                    print("internal error")
+                    
+                case .servererr:
+                    print("error")
+                    
+                case .success:
+                    
+                    self.isFollowed = true
+                    DispatchQueue.main.async {
+                        self.followBtn.setTitle("Following", for: .normal)
+                        self.followBtn.layer.borderWidth = 0
+                        self.followBtn.layer.borderColor = UIColor.clear.cgColor
+                    }
+                    
+                }
+            }
+            
         }
         else{
-            followBtn.setTitle("Follow", for: .normal)
-            followBtn.layer.borderWidth = 1
-            followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
 
+            NetworkManager.Delete(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { error in
+                switch(error){
+                case .servererr:
+                    print("Internal server error")
+                case .notfound:
+                    print("could not complete request")
+                
+                case .success:
+                    
+                    self.isFollowed = false
+                    DispatchQueue.main.async {
+                        self.followBtn.setTitle("Follow", for: .normal)
+                        self.followBtn.layer.borderWidth = 1
+                        self.followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+                    }
+                    
+                }
+            }
+            
         }
         
         followBtn.setNeedsDisplay()

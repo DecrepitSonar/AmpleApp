@@ -13,28 +13,44 @@ class Library: UIViewController {
     
     var collectionView: UICollectionView!
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>!
-    let user = UserDefaults.standard.object(forKey: "userId")
+    let user = UserDefaults.standard.object(forKey: "userdata")
     
     override func loadView() {
         super.loadView()
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         title = "Library"
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-//        UserDefaults.standard.removeObject(forKey: "userkey")
-        NetworkManager.loadLibraryContent(id: user as! String) { result in
-            switch(result){
-            case .success(let data):
+        
+        NetworkManager.Get(url: "library?user=\(user!)") { (data: [LibObject], error: NetworkError) in
+            switch(error){
+            case .notfound:
+                print("error url not found")
+            
+            case .servererr:
+                print("Internal Server error")
+                
+            case .success:
                 print(data)
-            case .failure(let err):
-                print(err)
+                self.section = data
+                
+                DispatchQueue.main.async {
+                    self.initDataSource()
+                }
             }
         }
-//        initDataSource()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard collectionView != nil else{
+            return
+        }
+        loadView()
+        
+    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
     }
     

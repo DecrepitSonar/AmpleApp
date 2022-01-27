@@ -11,6 +11,7 @@ class ProfileViewController: UIViewController {
     
     var artistId: String?
     var data: ProfileObject!
+    var header: ProfileHead!
     
     var tableview: UITableView!
     
@@ -35,9 +36,9 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350))
+
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        
         NetworkManager.Get(url: "artist?id=\(artistId!)") { (data: ProfileObject, error: NetworkError ) in
             switch( error){
             case .success:
@@ -75,28 +76,22 @@ class ProfileViewController: UIViewController {
     }
     
     func initHeader(){
-        let header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350))
+        
         header.image.setUpImage(url: data.imageURL)
         header.name.text = data.name
+        let artist = Artist(id: data.artistId,
+                               type: data.type,
+                               name: data.name,
+                               imageURL: data.imageURL,
+                               isVerified: data.isVerified,
+                               joinDate: data.joinDate,
+                               subscribers: data.subscribers
+        )
         
         let subscribers = NumberFormatter.localizedString(from: NSNumber(value: data.subscribers), number: NumberFormatter.Style.decimal)
         
         header.subscribersLabel.text = " \(data.type) • Subscribers: \(subscribers)"
-        let user = UserDefaults.standard.object(forKey: "userdata")
-        
-        NetworkManager.Get(url: "user?id=\(data.id)&&user=\(user!)") { ( result: Artist, error: NetworkError ) in
-            switch(error){
-            case .notfound:
-                print("404")
-            
-            case .servererr:
-                print("server error")
-            
-            case .success:
-                print("result")
-                print(result)
-            }
-        }
+        header.setupHeader(artist: artist)
         tableview.tableHeaderView = header
         
     }

@@ -62,9 +62,9 @@
             filePath = "spotlight/Controller/NetworkManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "296"
-            endingLineNumber = "296"
-            landmarkName = "getAlbums(completion:)"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
+            landmarkName = "getAudioTrack(track:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -78,8 +78,8 @@
             filePath = "spotlight/Model/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1539"
-            endingLineNumber = "1539"
+            startingLineNumber = "1605"
+            endingLineNumber = "1605"
             landmarkName = "CollectionCell"
             landmarkType = "3">
          </BreakpointContent>
@@ -94,9 +94,9 @@
             filePath = "spotlight/Controller/NetworkManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "439"
-            endingLineNumber = "439"
-            landmarkName = "getRandomAudioTrack(completion:)"
+            startingLineNumber = "502"
+            endingLineNumber = "502"
+            landmarkName = "getSearchHistory(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

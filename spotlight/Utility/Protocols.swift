@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+protocol ProfileHeaderDelegate{
+    func didTapFollowBtn()
+}
+
 protocol SelfConfigureingCell {
     static var reuseIdentifier: String { get }
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?)

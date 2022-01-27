@@ -14,8 +14,6 @@ struct UserData: Decodable {
     var email: String
     var subscribed: [String]
     var joinDate: String
-    var savedAlbums: [Album]
-    var savedTracks: [Track]
     var playlists: [Album]
     var listeningHistory: [Track]
 }

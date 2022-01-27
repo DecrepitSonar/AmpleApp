@@ -21,10 +21,11 @@ enum AuthenticationStatus: Error{
     case authenticationError
     case serverError
 }
+
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -33,33 +34,54 @@ class NetworkManager {
         let url = URL(string: "\(baseURL)/\(url)")
         
         print(url)
+        
         URLSession.shared.dataTask(with: url!){ data, response, error in
-                if error != nil {
+            if error != nil {
 //                    completion(.failure(.servererr))
 //                    print(error)
-                }
+            }
+            
+            guard let httpresponse = response as? HTTPURLResponse else {
                 
-                guard let httpresponse = response as? HTTPURLResponse else {
+                return
+            }
+            
+            print(httpresponse)
+//
+            switch(httpresponse.statusCode){
+        
+                case 404:
+                    print(httpresponse)
+                    completion(data as! T, .notfound)
+                
+                break;
+                
+                case 500:
+                    print("internal error")
+                
+                break;
+                default:
+                    print("reponse ok")
+                
+                    guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
+            
+                        completion(data as! T, .success)
+                        
+                        return
+                    }
                     
-                    return
-                }
+                    let decoder = JSONDecoder()
+                    do {
+                        let dataResponse = try decoder.decode(T.self, from: data!)
+                        print(dataResponse)
+                        completion(dataResponse, .success)
+                    }
+                    catch{
+                        print(error)
+                    }
+            }
                 
-                print(httpresponse)
-                guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-//                    completion(, .servererr)
-//                    print()
-                    return
-                }
                 
-                let decoder = JSONDecoder()
-                do {
-                    let dataResponse = try decoder.decode(T.self, from: data!)
-                    print(dataResponse)
-                    completion(dataResponse, .success)
-                }
-                catch{
-//                    print(error)
-                }
         }.resume()
         
     }
@@ -83,38 +105,78 @@ class NetworkManager {
             }
             
             guard let response = response as? HTTPURLResponse else {
-//                print(response)
                 return
             }
             
-//                print(response)
+            print(response)
+            switch(response.statusCode){
+                case 200:
+                    
+                    print("reponse ok")
+                        
+                    guard let mimeType = response.mimeType, mimeType == "application/json" else {
             
+                        completion(data as! T, .success)
+                        
+                        return
+                    }
+                
+                    do {
+                        let resp = try JSONDecoder().decode(T.self, from: data!)
+                        completion(resp, .success)
+                    }
+                    catch{
+                        print( error)
+                    }
+
+                case 500:
+                    print("")
+
+                case 404:
+                    completion(data as! T, .notfound)
+                
+                default:
+                    print("Requst completed successfully")
+            }
+
+        }.resume()
+        
+    }
+    static func Delete(url: String, completion: @escaping (NetworkError) -> ()){
+        
+        let url = URL(string: "\(baseURL)/\(url)")
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "DELETE"
+        print(url)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if error != nil {
+                print(error)
+            }
+
+            guard let response = response as? HTTPURLResponse else {
+                return
+            }
+
+            print(response.statusCode)
+
             switch(response.statusCode){
             case 200:
-                
-                print("reponse ok")
-                print(data)
-                do {
-                    let resp = try JSONDecoder().decode(T.self, from: data!)
-//                    print("response",resp)
-                    completion(resp, .success)
-                }
-                catch{
-                    print( error)
-                }
+                completion(.success)
 
             case 500:
-//                completion( )
-                print("")
+                print("Internal server error")
+                completion(.servererr)
 
-            case 403:
-//                completion(.failure(.authenticationError))
-                print("")
+            case 404:
+                print("could not complete request. item not found")
+                completion(.notfound)
+
             default:
+                print(response)
                 print("Requst completed successfully")
             }
-//
-           
 
         }.resume()
         
@@ -198,6 +260,7 @@ class NetworkManager {
                     return
                 }
 
+                
                 let decoder = JSONDecoder()
 
                 let dataResponse = try? decoder.decode([LibObject].self, from: data!)

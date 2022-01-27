@@ -35,7 +35,7 @@ class MusicViewController: UIViewController {
         // Do any additional setup after loading the view.
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
-        let user = UserDefaults.standard.object(forKey: "userId") as! String
+        let user = UserDefaults.standard.object(forKey: "userdata") as! String
         
         NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject], error: NetworkError) in
             switch(error){
@@ -47,7 +47,6 @@ class MusicViewController: UIViewController {
                     self.initCollectionView()
                 }
 
-                
             case .notfound:
                 print("not found")
             case .servererr:
@@ -118,6 +117,7 @@ class MusicViewController: UIViewController {
         }
         
         datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
+            
             guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
                 print("could not dequeue supplementory view")
                 return nil
