@@ -7,93 +7,116 @@
 
 import Foundation
 
-struct UserCredentials: Decodable {
+struct UserData: Decodable {
+    var id: String
     var username: String
-    var apiKey: String
+    var password: String
+    var email: String
+    var subscribed: [String]
+    var joinDate: String
+    var playlists: [Album]
+    var listeningHistory: [Track]
 }
 
-struct credentials: Codable{
+struct LoginCredentials: Codable{
     var username: String
     var password: String
 }
+//
+//struct LibObject: Codable, Hashable {
+//    var id: String
+//    var artistId: String?
+//    var type: String
+//    var title: String?
+//    var tagline: String?
+//    var name: String?
+//    var imageURL: String?
+//    var artistImgURL: String?
+//    var items: [LibItem]?
+//}
 
 struct LibObject: Codable, Hashable {
     var id: String
-    var artistId: String?
     var type: String
-    var title: String?
     var tagline: String?
-    var name: String?
-    var imageURL: String?
-    var artistImgURL: String?
     var items: [LibItem]?
+    var name: String?
+    var artistImgURL: String?
+    var title: String?
+    var imageURL: String?
+    var artistId: String?
+    var releaseDate: String?
 }
 
-struct LibItem: Codable ,Hashable{
+struct LibItem: Codable, Hashable {  
     var id: String
+    var trackNum: Int?
+    var genre: String?
     var type: String?
-    var trackNum: String?
     var title: String?
     var artistId: String?
-    var albumId: String?
-    var imageURL: String
-    var playCount: Int32?
     var name: String?
+    var imageURL: String
+    var audioURL: String?
+    var albumId: String?
+    var playCount: Int32?
 //    var followers: String?
-    var listeners: Int32?
+    var subscribers: Int32?
     var isVerified: Bool?
 //    var bio: String?
-//    var dateJoined: String?
-    var audioURL: String?
+    var joinDate: String?
+//    var audioURL: String?
 }
 
-struct AlbumDetail: Codable, Hashable {
+struct Album: Codable, Hashable {
     var id: String
     var type: String
-    var artist: String
-
-    
-    var items: [AlbumItems]?
+    var tagline: String?
+    var items: [Track]?
+    var name: String?
+    var artistImgURL: String?
+    var title: String?
+    var imageURL: String?
+    var artistId: String?
+    var releaseDate: String?
 }
 
-struct AlbumItems: Codable, Hashable {
+struct AlbumItem: Codable, Hashable {
     var id: String
     var type: String?
-    var trackNum: String?
+    var trackNum: UInt?
     var title: String?
     var artistId: String?
     var artist: String?
     var albumId: String?
     var imageURL: String?
     var name: String?
-    
     var playCount: Int?
 }
 
 struct Artist: Codable, Hashable {
     var id: String
+    var type: String
     var name: String
     var imageURL: String
     var isVerified: Bool
+    var joinDate: String
+    var subscribers: UInt32
 }
 
-struct Track: Decodable {
+struct Track: Codable, Hashable {
     var id: String
+    var type: String?
+    var trackNum: UInt?
     var title: String
     var artistId: String
     var name: String
     var imageURL: String
     var albumId: String
     var audioURL: String?
+    var playCount: Int?
 }
 
-struct Album: Decodable {
-    var Id: String
-    var Name: String
-    var ArtistId: String
-    var Image: String
-    var Artist: String
-}
 //
 //struct Playlist: Decodable {
 //    var Id: String
@@ -119,36 +142,27 @@ struct Catalog: Codable, Hashable {
 }
 //
 
-// Track overview models
-struct DetailSection: Codable, Hashable {
-    var id: String
-    var type: String
-    var artist: String
-    var items: [AlbumDetail]
-}
-
-// Artist Profile data model
-struct ArtistDetail: Codable, Hashable{
-    var id: String
-    var type: String
-    var username: String
-    var imageURL: String
-    var sections: [ProfileSections]
-}
-
-struct ProfileSections: Codable, Hashable{
-    var id: String
-    var type: String
-    var tagline: String
-    var items: [ProfileItem]
-}
-
 struct ProfileItem: Codable, Hashable {
-    var id: String
-    var title: String
-    var artist: String
-    var imageURL: String
+    var genre: String
+    var about: String
+    var label: String
+    var country: String
 }
+
+struct ProfileObject: Codable, Hashable{
+    var id: String
+    var type: String
+    var name: String
+    var artistId: String
+    var imageURL: String
+    var bio: ProfileItem?
+    var joinDate: String
+    var subscribers: UInt32
+    var isVerified: Bool
+    var items: [LibObject]
+}
+
+
 
 struct SearchObj: Codable, Hashable{
     var id: String

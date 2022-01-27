@@ -8,24 +8,6 @@
 import Foundation
 import  UIKit
 
-protocol SelfConfigureingCell {
-    static var reuseIdentifier: String { get }
-    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?)
-    
-}
-
-@objc protocol GestureAction {
-    @objc func didTap(_sender: CustomGestureRecognizer)
-}
-
-protocol Cell : SelfConfigureingCell & GestureAction {
-    
-}
-
-protocol PlayerConfiguration {
-    static var reuseIdentifier: String { get }
-    func configure(with player: Queue, rootVc: UINavigationController?)
-}
 
 class CustomGestureRecognizer: UITapGestureRecognizer{
     var id: String?
@@ -81,7 +63,7 @@ class LayoutManager {
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 50)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for collection Section")
         
@@ -189,7 +171,7 @@ class LayoutManager {
         return supplementoyItem
     }
     static func createProfileHeaderLayout() -> NSCollectionLayoutBoundarySupplementaryItem {
-        let item = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.60))
+        let item = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.90))
         
         let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: item, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         
