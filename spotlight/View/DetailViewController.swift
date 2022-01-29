@@ -36,14 +36,14 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album, error: NetworkError) in
+        NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album?, error: NetworkError) in
             switch(error){
             case .servererr:
                 print(error.localizedDescription)
             
             case .success:
                 
-                self.data = data
+                self.data = data!
                 
                 DispatchQueue.main.async {
                     self.loadingView.removeFromSuperview()
@@ -71,7 +71,7 @@ class DetailViewController: UIViewController {
         tableview.separatorColor = UIColor.clear
         tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 140, right: 0)
         tableview.contentInsetAdjustmentBehavior = .never
-
+        tableview.allowsSelection = true
         setupHeader()
         
         view.addSubview(tableview)
@@ -110,6 +110,37 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
         
         return "Published \(publishDate)"
     }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+
+         let favouritAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
+             print(self.data!.items![indexPath.row])
+             
+//             NetworkManager.Post(url: "/user/saved", data: self.data!.items![indexPath.row], completion: ( data: Bool, error: NetworkError) in
+//                
+//             )
+        }
+        
+        let addToQueueAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
+//            AudioManager.audioQueue.append(contentsOf: data[indexPath.row])
+            
+//            console.log(AudioManager.audioQueue)
+       }
+        
+        favouritAction.image = UIImage(systemName: "suit.heart")
+        favouritAction.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+        
+        addToQueueAction.image = UIImage(systemName: "increase.indent")
+        addToQueueAction.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+        
+        return UISwipeActionsConfiguration(actions: [favouritAction, addToQueueAction])
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.items![indexPath.row]])
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }

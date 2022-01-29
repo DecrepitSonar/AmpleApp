@@ -39,11 +39,12 @@ class ProfileViewController: UIViewController {
         header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350))
 
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        NetworkManager.Get(url: "artist?id=\(artistId!)") { (data: ProfileObject, error: NetworkError ) in
+        
+        NetworkManager.Get(url: "artist?id=\(artistId!)") { (data: ProfileObject?, error: NetworkError ) in
             switch( error){
             case .success:
                 
-                self.data = data
+                self.data = data!
                 
                 DispatchQueue.main.async {
                     self.loadingView.removeFromSuperview()

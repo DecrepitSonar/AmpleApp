@@ -231,13 +231,13 @@ class LoginViewController: UIViewController {
     
             let credentials = LoginCredentials(username: formData.username, password: formData.password)
 //
-            NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData, error: NetworkError) in
+            NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData?, error: NetworkError) in
                 switch(error){
                 case .servererr:
                     print(error.localizedDescription)
                 
                 case .success:
-                    UserDefaults.standard.set(data.id, forKey: "userdata")
+                    UserDefaults.standard.set(data!.id, forKey: "userdata")
                 
                     DispatchQueue.main.async {
                         self.present(self.tabVc, animated: true)

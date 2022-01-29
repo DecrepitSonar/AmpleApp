@@ -24,42 +24,53 @@ public class DynamicTableView: UITableView {
 }
 class SearchViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
 
-    var tableview: DynamicTableView!
+    var tableview: UITableView!
     
     let Genres = ["R&B", "Hip-Hop", "Rap", "Soul", "Jazz", "Pop"]
     var trackHistory = [LibItem](){
         didSet{
-            tableview.reloadData()
+            DispatchQueue.main.async {
+                self.tableview.reloadData()
+            }
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationController!.navigationBar.prefersLargeTitles = true
+        navigationItem.hidesSearchBarWhenScrolling = false
         title = "Search"
         
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         
-        NetworkManager.getSearchHistory { result in
-            switch(result){
-            case .success(let data):
-                self.trackHistory = data
-                print(data)
-            case .failure(let err):
-                print(err)
-            }
-        }
-        
-        tableview = DynamicTableView()
+        tableview = UITableView()
         tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame
-//        tableview.separatorColor = UIColor.clear
-        tableview.estimatedRowHeight = 50
+        tableview.separatorColor = UIColor.clear
+        tableview.rowHeight = UITableView.automaticDimension
+        
+        
+        
+        let user = UserDefaults.standard.object(forKey: "userdata")
+
+        NetworkManager.Get(url: "search/history?userId=\(user!)", completion: { (data: [LibItem]?, error: NetworkError) in
+        
+            switch(error){
+            case .notfound:
+                print("Url not found")
+                
+            case .servererr:
+                print("server error")
+                
+            case .success:
+                self.trackHistory = data!
+            }
+        })
 
         view.addSubview(tableview)
         
@@ -71,7 +82,6 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         
     }
     
-//
     func updateSearchResults(for searchController: UISearchController) {
         
         guard let text = searchController.searchBar.text else {
@@ -80,7 +90,6 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 
         let vc = searchController.searchResultsController as? SearchResultViewController
         
-//        vc?.view.backgroundColor = .systemRed
         if (text.isEmpty){
             return
         }
@@ -105,64 +114,44 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        switch(indexPath.section){
-        case 0:
-            return 150
-        default:
-            return 80
-        }
-//        return UIT/ableView.automaticDimension
+        return 70
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch(section){
-        case 0:
-            return "Genres"
+        return "Recent Searches"
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        case 1:
-            return "Recent Searches"
-        default:
-            return ""
-        }
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch(section){
-        case 0:
-            return 1
-        default:
-            if( trackHistory.count > 1){
-                return trackHistory.count
-            }
-            
+        if(trackHistory.count > 0){
+            return trackHistory.count
+        }
+        else{
             return 1
         }
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        switch(indexPath.section){
-        case 0:
-            let cell = tableview.dequeueReusableCell(withIdentifier: GenreColletionCell.reuseableIdentifier, for: indexPath) as! GenreColletionCell
-            cell.configure(genres: Genres)
-            return cell
+        if(trackHistory.count > 0 ){
             
-        default:
-            if(trackHistory.count > 0 && trackHistory != nil){
-                let cell = tableview.dequeueReusableCell(withIdentifier: TrackStrip.reuseIdentifier, for: indexPath) as! TrackStrip
-                cell.artist.text = trackHistory[indexPath.row].name
-                cell.name.text = trackHistory[indexPath.row].title
-                cell.image.setUpImage(url: trackHistory[indexPath.row].imageURL)
+            switch(trackHistory[indexPath.row].type){
+            case "Artist":
+                return configureTableCell(tableview: tableView, AviTableCell.self, with: trackHistory[indexPath.row], indexPath: indexPath)
                 
-                return cell
+            default:
+                return configureTableCell(tableview: tableView, TrackStrip.self, with: trackHistory[indexPath.row], indexPath: indexPath)
             }
-            
+        }
+        else{
             let cell = tableview.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
             cell.textLabel?.text = "No Recent Searchs"
             cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             return cell
-            
         }
+        
     }
 }
 

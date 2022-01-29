@@ -525,7 +525,9 @@ class TrackCell: UITableViewCell{
         let labelStack = UIStackView(arrangedSubviews: [trackTitleLabel, artistNameLabel])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [labelStack])
+        selectionStyle = .none
+        
+        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, optionsBtn])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
@@ -540,8 +542,8 @@ class TrackCell: UITableViewCell{
 //            trackImage.widthAnchor.constraint(equalToConstant: 50),
 //            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
 //
-//            optionsBtn.widthAnchor.constraint(equalToConstant: 30 ),
-//            optionsBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            optionsBtn.widthAnchor.constraint(equalToConstant: 30 ),
+            optionsBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             
             horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -569,11 +571,11 @@ class TrackCell: UITableViewCell{
 //                          albumId: item.albumId!,
 //                          audioURL: item.audioURL!)
         
-        tapGesture.track = item
-        addGestureRecognizer(tapGesture)
+//        tapGesture.track = item
+//        addGestureRecognizer(tapGesture)
         
-        options.track = item
-        optionsBtn.addGestureRecognizer(options)
+//        options.track = item
+//        optionsBtn.addGestureRecognizer(options)
         
         optionsBtn.addTarget(self, action: #selector(openOptionsView(_sender:)), for: .touchUpInside)
     }
@@ -585,7 +587,7 @@ class TrackCell: UITableViewCell{
     
     @objc func didTap(_sender: CustomGestureRecognizer){
         
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
+//        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
     }
     
     var trackImage: UIImageView = {
@@ -620,7 +622,6 @@ class TrackCell: UITableViewCell{
         btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         return btn
     }()
-    
     
 }
 
@@ -1301,7 +1302,7 @@ class ProfileHead: UIView{
     func setupHeader(artist: Artist){
         
         self.artist = artist
-        NetworkManager.Get(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { ( result: Data, error: NetworkError ) in
+        NetworkManager.Get(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { ( result: Data?, error: NetworkError ) in
             switch(error){
             case .notfound:
             
@@ -1376,7 +1377,7 @@ class ProfileHead: UIView{
         
         if(!isFollowed){
             
-            NetworkManager.Post(url: "user/subscriptions?id=\(user!)", data: artist) { ( data: Data, error: NetworkError) in
+            NetworkManager.Post(url: "user/subscriptions?id=\(user!)", data: artist) { ( data: Data?, error: NetworkError) in
                 switch(error){
                 case .notfound:
                     print("internal error")
@@ -1694,6 +1695,9 @@ class TrackStrip: UITableViewCell, TableCell{
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        selectionStyle = .none
+        backgroundColor = .clear
+        
         image.contentMode = .scaleAspectFill
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         backgroundColor = .clear
@@ -1782,7 +1786,10 @@ class AviTableCell: UITableViewCell, TableCell{
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        let labelStack = UIStackView(arrangedSubviews: [name, artist])
+        backgroundColor = .clear
+        selectionStyle = .none
+        
+        let labelStack = UIStackView(arrangedSubviews: [artist])
         labelStack.axis = .vertical
         
         let horizontalStack = UIStackView(arrangedSubviews: [image, labelStack, options])
@@ -1819,8 +1826,7 @@ class AviTableCell: UITableViewCell, TableCell{
     
     func configureWithSet(image: String, name: String, artist: String, type: String) {
         self.image.setUpImage(url: image)
-        self.name.text = "\(type) • \(name)"
-        self.artist.text = artist
+        self.artist.text = "\(type) • \(artist)"
     }
     
     let image: UIImageView = {
@@ -1837,8 +1843,8 @@ class AviTableCell: UITableViewCell, TableCell{
     
     var artist: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
-        label.setFont(with: 10)
+        label.textColor = .label
+        label.setFont(with: 12)
         return label
     }()
     var name: UILabel = {

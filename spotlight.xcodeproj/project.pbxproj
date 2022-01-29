@@ -164,6 +164,7 @@
 				225E145327A3513F006C5317 /* LoginViewController.swift */,
 				225E145527A3513F006C5317 /* VideoViewController.swift */,
 				225E145727A3513F006C5317 /* components.swift */,
+				225E147B27A352A7006C5317 /* ProfileViewController.swift */,
 				225E147D27A35422006C5317 /* Data */,
 				225E143827A3513F006C5317 /* SubViews */,
 			);
@@ -175,7 +176,6 @@
 			children = (
 				225E143927A3513F006C5317 /* Settings */,
 				225E144127A3513F006C5317 /* TrackQueueListViewController.swift */,
-				225E147B27A352A7006C5317 /* ProfileViewController.swift */,
 				225E144427A3513F006C5317 /* SearchResultViewController.swift */,
 				225E144727A3513F006C5317 /* TrackHistoryViewController.swift */,
 				225E144927A3513F006C5317 /* ArtistProfileVc.swift */,

@@ -22,7 +22,7 @@ class Library: UIViewController {
         title = "Library"
         
         
-        NetworkManager.Get(url: "library?user=\(user!)") { (data: [LibObject], error: NetworkError) in
+        NetworkManager.Get(url: "library?user=\(user!)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
             case .notfound:
                 print("error url not found")
@@ -31,8 +31,8 @@ class Library: UIViewController {
                 print("Internal Server error")
                 
             case .success:
-                print(data)
-                self.section = data
+                print(data!)
+                self.section = data!
                 
                 DispatchQueue.main.async {
                     self.initDataSource()

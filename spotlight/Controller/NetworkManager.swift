@@ -24,13 +24,13 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     
-    static func Get<T: Decodable>(url: String, completion: @escaping (T, NetworkError) -> ()){
+    static func Get<T: Decodable>(url: String, completion: @escaping (T?, NetworkError) -> ()){
         let url = URL(string: "\(baseURL)/\(url)")
         
         print(url)
@@ -52,7 +52,7 @@ class NetworkManager {
         
                 case 404:
                     print(httpresponse)
-                    completion(data as! T, .notfound)
+                    completion(nil, .notfound)
                 
                 break;
                 
@@ -65,12 +65,13 @@ class NetworkManager {
                 
                     guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
             
-                        completion(data as! T, .success)
+                        completion(nil, .success)
                         
                         return
                     }
                     
                     let decoder = JSONDecoder()
+                
                     do {
                         let dataResponse = try decoder.decode(T.self, from: data!)
                         print(dataResponse)
@@ -85,7 +86,7 @@ class NetworkManager {
         }.resume()
         
     }
-    static func Post<T: Decodable, D: Encodable>(url: String, data: D, completion: @escaping (T, NetworkError) -> ()){
+    static func Post<T: Decodable, D: Encodable>(url: String, data: D, completion: @escaping (T?, NetworkError) -> ()){
         
         let url = URL(string: "\(baseURL)/\(url)")
         var request = URLRequest(url: url!)
@@ -100,6 +101,7 @@ class NetworkManager {
         request.httpBody = encoded
 
         let task = URLSession.shared.uploadTask(with: request, from: encoded) { data, response, error in
+            
             if error != nil {
 //                    print( error)
             }
@@ -109,6 +111,7 @@ class NetworkManager {
             }
             
             print(response)
+            
             switch(response.statusCode){
                 case 200:
                     
@@ -116,7 +119,7 @@ class NetworkManager {
                         
                     guard let mimeType = response.mimeType, mimeType == "application/json" else {
             
-                        completion(data as! T, .success)
+                        completion(nil, .success)
                         
                         return
                     }
@@ -133,7 +136,7 @@ class NetworkManager {
                     print("")
 
                 case 404:
-                    completion(data as! T, .notfound)
+                    completion(nil, .notfound)
                 
                 default:
                     print("Requst completed successfully")

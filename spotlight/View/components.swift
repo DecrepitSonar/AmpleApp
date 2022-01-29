@@ -209,10 +209,14 @@ class MiniPlayer: UIView {
     @objc func togglePlayBtn(sender: Notification){
         
         if (player!.isPlaying){
-            playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            DispatchQueue.main.async {
+                self.playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            }
             
         }else{
-            playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            DispatchQueue.main.async {
+                self.playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            }
         }
     }
     @objc func togglePlayState(){
