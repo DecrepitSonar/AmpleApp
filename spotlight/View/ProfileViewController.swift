@@ -70,6 +70,9 @@ class ProfileViewController: UIViewController {
         tableview.contentInsetAdjustmentBehavior = .never
         tableview.backgroundColor = .clear
         tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableview.bounces = false
+        tableview.rowHeight = UITableView.automaticDimension
+        tableview.estimatedRowHeight  = 100
         
         tableview.register(ProfileContentSection.self, forCellReuseIdentifier: ProfileContentSection.reuseIdentifier)
         initHeader()
@@ -97,10 +100,17 @@ class ProfileViewController: UIViewController {
         
     }
     
-    func didTapFollowBtn(){
-//        NetworkManager.updateFollowStatus(id: artistId){ result in
-//
-//        }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let offset = tableview.contentOffset.y
+        
+        print(offset)
+        
+        if(offset < 350 ){
+            header.image.center.y =  header.center.y + offset
+            return
+        }
+
     }
 
 }
@@ -117,6 +127,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableview.dequeueReusableCell(withIdentifier: ProfileContentSection.reuseIdentifier, for: indexPath) as! ProfileContentSection
         cell.navigationController = navigationController
         cell.section = data.items
+        
         return cell
     }
     

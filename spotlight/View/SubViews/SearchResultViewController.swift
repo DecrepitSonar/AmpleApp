@@ -81,7 +81,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             
             updateSearchHistory(item: data[indexPath.row])
             
-//            presentingViewController?.navigationController?.pushViewController(profile, animated: true)
+            presentingViewController?.navigationController?.pushViewController(profile, animated: true)
             
             
         case "Album":

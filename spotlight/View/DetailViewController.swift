@@ -13,6 +13,8 @@ class DetailViewController: UIViewController {
     var data: Album?
     var tableview: UITableView!
     
+
+    
     var loadingView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         view.backgroundColor = .red
@@ -89,6 +91,9 @@ class DetailViewController: UIViewController {
         
         header.artistId = data!.artistId!
         self.tableview.tableHeaderView = header
+        
+        header.album = data
+        header.checkIfAlbumIsSaved()
         
     }
 }

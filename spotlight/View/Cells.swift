@@ -849,9 +849,14 @@ class DetailHeaders: UIView{
     var vc: UINavigationController?
     var tapGesture: CustomGestureRecognizer!
     var artistId = String()
+    var album: Album!
     
+    var isSaved: Bool = false
+    var isDownloaded: Bool?
+    var addedToListQueue: Bool?
     
-    let likeBtnConfig = UIImage.SymbolConfiguration(pointSize: 20)
+    let btnConfig = UIImage.SymbolConfiguration(pointSize: 20)
+    let user = UserDefaults.standard.object(forKey: "userdata")
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -869,28 +874,7 @@ class DetailHeaders: UIView{
         btnStack.translatesAutoresizingMaskIntoConstraints = false
         btnStack.distribution = .fillEqually
         btnStack.spacing = 10
-        
-        let likebtn = UIImageView()
-        
-        likebtn.image = UIImage(systemName: "heart", withConfiguration: likeBtnConfig)
-        likebtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        let ellipis = UIImageView()
-        ellipis.image = UIImage(systemName: "ellipsis")
-        ellipis.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
 
-        let shareBtn = UIImageView()
-        shareBtn.image = UIImage(systemName: "square.and.arrow.up")
-        shareBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        let downloadBtn = UIImageView()
-        downloadBtn.image = UIImage(systemName: "arrow.down")
-        downloadBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        let queueBtn = UIImageView()
-        queueBtn.image = UIImage(systemName: "list.triangle")
-        queueBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
         let TirtiaryStack = UIStackView(arrangedSubviews: [likebtn, queueBtn, shareBtn, downloadBtn, ellipis])
         TirtiaryStack.axis = .horizontal
         TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
@@ -902,13 +886,15 @@ class DetailHeaders: UIView{
         SecondaryStack.distribution = .fill
         SecondaryStack.spacing = 10
         
-        let ContainerStack = UIStackView(arrangedSubviews: [albumImage, trackTitle, SecondaryStack, btnStack, TirtiaryStack])
+        let ContainerStack = UIStackView(arrangedSubviews: [albumImage, TirtiaryStack,trackTitle, SecondaryStack, btnStack])
         ContainerStack.translatesAutoresizingMaskIntoConstraints = false
         ContainerStack.axis = .vertical
         ContainerStack.spacing = 17
         ContainerStack.layer.zPosition = 3
         
         addSubview(ContainerStack)
+        
+        likebtn.addTarget(self, action: #selector(savedBtnTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -100),
@@ -925,8 +911,8 @@ class DetailHeaders: UIView{
             albumImage.heightAnchor.constraint(equalToConstant: 355),
             albumImage.widthAnchor.constraint(equalToConstant:350),
 
-            artistAviImage.heightAnchor.constraint(equalToConstant: 40),
-            artistAviImage.widthAnchor.constraint(equalToConstant: 40),
+            artistAviImage.heightAnchor.constraint(equalToConstant: 20),
+            artistAviImage.widthAnchor.constraint(equalToConstant: 20),
 
             ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             ContainerStack.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 75),
@@ -934,11 +920,77 @@ class DetailHeaders: UIView{
 ////
             btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
         ])
-        
+
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func savedBtnTapped(){
+
+        
+        if( !isSaved){
+            NetworkManager.Post(url: "user/saved?userId=\(user!)", data: album) { (data: Data?, error: NetworkError) in
+                
+                switch(error){
+                case .servererr:
+                    print("Internal server error")
+                
+                case .notfound:
+                    print("url not found")
+                    
+                case .success:
+                    print("Post request successful")
+                    self.isSaved = true
+                    DispatchQueue.main.async {
+                        self.likebtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                        self.likebtn.reloadInputViews()
+                    }
+                }
+            }
+        }
+        else{
+            NetworkManager.Delete(url: "user/saved?userId=\(user!)&&id=\(album.id)") { err in
+                switch( err ){
+                case .servererr:
+                    print( "Internal server error")
+                
+                case .notfound:
+                    print( "Url not found")
+                
+                case .success:
+                    print("Delete request successful")
+                    self.isSaved = false
+                    DispatchQueue.main.async {
+                        self.likebtn.setImage(UIImage(systemName: "heart"), for: .normal)
+                    }
+                }
+            }
+        }
+        
+        likebtn.setNeedsDisplay()
+    }
+    
+    func checkIfAlbumIsSaved(){
+        NetworkManager.Get(url: "user/saved?id=\(album.id)&&userId=\(user!)") { (data: Album?, error: NetworkError) in
+            
+            switch( error){
+            case .servererr:
+                print("Internal server error ")
+            
+            case .notfound:
+                print("Path to url not found")
+                
+            case .success:
+                print("success")
+                DispatchQueue.main.async {
+                    self.likebtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                }
+                
+                self.isSaved = true
+            }
+        }
     }
     
     @objc func didTap(_sender: CustomGestureRecognizer) {
@@ -1004,6 +1056,40 @@ class DetailHeaders: UIView{
         
         return label
     }()
+    
+    let likebtn: UIButton = {
+        
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "heart"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        return btn
+    }()
+    let queueBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "list.triangle"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let shareBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let downloadBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "arrow.down"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let ellipis: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+  
     var playBtn: UIButton = {
         
         let btnConfig = UIImage.SymbolConfiguration(pointSize: 20)
@@ -1049,7 +1135,7 @@ class DetailHeaders: UIView{
         image.contentMode = .scaleAspectFill
         image.translatesAutoresizingMaskIntoConstraints = false
         image.clipsToBounds = true
-        image.layer.cornerRadius = 20
+        image.layer.cornerRadius = 10
         image.isUserInteractionEnabled = true
         image.layer.zPosition = 1
 
@@ -1281,11 +1367,14 @@ class ProfileHead: UIView{
     
     var stack = UIStackView()
     
+    var animator: UIViewPropertyAnimator!
+    
     override init(frame: CGRect){
         super.init( frame: frame)
         
         addSubview(image)
-
+        layer.zPosition = -3
+        
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor),
             image.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -1368,12 +1457,9 @@ class ProfileHead: UIView{
             infoBtn.heightAnchor.constraint(equalToConstant: 20),
             infoBtn.widthAnchor.constraint(equalToConstant: 20)
         ])
-        
     }
     
     @objc func didTapFollowBtn() {
-        
-        
         
         if(!isFollowed){
             

@@ -47,7 +47,7 @@ class NetworkManager {
             }
             
             print(httpresponse)
-//
+            
             switch(httpresponse.statusCode){
         
                 case 404:
@@ -133,7 +133,7 @@ class NetworkManager {
                     }
 
                 case 500:
-                    print("")
+                completion(nil, .servererr)
 
                 case 404:
                     completion(nil, .notfound)
