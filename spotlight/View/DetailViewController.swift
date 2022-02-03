@@ -6,15 +6,15 @@
 //
 
 import UIKit
+import CoreAudio
 
 class DetailViewController: UIViewController {
 
     var albumId = String()
     var data: Album?
     var tableview: UITableView!
-    
+    let user = UserDefaults.standard.object(forKey: "userdata")
 
-    
     var loadingView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         view.backgroundColor = .red
@@ -64,7 +64,6 @@ class DetailViewController: UIViewController {
         tableview = UITableView(frame: .zero, style: .grouped)
         tableview.delegate = self
         tableview.dataSource = self
-//        tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableview.frame = view.frame
         
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -121,24 +120,27 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
          let favouritAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
              print(self.data!.items![indexPath.row])
              
-//             NetworkManager.Post(url: "/user/saved", data: self.data!.items![indexPath.row], completion: ( data: Bool, error: NetworkError) in
-//                
-//             )
+             NetworkManager.Post(url: "user/savedTracks?user=\(self.user!)", data: self.data!.items![indexPath.row]) { ( data: Bool?, error: NetworkError) in
+                 switch(error){
+                 case .notfound:
+                     print("url not found")
+                
+                 case .servererr:
+                     print("Internal server error")
+                     
+                 case .success:
+                     DispatchQueue.main.async {
+                         self.tableview.reloadRows(at: [indexPath], with: .right)
+                     }
+                     print("success")
+                 }
+             }
         }
-        
-        let addToQueueAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
-//            AudioManager.audioQueue.append(contentsOf: data[indexPath.row])
-            
-//            console.log(AudioManager.audioQueue)
-       }
         
         favouritAction.image = UIImage(systemName: "suit.heart")
         favouritAction.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
         
-        addToQueueAction.image = UIImage(systemName: "increase.indent")
-        addToQueueAction.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
-        
-        return UISwipeActionsConfiguration(actions: [favouritAction, addToQueueAction])
+        return UISwipeActionsConfiguration(actions: [favouritAction])
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

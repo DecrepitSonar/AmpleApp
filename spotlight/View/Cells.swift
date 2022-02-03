@@ -515,6 +515,9 @@ class TrackCell: UITableViewCell{
     
     var tapGesture: CustomGestureRecognizer!
     var options: CustomGestureRecognizer!
+    var user = UserDefaults.standard.object(forKey: "userdata")
+    var isSaved: Bool = false
+    var track: Track!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -527,7 +530,7 @@ class TrackCell: UITableViewCell{
         
         selectionStyle = .none
         
-        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, optionsBtn])
+        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, likedBtn, optionsBtn])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
@@ -550,6 +553,10 @@ class TrackCell: UITableViewCell{
             horizontalStack.topAnchor.constraint(equalTo: topAnchor),
             horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        optionsBtn.addTarget(self, action: #selector(openOptionsView(_sender:)), for: .touchUpInside)
+        likedBtn.addTarget(self, action: #selector(toggleSave), for: .touchUpInside)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -558,6 +565,8 @@ class TrackCell: UITableViewCell{
     
     
     func configure(with item: Track) {
+        
+        track = item
         
         trackImage.setUpImage(url: item.imageURL)
         trackTitleLabel.text = item.title
@@ -577,7 +586,66 @@ class TrackCell: UITableViewCell{
 //        options.track = item
 //        optionsBtn.addGestureRecognizer(options)
         
-        optionsBtn.addTarget(self, action: #selector(openOptionsView(_sender:)), for: .touchUpInside)
+        print("Initialized cell")
+        
+        NetworkManager.Get(url: "user/savedTracks?id=\(item.id)&&user=\(user!)") { (data: Data?, error: NetworkError) in
+            switch( error ){
+            case .servererr:
+                print( "Internal server ")
+            
+            case .notfound:
+                print( "url not found")
+                
+            case .success:
+                
+                DispatchQueue.main.async {
+                    self.likedBtn.isHidden = false
+                }
+                
+            }
+        }
+        
+    }
+    
+    @objc func toggleSave(){
+        
+        if(!isSaved){
+            NetworkManager.Post(url: "user/savedTracks?user=\(self.user!)", data: track) { ( data: Bool?, error: NetworkError) in
+                switch(error){
+                case .notfound:
+                    print("url not found")
+               
+                case .servererr:
+                    print("Internal server error")
+                    
+                case .success:
+                    print("success")
+                    
+                    DispatchQueue.main.async {
+                        self.likedBtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                        self.likedBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+                    }
+                }
+            }
+        }
+        else{
+            NetworkManager.Delete(url: "user/savedTracks?user=\(self.user!)") { (error: NetworkError) in
+                switch( error ){
+                case .servererr:
+                    print(" internal server error ")
+                
+                case .notfound:
+                    print( "url not found")
+                    
+                case .success:
+                    DispatchQueue.main.async {
+                        self.likedBtn.isHidden = false
+                    }
+                }
+            }
+        }
+        
+        likedBtn.setNeedsDisplay()
     }
     
     @objc func openOptionsView(_sender: CustomGestureRecognizer){
@@ -613,7 +681,17 @@ class TrackCell: UITableViewCell{
         
         return label
     }()
-    
+    let likedBtn: UIButton = {
+        let view = UIButton()
+        view.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        view.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        view.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        view.isHidden = true
+        view.layer.zPosition = 2
+
+        return view
+    }()
     let optionsBtn: UIButton = {
         
         let btn = UIButton()
@@ -1841,6 +1919,7 @@ class TrackStrip: UITableViewCell, TableCell{
         image.setUpImage(url: track.imageURL)
         name.text = track.title
         artist.text = track.name
+        
         
 //        tapGesture!.track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
     }
