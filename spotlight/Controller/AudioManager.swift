@@ -30,7 +30,6 @@ class AudioManager {
     
     // current index of track in queue
     
-    
     // initialize player with track queue or track
     static func initPlayer( track: Track?, tracks: [Track]?){
         
@@ -43,12 +42,15 @@ class AudioManager {
             print("current track: ", currentQueue)
             
             playerController(option: .play)
+
             return
         }
         
+        print(tracks)
         audioQueue = []
         audioQueue = tracks!.reversed()
         currentQueue = audioQueue.popLast()
+        print("current Track: ", currentQueue)
         
         playerController(option: .play)
         
@@ -64,8 +66,6 @@ class AudioManager {
             
                 initPlayerData(data: data)
                 
-//                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
-                
             case .failure(let err):
                 print( err)
             }
@@ -80,7 +80,7 @@ class AudioManager {
             player!.play()
             
             print("initialize player")
-            
+            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }
         catch{
@@ -93,10 +93,11 @@ class AudioManager {
         
         switch(option){
         case .play:
-            
-            getTrack(track: currentQueue!)
+           
+            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
             
             if currentQueue != nil {
+                getTrack(track: currentQueue!)    
                 return
             }
             
@@ -153,7 +154,6 @@ class AudioManager {
 
            }
            
-            
         case .previous:
             
             guard timer != nil else {
@@ -179,13 +179,13 @@ class AudioManager {
     }
     
     static func getCurrentTrack() -> Track{
-        guard audioQueue.isEmpty else{
+        guard currentQueue != nil else{
             print( "queue is empty")
-            return currentQueue!
+            return Track(id: "", title: "Title", artistId: "", name: "Artist", imageURL: "", albumId: "", audioURL: "")
         }
         
         print("queue is not empty")
-        return Track(id: "", title: "Title", artistId: "", name: "Artist", imageURL: "", albumId: "", audioURL: "")
+        return currentQueue!
         
     }
     

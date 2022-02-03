@@ -49,6 +49,7 @@ class MusicViewController: UIViewController {
 
             case .notfound:
                 print("not found")
+                
             case .servererr:
                 print("Internal Server /err")
             }

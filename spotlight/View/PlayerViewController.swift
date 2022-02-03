@@ -67,7 +67,7 @@ class PlayerViewController: UIViewController {
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
 
-        image.image = UIImage(named: currentTrack.imageURL)
+        image.setUpImage(url:  currentTrack.imageURL)
         image.translatesAutoresizingMaskIntoConstraints = false
 //        image.layer.cornerRadius = 10
         view.addSubview(image)
@@ -142,22 +142,12 @@ class PlayerViewController: UIViewController {
         slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         totalTrackTime.setFont(with: 12)
-        totalTrackTime.text = formatter.string(from: player.duration)
+        totalTrackTime.text = formatter.string(from: player.currentTime - player.duration)
         
         totalTimeLapsed.setFont(with: 12)
-        totalTrackTime.text = formatter.string(from: player.currentTime)
-        
-        if( player.currentTime > 60 ){
-            self.totalTrackTime.text = self.formatter.string(from: player.duration )
-            
-        }else if( player.currentTime >= 10){
-            self.totalTrackTime.text = "0:\(self.formatter.string(from: player.duration )!)"
-            
-        }else{
-            self.totalTrackTime.text = "0:0\(self.formatter.string(from: player.duration )!)"
-        }
-        
-        let sliderStack = UIStackView(arrangedSubviews: [ totalTrackTime, totalTimeLapsed])
+        totalTimeLapsed.text = formatter.string(from: player.currentTime)
+    
+        let sliderStack = UIStackView(arrangedSubviews: [ totalTimeLapsed, totalTrackTime ])
         sliderStack.axis = .horizontal
         sliderStack.spacing = 10
         sliderStack.distribution = .equalSpacing
@@ -241,10 +231,16 @@ class PlayerViewController: UIViewController {
     @objc func togglePlayBtn(sender: Notification){
         
         if (player!.isPlaying){
-            playBtn.setImage(pauseBtnImg, for: .normal)
+            
+            DispatchQueue.main.async {
+                self.playBtn.setImage(self.pauseBtnImg, for: .normal)
+            }
             
         }else{
-            playBtn.setImage(playbtnImg, for: .normal)
+            
+            DispatchQueue.main.async {
+                self.playBtn.setImage(self.playbtnImg, for: .normal)
+            }
         }
     }
     
@@ -262,6 +258,8 @@ class PlayerViewController: UIViewController {
             self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
         }
         
+        
+        totalTrackTime.text = formatter.string(from: player.currentTime - player.duration)
 //        print(round(Float(player.currentTime / player.duration)))
         slider.setValue(Float(player.currentTime / player.duration), animated: true)
         
@@ -315,7 +313,16 @@ class PlayerViewController: UIViewController {
     //        print(_sender.userInfo?.keys)
     }
 
-    @objc func openQueueList(){
-        NotificationCenter.default.post(name: NSNotification.Name("queue"), object: nil)
-    }
+//    @objc func openQueueList(){
+//        
+//        let queue = TrackQueueListViewController()
+//        print("opening player")
+//           
+//        print("presenting player")
+//        queue.modalPresentationStyle = .overFullScreen
+//        navigationController!.present(queue, animated: true)
+//        
+//        presentingViewController?.present(queue, animated: true)
+////        NotificationCenter.default.post(name: NSNotification.Name("queue"), object: nil)
+//    }
 }

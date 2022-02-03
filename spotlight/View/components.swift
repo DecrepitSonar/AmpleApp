@@ -149,6 +149,8 @@ class MiniPlayer: UIView {
             trackInfoStack.leadingAnchor.constraint(equalTo: img.trailingAnchor, constant: 20),
             trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
+        
+        self.isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -156,52 +158,37 @@ class MiniPlayer: UIView {
     }
     
     @objc func setTrack(sender: Notification){
-        
+//
         if let object = sender.userInfo as NSDictionary? {
             if let track = object["track"] {
                 
                 print("settings track")
-                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
+//                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
                 
                 AudioManager.initPlayer(track: track as? Track, tracks: nil)
-                return 
             }
+//            return
         }
     }
     
     @objc func updateMiniPlayer(sender: Notification){
 
-        print("updated player")
-        if let object = sender.userInfo as NSDictionary? {
-                  if let track = object["track"]{
-                      let track = track as? Track
-                      
-                      img.setUpImage(url: track!.imageURL)
-                      artistLabel.text = track!.name
-                      trackLabel.text = track!.title
-                  }
+        DispatchQueue.main.async {
+            self.isHidden = false
+            print("updated player")
+            if let object = sender.userInfo as NSDictionary? {
+                      if let track = object["track"]{
+                          let track = track as? Track
+                          
+                          self.img.setUpImage(url: track!.imageURL)
+                          self.artistLabel.text = track!.name
+                          self.trackLabel.text = track!.title
+                      }
+            }
         }
-
-//        if let object = sender.userInfo as NSDictionary? {
-//            if let id = object["track"]{
-//
-//                NetworkManager.getTrack( id: id as! String, completion: {
-//                    result in
-//
-//                    switch( result){
-//                    case .success( let data):
-//                        self.img.image = UIImage(named: data.imageURL)
-//                        self.artistLabel.text = data.name
-//                        self.trackLabel.text = data.title
-//
-//                    case .failure( let err):
-//                        print(err)
-//                    }
-//                })
-//
-//            }
-//        }
+      
     }
+    
     @objc func nextTrack(){
         AudioManager.playerController(option: .next)
         
@@ -231,27 +218,23 @@ class MiniPlayer: UIView {
             
         }
         
-        
-        
-        
         print("pressed")
         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
     }
+    
     @objc func openPlayer(){
-        print("pressed")
+        print("pressed player")
         NotificationCenter.default.post(name: NSNotification.Name("player"), object: nil)
     }
    
     let img: UIImageView = {
+        
         let view = UIImageView()
         view.image = UIImage(named: "6lack")
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         view.heightAnchor.constraint(equalToConstant: 50).isActive = true
         view.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        
         view.clipsToBounds = true
-//        view.layer.cornerRadius = 5
         
         return view
         
@@ -295,10 +278,8 @@ class MiniPlayer: UIView {
         return btn
     }()
     
-    
 }
 class customTab: UITabBarController{
-    
     
     let animate = CABasicAnimation()
 

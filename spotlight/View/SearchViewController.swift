@@ -54,8 +54,6 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         tableview.separatorColor = UIColor.clear
         tableview.rowHeight = UITableView.automaticDimension
         
-        
-        
         let user = UserDefaults.standard.object(forKey: "userdata")
 
         NetworkManager.Get(url: "search/history?userId=\(user!)", completion: { (data: [LibItem]?, error: NetworkError) in

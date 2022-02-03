@@ -148,6 +148,7 @@ class TrendingSection: UICollectionViewCell, Cell{
     let title = UILabel()
     let artist = UILabel()
     let listenCount = UILabel()
+    var track: Track!
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -169,9 +170,7 @@ class TrendingSection: UICollectionViewCell, Cell{
         listenCount.setFont(with: 10)
         listenCount.textColor = .secondaryLabel
         listenCount.textAlignment = .right
-        listenCount.numberOfLines = 0
-        listenCount.layer.borderColor = UIColor.red.cgColor
-        listenCount.layer.borderWidth = 1
+//        listenCount.numberOfLines = 0
         listenCount.translatesAutoresizingMaskIntoConstraints = false
         listenCount.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
@@ -182,7 +181,7 @@ class TrendingSection: UICollectionViewCell, Cell{
         innterStackview.axis = .vertical
         innterStackview.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackview = UIStackView(arrangedSubviews: [chartPosition, image, innterStackview] )
+        let stackview = UIStackView(arrangedSubviews: [image, innterStackview, listenCount] )
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .horizontal
         stackview.alignment = .center
@@ -200,11 +199,8 @@ class TrendingSection: UICollectionViewCell, Cell{
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            
-            chartPosition.trailingAnchor.constraint(equalTo: image.leadingAnchor, constant: -20),
-            chartPosition.widthAnchor.constraint(equalToConstant: 5),
         
-//            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
+            listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
         ])
     }
     
@@ -216,24 +212,20 @@ class TrendingSection: UICollectionViewCell, Cell{
         
         vc = rootVc!
         
-        let track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
+        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
         
         tapGesture?.track = track
         
-        chartPosition.text = String(indexPath! + 1)
         image.setUpImage(url: catalog.imageURL)
         title.text = catalog.title
         artist.text = catalog.name
-//        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
+        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
     
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        
-        print("selected track")
-        
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
+        AudioManager.initPlayer(track: track, tracks: nil)
     }
 }
 class MediumImageSlider: UICollectionViewCell, Cell{
@@ -325,7 +317,6 @@ class MediumImageSlider: UICollectionViewCell, Cell{
             vc?.pushViewController(view, animated: true)
             
         }
-        
         
     }
 }
@@ -668,7 +659,7 @@ class TrackCell: UITableViewCell{
     
     @objc func didTap(_sender: CustomGestureRecognizer){
         
-//        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
+        AudioManager.initPlayer(track: _sender.track, tracks: nil)
     }
     
     var trackImage: UIImageView = {
@@ -716,13 +707,12 @@ class TrackCell: UITableViewCell{
     
 }
 
-
 // headers
 class PlaylistsDetailHeader: UIView{
     
     static let reuseableIdentifier: String = "image Header"
     
-    var tracks = [Track]()
+    var tracks: [Track]!
     var vc: UINavigationController?
     var tapGesture: CustomGestureRecognizer!
     var artistId = String()
@@ -791,9 +781,7 @@ class PlaylistsDetailHeader: UIView{
     }
 
     @objc func playAllTracks(){
-        
         AudioManager.initPlayer(track: nil, tracks: tracks)
-//        print("pressed")
     }
     
     func setupGradient(){

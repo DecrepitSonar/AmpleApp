@@ -85,7 +85,7 @@ class PlaylistViewController: UIViewController{
         header.albumImage.setUpImage(url: data!.imageURL)
         header.trackTitle.text = data!.title
         header.vc = navigationController
-        
+        header.tracks = data!.tracks
         self.tableview.tableHeaderView = header
         
         
@@ -143,8 +143,7 @@ extension PlaylistViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.tracks[indexPath.row]])
+        AudioManager.initPlayer(track: data!.tracks[indexPath.row], tracks: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
