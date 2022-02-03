@@ -19,8 +19,11 @@ class Library: UIViewController {
         super.loadView()
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        title = "Library"
         
+        let btn = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(openSettings))
+        navigationController?.navigationItem.rightBarButtonItem = btn
+        
+        title = "Library"
         
         NetworkManager.Get(url: "library?user=\(user!)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
@@ -54,6 +57,11 @@ class Library: UIViewController {
         
     }
     
+    @objc func openSettings(){
+        let view = SettingsViewController()
+        
+        navigationController?.pushViewController(view, animated: true)
+    }
     func initDataSource(){
         
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())

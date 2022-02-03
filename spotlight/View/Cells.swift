@@ -690,7 +690,7 @@ class TrackCell: UITableViewCell{
     var trackTitleLabel: UILabel = {
         let label = UILabel()
 //        label.textColor = .label
-//        label.setFont(with: 12)
+        label.setFont(with: 12)
         
         return label
     }()
@@ -1864,10 +1864,10 @@ class TrackStrip: UITableViewCell, TableCell{
         image.layer.cornerRadius = 5
         
         name.textColor = .label
-        name.setFont(with: 12)
+        name.font = UIFont.systemFont(ofSize: 12)
         
         artist.textColor = .secondaryLabel
-        artist.setFont(with: 10)
+        artist.font = UIFont.systemFont(ofSize: 10, weight: .bold)
         
         options.translatesAutoresizingMaskIntoConstraints = false
         options.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -1889,8 +1889,8 @@ class TrackStrip: UITableViewCell, TableCell{
         
         NSLayoutConstraint.activate([
             
-            image.heightAnchor.constraint(equalToConstant: 40),
-            image.widthAnchor.constraint(equalToConstant: 40),
+            image.heightAnchor.constraint(equalToConstant: 50),
+            image.widthAnchor.constraint(equalToConstant: 50),
             
             image.leadingAnchor.constraint(equalTo: options.trailingAnchor, constant: 7),
             

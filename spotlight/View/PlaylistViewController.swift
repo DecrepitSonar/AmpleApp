@@ -80,7 +80,7 @@ class PlaylistViewController: UIViewController{
     }
     func setupHeader(){
        
-        let header = PlaylistsDetailHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
+        let header = PlaylistsDetailHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 520))
         header.artist.text = data!.title
         header.albumImage.setUpImage(url: data!.imageURL)
         header.trackTitle.text = data!.title
@@ -148,7 +148,7 @@ extension PlaylistViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return 60
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         

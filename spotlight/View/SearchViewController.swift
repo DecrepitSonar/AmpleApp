@@ -46,7 +46,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         
-        tableview = UITableView()
+        tableview = UITableView(frame: .zero, style: .grouped)
         tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.delegate = self
         tableview.dataSource = self
@@ -113,16 +113,25 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
     
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        return 50
+        if( indexPath.row == 0 && indexPath.section == 0 ){
+            return 100
+        }
+        return 60
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if( section == 0){
+            return "Search Genres"
+        }
         return "Recent Searches"
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if( section == 0 ){
+            return 1
+        }
+        
         if(trackHistory.count > 0){
             return trackHistory.count
         }
@@ -131,10 +140,16 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         }
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
+        if( indexPath.section == 0 ){
+            let cell = tableview.dequeueReusableCell(withIdentifier: GenreColletionCell.reuseableIdentifier) as! GenreColletionCell
+            cell.configure(genres: Genres)
+            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+            return cell
+        }
         if(trackHistory.count > 0 ){
             
             switch(trackHistory[indexPath.row].type){
