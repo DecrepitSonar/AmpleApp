@@ -114,7 +114,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 70
+        return 50
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Recent Searches"

@@ -242,6 +242,7 @@ class MediumImageSlider: UICollectionViewCell, Cell{
     
     var vc: UINavigationController?
     var tapgesture: CustomGestureRecognizer?
+    var type: String?
     
     let image = UIImageView()
     let artist = UILabel()
@@ -295,6 +296,7 @@ class MediumImageSlider: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc!
+        type = catalog.type
         
         tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         tapgesture!.id = catalog.id
@@ -309,10 +311,21 @@ class MediumImageSlider: UICollectionViewCell, Cell{
     func didTap(_sender: CustomGestureRecognizer) {
 
         print(_sender.id!)
-        let view = DetailViewController()
-        view.albumId = _sender.id!
-
-        vc?.pushViewController(view, animated: true)
+        
+        
+        switch( type){
+        case "Playlist":
+            let view = PlaylistViewController()
+            view.id = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        default:
+            let view = DetailViewController()
+            view.albumId = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        }
+        
         
     }
 }
@@ -705,7 +718,7 @@ class TrackCell: UITableViewCell{
 
 
 // headers
-class DetailHeader: UICollectionReusableView, GestureAction{
+class PlaylistsDetailHeader: UIView{
     
     static let reuseableIdentifier: String = "image Header"
     
@@ -717,8 +730,8 @@ class DetailHeader: UICollectionReusableView, GestureAction{
     override init(frame: CGRect){
         super.init(frame: frame)
         
-        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
-        artistAviImage.addGestureRecognizer(tapGesture!)
+//        tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+//        artistAviImage.addGestureRecognizer(tapGesture!)
 
         playBtn.addTarget(self, action: #selector(playAllTracks), for: .touchUpInside)
         playBtn.isUserInteractionEnabled = true
@@ -729,20 +742,9 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         btnStack.axis = .horizontal
         btnStack.translatesAutoresizingMaskIntoConstraints = false
         btnStack.distribution = .fillEqually
-        btnStack.spacing = 10 
-
-        let TirtiaryStack = UIStackView(arrangedSubviews: [pageTag])
-        TirtiaryStack.axis = .horizontal
-        TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
-        TirtiaryStack.distribution = .equalSpacing
+        btnStack.spacing = 10
         
-        let SecondaryStack = UIStackView(arrangedSubviews: [artistAviImage, artist])
-        SecondaryStack.axis = .horizontal
-        SecondaryStack.alignment = .center
-        SecondaryStack.distribution = .fill
-        SecondaryStack.spacing = 10
-        
-        let ContainerStack = UIStackView(arrangedSubviews: [albumImage, trackTitle, btnStack, SecondaryStack, datePublished, TirtiaryStack])
+        let ContainerStack = UIStackView(arrangedSubviews: [albumImage, trackTitle, btnStack])
         ContainerStack.translatesAutoresizingMaskIntoConstraints = false
         ContainerStack.axis = .vertical
         ContainerStack.spacing = 17
@@ -769,7 +771,7 @@ class DetailHeader: UICollectionReusableView, GestureAction{
             artistAviImage.widthAnchor.constraint(equalToConstant: 40),
 
             ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            ContainerStack.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 75),
+            ContainerStack.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 100),
             ContainerStack.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
 ////
             btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
@@ -904,13 +906,6 @@ class DetailHeader: UICollectionReusableView, GestureAction{
         return label
     }()
     
-    let datePublished: UILabel = {
-        let label = UILabel()
-        label.text = "Published 2019, 10 Tracks ,45 minutes"
-        label.setFont(with: 12)
-        label.textColor = .secondaryLabel
-        return label
-    }()
     let pageTag: UILabel = {
         let label = UILabel()
         label.textColor = .secondaryLabel
@@ -1894,8 +1889,8 @@ class TrackStrip: UITableViewCell, TableCell{
         
         NSLayoutConstraint.activate([
             
-            image.heightAnchor.constraint(equalToConstant: 50),
-            image.widthAnchor.constraint(equalToConstant: 50),
+            image.heightAnchor.constraint(equalToConstant: 40),
+            image.widthAnchor.constraint(equalToConstant: 40),
             
             image.leadingAnchor.constraint(equalTo: options.trailingAnchor, constant: 7),
             

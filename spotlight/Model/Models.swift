@@ -203,3 +203,12 @@ struct settings{
     let image: String
     let description: String
 }
+
+struct Playlist: Codable {
+    var id: String
+    var title: String
+    var type: String
+    var userId: String
+    var tracks: [Track]
+    var imageURL: String
+}

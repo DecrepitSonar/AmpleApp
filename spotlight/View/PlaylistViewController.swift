@@ -1,20 +1,20 @@
 //
-//  DetailViewController.swift
+//  PlaylistViewController.swift
 //  spotlight
 //
-//  Created by bajo on 2022-01-23.
+//  Created by bajo on 2022-02-03.
 //
 
 import UIKit
-import CoreAudio
 
-class DetailViewController: UIViewController {
-
-    var albumId = String()
-    var data: Album?
+class PlaylistViewController: UIViewController{
+    
+    var id = String()
+    var data: Playlist?
+    
     var tableview: UITableView!
     let user = UserDefaults.standard.object(forKey: "userdata")
-
+    
     var loadingView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         view.backgroundColor = .red
@@ -38,27 +38,27 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album?, error: NetworkError) in
-            switch(error){
-            case .servererr:
-                print(error.localizedDescription)
+        NetworkManager.Get(url: "user/playlist?user=\(user!)&&id=\(id)") { (data: Playlist?, error: NetworkError) in
             
-            case .success:
+            switch( error ){
+            case .servererr:
+                print( "internal error")
+            
+            case .notfound:
+                print( "url not found ")
                 
+            case .success:
+                print( "success ")
                 self.data = data!
                 
                 DispatchQueue.main.async {
                     self.loadingView.removeFromSuperview()
-                    
                     self.loadTableview()
                 }
-                
-            case .notfound:
-                print(error.localizedDescription)
             }
         }
+        
     }
-    
     
     func loadTableview(){
         tableview = UITableView(frame: .zero, style: .grouped)
@@ -67,7 +67,7 @@ class DetailViewController: UIViewController {
         tableview.frame = view.frame
         
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableview.register(TrackCell.self, forCellReuseIdentifier: TrackCell.reuseIdentifier)
+        tableview.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
         tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.separatorColor = UIColor.clear
         tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 140, right: 0)
@@ -80,47 +80,45 @@ class DetailViewController: UIViewController {
     }
     func setupHeader(){
        
-        let header = DetailHeaders(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 640))
-        header.artist.text = data?.name
-        header.albumImage.setUpImage(url: data!.imageURL!)
-        header.imageContainer.setUpImage(url: data!.imageURL!)
-        header.trackTitle.text = data?.title
-        header.artistAviImage.setUpImage(url: data!.artistImgURL!)
+        let header = PlaylistsDetailHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 500))
+        header.artist.text = data!.title
+        header.albumImage.setUpImage(url: data!.imageURL)
+        header.trackTitle.text = data!.title
         header.vc = navigationController
         
-        header.artistId = data!.artistId!
         self.tableview.tableHeaderView = header
         
-        header.album = data
-        header.checkIfAlbumIsSaved()
         
     }
+
 }
 
-extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
+extension PlaylistViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data!.items!.count
+        return data!.tracks.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Tracks"
     }
     
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+//    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+//
+//        let date = Date()
+//        let publishDate = date.formateDate(dateString: data!.releaseDate!)
         
-        let date = Date()
-        let publishDate = date.formateDate(dateString: data!.releaseDate!)
         
+//        return "Published \(publishDate)"
         
-        return "Published \(publishDate)"
-    }
+//    }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
          let favouritAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
-             print(self.data!.items![indexPath.row])
+             print(self.data!.tracks[indexPath.row])
              
-             NetworkManager.Post(url: "user/savedTracks?user=\(self.user!)", data: self.data!.items![indexPath.row]) { ( data: Bool?, error: NetworkError) in
+             NetworkManager.Delete(url: "user/savedTracks?user=\(self.user!)") { (error : NetworkError) in
                  switch(error){
                  case .notfound:
                      print("url not found")
@@ -137,15 +135,16 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
              }
         }
         
-        favouritAction.image = UIImage(systemName: "suit.heart")
-        favouritAction.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+//        favouritAction.image = UIImage(systemName: "xmark.circle")
+        favouritAction.title = "Remove"
+        favouritAction.backgroundColor = .systemRed
         
         return UISwipeActionsConfiguration(actions: [favouritAction])
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.items![indexPath.row]])
+        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.tracks[indexPath.row]])
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -153,11 +152,10 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableview.dequeueReusableCell(withIdentifier: TrackCell.reuseIdentifier, for: indexPath) as! TrackCell
-        cell.configure(with: data!.items![indexPath.row])
+        let cell = tableview.dequeueReusableCell(withIdentifier: TrackStrip.reuseIdentifier, for: indexPath) as! TrackStrip
+        cell.configure(track: data!.tracks[indexPath.row])
         cell.backgroundColor = .clear
         return cell
     }
-    
     
 }

@@ -42,6 +42,7 @@
 		225E148627A35422006C5317 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 225E148127A35422006C5317 /* catalog.json */; };
 		225E148727A35422006C5317 /* profileData.json in Resources */ = {isa = PBXBuildFile; fileRef = 225E148227A35422006C5317 /* profileData.json */; };
 		225E148927A6BD8D006C5317 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 225E148827A6BD8B006C5317 /* Assets.xcassets */; };
+		225E148B27AC0529006C5317 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225E148A27AC0528006C5317 /* PlaylistViewController.swift */; };
 		227A1B1C278A191B00314ED7 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227A1B1B278A191A00314ED7 /* extensions.swift */; };
 		227A2DA52795FAD5005F7EE2 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227A2DA42795FAD5005F7EE2 /* Protocols.swift */; };
 		229F559F26E5288D00D10B36 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F559E26E5288D00D10B36 /* NetworkManager.swift */; };
@@ -104,6 +105,7 @@
 		225E148127A35422006C5317 /* catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		225E148227A35422006C5317 /* profileData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = profileData.json; sourceTree = "<group>"; };
 		225E148827A6BD8B006C5317 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		225E148A27AC0528006C5317 /* PlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
 		227A1B1B278A191A00314ED7 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		227A2DA42795FAD5005F7EE2 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		229F559E26E5288D00D10B36 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				225E143327A3513F006C5317 /* Cells.swift */,
+				225E148A27AC0528006C5317 /* PlaylistViewController.swift */,
 				225E143427A3513F006C5317 /* SearchViewController.swift */,
 				225E143527A3513F006C5317 /* Library.swift */,
 				225E143627A3513F006C5317 /* MusicViewController.swift */,
@@ -437,6 +440,7 @@
 				225E146027A3513F006C5317 /* AccountSettingsVc.swift in Sources */,
 				227A1B1C278A191B00314ED7 /* extensions.swift in Sources */,
 				225E146F27A3513F006C5317 /* ReleasesVc.swift in Sources */,
+				225E148B27AC0529006C5317 /* PlaylistViewController.swift in Sources */,
 				225E145E27A3513F006C5317 /* NotificationSettingsVc.swift in Sources */,
 				225E147527A3513F006C5317 /* HomeVc.swift in Sources */,
 				225314D626E523EF00D1F496 /* SceneDelegate.swift in Sources */,
