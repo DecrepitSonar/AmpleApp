@@ -120,7 +120,7 @@ class PlayerViewController: UIViewController {
         likeBtn.setImage(likeBtnImg, for: .normal)
         likeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
-        let optionStack = UIStackView(arrangedSubviews: [likeBtn, shareBtn, optionBtn])
+        let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, shareBtn, optionBtn])
         optionStack.axis = .horizontal
         optionStack.alignment = .leading
         optionStack.spacing = 20
@@ -136,9 +136,8 @@ class PlayerViewController: UIViewController {
         buttonStack.distribution = .fillProportionally
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         
-        
         slider.setThumbImage(UIImage(), for: .normal)
-        slider.value = 0.3
+        slider.value = 0
         slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         totalTrackTime.setFont(with: 12)
@@ -159,7 +158,7 @@ class PlayerViewController: UIViewController {
         queue.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         queue.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
         
-        let stackControls = UIStackView(arrangedSubviews: [optionStack, labelStack, sliderStack, slider, buttonStack, queue])
+        let stackControls = UIStackView(arrangedSubviews: [labelStack, sliderStack, slider, buttonStack, optionStack ])
         
         stackControls.axis = .vertical
         stackControls.spacing = 25
@@ -178,7 +177,7 @@ class PlayerViewController: UIViewController {
         NSLayoutConstraint.activate([
 
             image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            image.heightAnchor.constraint(equalToConstant: 320),
+            image.heightAnchor.constraint(equalToConstant: 340),
             image.widthAnchor.constraint(equalToConstant: 340),
             
             
@@ -188,7 +187,7 @@ class PlayerViewController: UIViewController {
             stackControls.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackControls.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             
-            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -50),
+            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -100),
             
             closeBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
             closeBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
@@ -245,23 +244,24 @@ class PlayerViewController: UIViewController {
     }
     
     @objc func updateTrackTiming(){
-        
         AudioManager.checkTrackIsEnded()
-        
-        if( player.currentTime > 60 ){
-            self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
+        DispatchQueue.main.async {
             
-        }else if( player.currentTime >= 10){
-            self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
+            if( player.currentTime > 60 ){
+                self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
+                
+            }else if( player.currentTime >= 10){
+                self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
+                
+            }else{
+                self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
+            }
             
-        }else{
-            self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
+            
+            self.totalTrackTime.text = self.formatter.string(from: player.currentTime - player.duration)
+    //        print(round(Float(player.currentTime / player.duration)))
+            self.slider.setValue(Float(player.currentTime / player.duration), animated: true)
         }
-        
-        
-        totalTrackTime.text = formatter.string(from: player.currentTime - player.duration)
-//        print(round(Float(player.currentTime / player.duration)))
-        slider.setValue(Float(player.currentTime / player.duration), animated: true)
         
     }
     
@@ -282,34 +282,37 @@ class PlayerViewController: UIViewController {
     }
     @objc func updatePlayer(sender: Notification){
         
-        totalTrackTime.text = formatter.string(from: player.duration)
-        
-            AudioManager.checkTrackIsEnded()
-        
-//            print(player.currentTime)
-            if( player.currentTime > 60){
-                self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
-                
-            }else if( player.currentTime >= 10){
-                self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
-                
-            }else{
-                self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
+        DispatchQueue.main.async {
+            self.totalTrackTime.text = self.formatter.string(from: player.duration)
+            
+                AudioManager.checkTrackIsEnded()
+            
+    //            print(player.currentTime)
+                if( player.currentTime > 60){
+                    self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
+                    
+                }else if( player.currentTime >= 10){
+                    self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
+                    
+                }else{
+                    self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
+                }
+            
+            
+            if let object = sender.userInfo as NSDictionary? {
+                      if let track = object["track"]{
+                          let track = track as? Track
+
+    //                          print(track!.audioURL)
+                          self.image.setUpImage(url: track!.imageURL)
+                          self.artist.text = track!.name
+                          self.trackTitle.text = track!.title
+
+
+                      }
             }
-        
-        
-        if let object = sender.userInfo as NSDictionary? {
-                  if let track = object["track"]{
-                      let track = track as? Track
-
-//                          print(track!.audioURL)
-                      image.image = UIImage(named: track!.imageURL)
-                      artist.text = track!.name
-                      trackTitle.text = track!.title
-
-
-                  }
         }
+        
     //        print(_sender.userInfo?.keys)
     }
 

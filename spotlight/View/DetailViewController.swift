@@ -87,7 +87,7 @@ class DetailViewController: UIViewController {
         header.trackTitle.text = data?.title
         header.artistAviImage.setUpImage(url: data!.artistImgURL!)
         header.vc = navigationController
-        
+        header.tracks = data!.items!
         header.artistId = data!.artistId!
         self.tableview.tableHeaderView = header
         

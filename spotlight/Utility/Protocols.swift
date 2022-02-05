@@ -8,6 +8,9 @@
 import Foundation
 import UIKit
 
+protocol PlayerDelegate {
+    func openPlayer()
+}
 protocol ProfileHeaderDelegate{
     func didTapFollowBtn()
 }

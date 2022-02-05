@@ -96,8 +96,20 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             
         case "Track":
             print("Track")
+            let item = data[indexPath.row]
             
-            NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data[indexPath.row]])
+            let track = Track(id: item.id,
+                              type: item.type,
+                              trackNum: nil,
+                              title: item.title!,
+                              artistId: item.artistId!,
+                              name: item.name!,
+                              imageURL: item.imageURL,
+                              albumId: item.albumId!,
+                              audioURL: item.audioURL!,
+                              playCount: nil)
+            
+            AudioManager.initPlayer(track: track, tracks: nil)
             
             NetworkManager.Post(url: "/user/history", data: data[indexPath.row]) { (data: Track?, error: NetworkError) in
                 switch(error){

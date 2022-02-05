@@ -102,6 +102,8 @@ class MiniPlayer: UIView {
     
     var timer = Timer()
     
+    var delegate: PlayerDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -224,7 +226,8 @@ class MiniPlayer: UIView {
     
     @objc func openPlayer(){
         print("pressed player")
-        NotificationCenter.default.post(name: NSNotification.Name("player"), object: nil)
+        
+        delegate?.openPlayer()
     }
    
     let img: UIImageView = {
@@ -279,7 +282,7 @@ class MiniPlayer: UIView {
     }()
     
 }
-class customTab: UITabBarController{
+class customTab: UITabBarController, PlayerDelegate{
     
     let animate = CABasicAnimation()
 
@@ -288,6 +291,7 @@ class customTab: UITabBarController{
     
     override func viewDidLoad() {
         
+        miniPlayer.delegate = self
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .fullScreen
         
@@ -295,7 +299,18 @@ class customTab: UITabBarController{
         
         miniPlayer.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
         miniPlayer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        
 
+    }
+    
+    func openPlayer() {
+        let player = PlayerViewController()
+        print("opening player")
+           
+        print("presenting player")
+        player.modalPresentationStyle = .overFullScreen
+        presentingViewController?.presentedViewController?.present(player, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {

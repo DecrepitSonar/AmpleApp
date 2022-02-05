@@ -94,7 +94,7 @@ class AudioManager {
         switch(option){
         case .play:
            
-            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
+//            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
             
             if currentQueue != nil {
                 getTrack(track: currentQueue!)    
@@ -130,25 +130,30 @@ class AudioManager {
             invalidateTimer()
             
             previousTracks.insert(currentQueue!, at: 0)
-            currentQueue = audioQueue.popLast()
+          
             print(audioQueue.count)
             
             
            if audioQueue.count < 1 {
-                NetworkManager.getRandomAudioTrack( completion: { result in
-                    switch( result){
-                    case .success( let data):
+               NetworkManager.Get(url: "track?isRandom=true") { ( data: Track?, error: NetworkError) in
+                   switch( error){
+                   case .success:
 //                        print(data)
-                        self.audioQueue.append(data)
-                        print(audioQueue)
-                        
-                        getTrack(track: currentQueue!)
-                        
+                       self.audioQueue.append(data!)
+                       print(audioQueue)
+                       currentQueue = audioQueue.popLast()
+                       
+                       getTrack(track: currentQueue!)
+                       
 
-                    case .failure( let err):
-                        print(err)
-                    }
-                })
+                   case .notfound:
+                       print("url not found")
+                       
+                   case .servererr:
+                       print( "internal server error")
+                   }
+               }
+          
            }else{
                getTrack(track: currentQueue!)
 

@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class MusicViewController: UIViewController {
+class MusicViewController: UIViewController, PlayerDelegate {
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -22,7 +22,7 @@ class MusicViewController: UIViewController {
     override func loadView() {
         super.loadView()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
         
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Browse"
@@ -57,7 +57,7 @@ class MusicViewController: UIViewController {
         
     }
     
-    @objc func openPlayer(sender: Notification){
+    func openPlayer(){
         let player = PlayerViewController()
         print("opening player")
            

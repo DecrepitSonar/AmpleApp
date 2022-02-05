@@ -1760,6 +1760,7 @@ class CollectionCell: UICollectionViewCell, Cell{
     let title = UILabel()
     let artist = UILabel()
     let listenCount = UILabel()
+    var track: Track!
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -1815,6 +1816,17 @@ class CollectionCell: UICollectionViewCell, Cell{
     
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
 
+        track = Track(id: item.id,
+                      type: item.type!,
+                      trackNum: nil,
+                      title: item.title!,
+                      artistId: item.artistId!,
+                      name: item.name!,
+                      imageURL: item.imageURL,
+                      albumId: item.albumId!,
+                      audioURL: item.audioURL!,
+                      playCount: nil)
+        
         chartPosition.text = "1"
         image.setUpImage(url: item.imageURL)
         title.text = item.title
@@ -1826,7 +1838,7 @@ class CollectionCell: UICollectionViewCell, Cell{
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track": _sender.id!])
+        AudioManager.initPlayer(track: track, tracks: nil)
     }
 }
 
