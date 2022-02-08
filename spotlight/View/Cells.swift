@@ -1430,6 +1430,7 @@ class ProfileHead: UIView{
     
     var animator: UIViewPropertyAnimator!
     
+    
     override init(frame: CGRect){
         super.init( frame: frame)
         

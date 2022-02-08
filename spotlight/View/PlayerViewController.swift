@@ -106,7 +106,7 @@ class PlayerViewController: UIViewController {
         
         artist.text = currentTrack.name
         artist.textColor = .label
-        artist.setFont(with: 15)
+        artist.setFont(with: 12)
         
         trackTitle.text = currentTrack.title
         trackTitle.widthAnchor.constraint(equalToConstant: 340).isActive = true
@@ -129,7 +129,7 @@ class PlayerViewController: UIViewController {
         let labelStack = UIStackView(arrangedSubviews: [artist, trackTitle])
         labelStack.axis = .vertical
         labelStack.distribution = .equalCentering
-        labelStack.spacing = 10
+        labelStack.spacing = 5
         
         let buttonStack = UIStackView(arrangedSubviews: [shuffleBtn, prevBtn, playBtn, forwardBtn, repeatBtn])
         buttonStack.axis = .horizontal
@@ -187,7 +187,7 @@ class PlayerViewController: UIViewController {
             stackControls.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackControls.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             
-            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -100),
+            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -75),
             
             closeBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
             closeBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)

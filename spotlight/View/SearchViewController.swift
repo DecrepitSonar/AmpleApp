@@ -114,7 +114,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         if( indexPath.row == 0 && indexPath.section == 0 ){
             return 100
         }
-        return 60
+        return 65
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if( section == 0){

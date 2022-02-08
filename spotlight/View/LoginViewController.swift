@@ -261,10 +261,11 @@ class LoginViewController: UIViewController {
 
         if(UserDefaults.standard.object(forKey: "userkey") != nil ){
             print("apearing")
+            setupForm()
             return
         }
         
-        setupForm()
+        
 
     }
     

@@ -27,6 +27,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableview.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
+        tableview.separatorColor = UIColor.clear
         view.addSubview(effect)
         
         view.addSubview(tableview)
@@ -53,7 +54,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 65
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -87,7 +88,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
             cell!.configure(track: AudioManager.previousTracks[indexPath.row])
-            cell!.layer.opacity = 0.5
+            cell!.layer.opacity = 0.1
             return cell!
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip

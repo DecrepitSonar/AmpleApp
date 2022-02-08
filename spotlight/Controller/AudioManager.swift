@@ -130,7 +130,7 @@ class AudioManager {
             invalidateTimer()
             
             previousTracks.insert(currentQueue!, at: 0)
-          
+            currentQueue = audioQueue.popLast()
             print(audioQueue.count)
             
             
