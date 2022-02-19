@@ -24,8 +24,8 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuap÷p.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuap÷p.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";

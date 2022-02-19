@@ -1063,7 +1063,7 @@ class DetailHeaders: UIView{
     @objc func playAllTracks(){
         
         AudioManager.shared.initPlayer(track: nil, tracks: tracks)
-
+//        print("pressed")
     }
     
     func setupGradient(){
@@ -1907,6 +1907,7 @@ class TrackStrip: UITableViewCell, TableCell{
             horizontalStack.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
         
+        
     }
     
     func configure(track: Track){
@@ -1915,6 +1916,8 @@ class TrackStrip: UITableViewCell, TableCell{
         name.text = track.title
         artist.text = track.name
         
+        
+//        tapGesture!.track = Track(id: item.id, title: item.title!, artistId: item.artistId!, name: item.name!, imageURL: item.imageURL, albumId: item.albumId!, audioURL: item.audioURL!)
     }
     
     func configureWithSet(image: String, name: String, artist: String, type: String) {
@@ -1924,10 +1927,17 @@ class TrackStrip: UITableViewCell, TableCell{
         self.artist.text = artist
         
     }
-   
+    
     required init?(coder: NSCoder) {
         fatalError("")
     }
+    
+//    @objc func didTap(_sender: CustomGestureRecognizer){
+////        print("Sender: ", _sender.track)
+//
+//        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : _sender.track! as Track])
+//    }
+    
 }
 
 class AviTableCell: UITableViewCell, TableCell{

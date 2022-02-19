@@ -17,7 +17,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        queue = AudioManager.audioQueue
+        queue = AudioManager.shared.audioQueue
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
 
@@ -43,13 +43,13 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         
         switch section{
         case 0:
-            return AudioManager.audioQueue.count
+            return 1
         
-        case 2:
-            return AudioManager.previousTracks.count
+        case 1:
+            return AudioManager.shared.audioQueue.count
             
         default:
-            return 1
+            return AudioManager.shared.previousTracks.count
         }
     }
     
@@ -63,36 +63,44 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section{
         case 0:
+            return "Now playing"
+            
+        case 1:
             return "Up Next"
-        case 2:
-            return "Previous"
             
         default:
-            return "Now playing"
+            return "Previous"
         }
 
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        if(queue!.isEmpty || queue == nil){
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-//            cell.textLabel?.text = "Nothing in queue"
-//            
-//            return cell
-//        }
+
         switch indexPath.section{
             
         case 0 :
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
+            cell!.configure(track: AudioManager.shared.getCurrentTrack())
+            return cell!
+            
+        case 1:
+            
             let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
             cell!.configure(track: queue![indexPath.row])
             return cell!
-        case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
-            cell!.configure(track: AudioManager.previousTracks[indexPath.row])
-            cell!.layer.opacity = 0.1
-            return cell!
+            
         default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
-            cell!.configure(track: AudioManager.getCurrentTrack())
+            
+            guard AudioManager.shared.previousTracks.isEmpty else {
+                
+                let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
+                cell!.configure(track: AudioManager.shared.previousTracks[indexPath.row])
+                cell!.layer.opacity = 0.1
+                return cell!
+                
+            }
+            
+            let cell = tableview.dequeueReusableCell(withIdentifier: "cell")
             return cell!
         }
     }

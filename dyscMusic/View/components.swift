@@ -100,6 +100,9 @@ class TextFieldWithPadding: UITextField {
 
 class MiniPlayer: UIView {
     
+    let player = AudioManager.shared.player
+    let audioManager = AudioManager.shared
+    
     var timer = Timer()
     
     var delegate: PlayerDelegate?
@@ -107,7 +110,7 @@ class MiniPlayer: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: NSNotification.Name("update"), object: nil)
         
@@ -159,45 +162,37 @@ class MiniPlayer: UIView {
         fatalError("")
     }
     
-    @objc func setTrack(sender: Notification){
+//    @objc func setTrack(sender: Notification){
+////
+//        if let object = sender.userInfo as NSDictionary? {
+//            if let track = object["track"] {
 //
-        if let object = sender.userInfo as NSDictionary? {
-            if let track = object["track"] {
-                
-                print("settings track")
-//                NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : track])
-                
-                AudioManager.initPlayer(track: track as? Track, tracks: nil)
-            }
-//            return
-        }
-    }
+//                print("settings track")
+//                AudioManager.shared.initPlayer(track: track as? Track, tracks: nil)
+//            }
+////            return
+//        }
+//    }
     
     @objc func updateMiniPlayer(sender: Notification){
-
+        
         DispatchQueue.main.async {
+         
             self.isHidden = false
-            print("updated player")
-            if let object = sender.userInfo as NSDictionary? {
-                      if let track = object["track"]{
-                          let track = track as? Track
-                          
-                          self.img.setUpImage(url: track!.imageURL)
-                          self.artistLabel.text = track!.name
-                          self.trackLabel.text = track!.title
-                      }
-            }
+            self.img.setUpImage(url: self.audioManager.currentQueue!.imageURL)
+            self.artistLabel.text = self.audioManager.currentQueue!.name
+            self.trackLabel.text = self.audioManager.currentQueue!.title
+            
         }
-      
     }
     
     @objc func nextTrack(){
-        AudioManager.playerController(option: .next)
+        AudioManager.shared.playerController(option: .next)
         
     }
     @objc func togglePlayBtn(sender: Notification){
         
-        if (player!.isPlaying){
+        if (AudioManager.shared.player!.isPlaying){
             DispatchQueue.main.async {
                 self.playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             }
@@ -213,10 +208,10 @@ class MiniPlayer: UIView {
             return
         }
         if(player!.isPlaying && player! != nil){
-            AudioManager.playerController(option: .pause )
+            AudioManager.shared.playerController(option: .pause )
             
         } else {
-            AudioManager.playerController(option: .resume)
+            AudioManager.shared.playerController(option: .resume)
             
         }
         

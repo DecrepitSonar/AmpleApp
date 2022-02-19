@@ -10,9 +10,10 @@ import AVFAudio
 
 class PlayerViewController: UIViewController {
     
+    let audioManager = AudioManager.shared
+    
     var currentTrack: Track!
     let formatter = DateComponentsFormatter()
-    
     
     var timer: Timer!
     var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
@@ -52,8 +53,12 @@ class PlayerViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.systemRed
         
+        formatter.unitsStyle = .positional
+        formatter.allowedUnits = [ .minute, .second ]
+        formatter.zeroFormattingBehavior = [ .dropTrailing ]
+        
         navigationController?.isToolbarHidden = true
-        currentTrack = AudioManager.getCurrentTrack()
+        currentTrack = audioManager.getCurrentTrack()
         view.addSubview(effect)
         effect.frame = view.bounds
         
@@ -62,14 +67,14 @@ class PlayerViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
 //        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         
-        timer =  Timer.scheduledTimer(timeInterval: 0.10, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
-        AudioManager.setTimer(time: timer)
+        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
 
         image.setUpImage(url:  currentTrack.imageURL)
         image.translatesAutoresizingMaskIntoConstraints = false
-//        image.layer.cornerRadius = 10
+        image.layer.cornerRadius = 5
+        image.clipsToBounds = true
         view.addSubview(image)
         
         let prevbtnImg = UIImage(systemName: "backward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
@@ -87,8 +92,8 @@ class PlayerViewController: UIViewController {
         prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         prevBtn.addTarget(self, action: #selector(prev), for: .touchUpInside)
         
-        if( player != nil){
-            player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
+        if( audioManager.player != nil){
+            audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
         }
     
         playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
@@ -126,7 +131,7 @@ class PlayerViewController: UIViewController {
         optionStack.spacing = 20
         optionStack.distribution = .equalSpacing
         
-        let labelStack = UIStackView(arrangedSubviews: [artist, trackTitle])
+        let labelStack = UIStackView(arrangedSubviews: [trackTitle, artist])
         labelStack.axis = .vertical
         labelStack.distribution = .equalCentering
         labelStack.spacing = 5
@@ -139,12 +144,14 @@ class PlayerViewController: UIViewController {
         slider.setThumbImage(UIImage(), for: .normal)
         slider.value = 0
         slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        slider.maximumValue = Float(audioManager.player.duration)
+        slider.addTarget(self, action: #selector(onSliderTouchOrDrag(sender:event:)), for: .valueChanged)
         
         totalTrackTime.setFont(with: 12)
-        totalTrackTime.text = formatter.string(from: player.currentTime - player.duration)
+        totalTrackTime.text = formatter.string(from: audioManager.player.currentTime - audioManager.player.duration)
         
         totalTimeLapsed.setFont(with: 12)
-        totalTimeLapsed.text = formatter.string(from: player.currentTime)
+        totalTimeLapsed.text = formatter.string(from: audioManager.player.currentTime)
     
         let sliderStack = UIStackView(arrangedSubviews: [ totalTimeLapsed, totalTrackTime ])
         sliderStack.axis = .horizontal
@@ -198,38 +205,46 @@ class PlayerViewController: UIViewController {
         
     }
 
+    @objc func onSliderTouchOrDrag(sender: UISlider, event: UIEvent){
+        
+        timer.invalidate()
+        if let touch = event.allTouches?.first {
+            switch(touch.phase){
+                
+            case .ended:
+                print("ended at: ", sender.value)
+                audioManager.player.currentTime = Double(sender.value)
+                timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+
+            default:
+                break
+            }
+        }
+    }
     
     @objc func togglePlayState(){
-//        print(slider)
         
-        AudioManager.invalidateTimer()
-        
-        
-        if(player!.isPlaying && player != nil){
-            AudioManager.playerController(option: .pause)
+        if(audioManager.player!.isPlaying && audioManager.player != nil){
+            audioManager.playerController(option: .pause)
         }
         else{
             timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
-            AudioManager.setTimer(time: timer)
-            AudioManager.playerController(option: .resume)
-            
+            audioManager.playerController(option: .resume)
         }
     }
     
     @objc func playnext(){
-        AudioManager.playerController(option: .next)
-        timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
-        AudioManager.setTimer(time: timer)
+        
+        audioManager.playerController(option: .next)
     }
     
     @objc func prev(){
-        AudioManager.playerController(option: .previous)
+        audioManager.playerController(option: .previous)
         timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
-        AudioManager.setTimer(time: timer)
     }
     @objc func togglePlayBtn(sender: Notification){
         
-        if (player!.isPlaying){
+        if (audioManager.player!.isPlaying){
             
             DispatchQueue.main.async {
                 self.playBtn.setImage(self.pauseBtnImg, for: .normal)
@@ -244,23 +259,20 @@ class PlayerViewController: UIViewController {
     }
     
     @objc func updateTrackTiming(){
-        AudioManager.checkTrackIsEnded()
+        
+//        print(audioManager.checkTrackIsEnded(timer: timer))
+        if audioManager.checkTrackIsEnded(timer: timer) {
+            timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+            slider.maximumValue = Float(audioManager.player.duration)
+            return
+        }
+        
         DispatchQueue.main.async {
             
-            if( player.currentTime > 60 ){
-                self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
-                
-            }else if( player.currentTime >= 10){
-                self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
-                
-            }else{
-                self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
-            }
+            self.totalTimeLapsed.text = self.formatter.string(from: self.audioManager.player.currentTime )
             
-            
-            self.totalTrackTime.text = self.formatter.string(from: player.currentTime - player.duration)
-    //        print(round(Float(player.currentTime / player.duration)))
-            self.slider.setValue(Float(player.currentTime / player.duration), animated: true)
+            self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.currentTime - self.audioManager.player.duration)
+            self.slider.setValue(Float(self.audioManager.player.currentTime), animated: true)
         }
         
     }
@@ -269,7 +281,7 @@ class PlayerViewController: UIViewController {
     @objc func openQueue(){
         
         let view = TrackQueueListViewController()
-        view.queue = AudioManager.getAudioQueue()
+        view.queue = audioManager.getAudioQueue()
         
         print("queue")
         present(view, animated: true)
@@ -282,38 +294,19 @@ class PlayerViewController: UIViewController {
     }
     @objc func updatePlayer(sender: Notification){
         
-        DispatchQueue.main.async {
-            self.totalTrackTime.text = self.formatter.string(from: player.duration)
-            
-                AudioManager.checkTrackIsEnded()
-            
-    //            print(player.currentTime)
-                if( player.currentTime > 60){
-                    self.totalTimeLapsed.text = self.formatter.string(from: player.currentTime )
-                    
-                }else if( player.currentTime >= 10){
-                    self.totalTimeLapsed.text = "0:\(self.formatter.string(from: player.currentTime )!)"
-                    
-                }else{
-                    self.totalTimeLapsed.text = "0:0\(self.formatter.string(from: player.currentTime )!)"
-                }
-            
-            
-            if let object = sender.userInfo as NSDictionary? {
-                      if let track = object["track"]{
-                          let track = track as? Track
-
-    //                          print(track!.audioURL)
-                          self.image.setUpImage(url: track!.imageURL)
-                          self.artist.text = track!.name
-                          self.trackTitle.text = track!.title
-
-
-                      }
-            }
-        }
         
-    //        print(_sender.userInfo?.keys)
+        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+        
+        DispatchQueue.main.async {
+            self.slider.maximumValue = Float(self.audioManager.player.duration)
+            self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.duration)
+            self.slider.setNeedsDisplay()
+
+            self.image.setUpImage(url: self.audioManager.currentQueue!.imageURL)
+            self.artist.text = self.audioManager.currentQueue!.name
+            self.trackTitle.text = self.audioManager.currentQueue!.title
+
+        }
     }
 
 //    @objc func openQueueList(){

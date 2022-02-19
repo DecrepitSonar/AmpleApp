@@ -145,7 +145,7 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        AudioManager.initPlayer(track: data!.items![indexPath.row], tracks: nil)
+        AudioManager.shared.initPlayer(track: data!.items![indexPath.row], tracks: nil)
 //        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.items![indexPath.row]])
     }
     

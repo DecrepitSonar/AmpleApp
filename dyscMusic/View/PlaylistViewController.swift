@@ -143,7 +143,7 @@ extension PlaylistViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        AudioManager.initPlayer(track: data!.tracks[indexPath.row], tracks: nil)
+        AudioManager.shared.initPlayer(track: data!.tracks[indexPath.row], tracks: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

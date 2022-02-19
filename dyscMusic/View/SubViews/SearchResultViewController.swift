@@ -109,7 +109,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
                               audioURL: item.audioURL!,
                               playCount: nil)
             
-            AudioManager.initPlayer(track: track, tracks: nil)
+            AudioManager.shared.initPlayer(track: track, tracks: nil)
             
             NetworkManager.Post(url: "/user/history", data: data[indexPath.row]) { (data: Track?, error: NetworkError) in
                 switch(error){

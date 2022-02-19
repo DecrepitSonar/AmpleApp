@@ -10,8 +10,6 @@ import AVFoundation
 import UIKit
 //import XCTest
 
-var player: AVAudioPlayer!
-
 enum PlayerControls{
     case pause
     case play
@@ -23,21 +21,39 @@ enum PlayerControls{
 class AudioManager {
    
  // track queue arrays
-    static var audioQueue = [Track]()
-    static var previousTracks = [Track]()
-    static var currentQueue: Track?
     
-    static var timer: Timer!
+    var audioQueue = [Track]()
+    var previousTracks = [Track]()
+    var currentQueue: Track?
+    var player: AVAudioPlayer!
+    var progressBar: UISlider!
+    var timer: Timer!
+    
+    static let shared = AudioManager()
     
     // current index of track in queue
     
     // initialize player with track queue or track
-    static func initPlayer( track: Track?, tracks: [Track]?){
+    func initPlayer( track: Track?, tracks: [Track]?){
         
         print("init player")
         guard tracks != nil else {
             
-            audioQueue = []
+            if audioQueue.count < 1 {
+            
+                NetworkManager.getRandomAudioTrack( completion: { result in
+                    switch( result){
+                    case .success( let data):
+                        print(data)
+                        self.audioQueue.append(data)
+                        
+                    case .failure( let err):
+                        print(err)
+                    }
+                })
+                
+            }
+            
             currentQueue = track
             
             print("current track: ", currentQueue)
@@ -47,17 +63,17 @@ class AudioManager {
             return
         }
         
-        print(tracks)
+
         audioQueue = []
-        audioQueue = tracks!.reversed()
-        currentQueue = audioQueue.popLast()
+        audioQueue = tracks!
+        currentQueue = audioQueue.removeFirst()
         print("current Track: ", currentQueue)
         
         playerController(option: .play)
         
     }
     
-    static func getTrack( track: Track){
+    func getTrack( track: Track){
 
         NetworkManager.getAudioTrack(track: track.audioURL!) { result in
             
@@ -65,7 +81,23 @@ class AudioManager {
             case .success(let data ):
                 print("requested track from network")
             
-                initPlayerData(data: data)
+                
+                do{
+                    self.player = try AVAudioPlayer(data: data)
+                    if( self.player.prepareToPlay()) {
+                        self.player.play()
+                        
+                        NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : self.currentQueue])
+                        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
+                    }
+                    
+                    print("initialize player")
+                }
+                catch{
+                    print("Failed to play track")
+                    print(error)
+                }
+
                 
             case .failure(let err):
                 print( err)
@@ -74,57 +106,21 @@ class AudioManager {
         
     }
     
-    // get track data
-    static func initPlayerData( data: Data){
-        var audiosSession = AVAudioSession.sharedInstance()
-        
-        do{
-            player = try AVAudioPlayer(data: data)
-            player!.play()
-            
-            try audiosSession.setCategory(.playback)
-            
-            print("initialize player")
-            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
-            NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
-        }
-        catch{
-            print("Failed to play track")
-            print(error)
-        }
-    }
-    
-    static func playerController(option: PlayerControls){
+    func playerController(option: PlayerControls){
         
         switch(option){
         case .play:
-           
-//            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : currentQueue])
             
             if currentQueue != nil {
                 getTrack(track: currentQueue!)    
                 return
             }
             
-            NetworkManager.getRandomAudioTrack( completion: { result in
-                switch( result){
-                case .success( let data):
-                    print(data)
-                    self.currentQueue = data
-                    
-                case .failure( let err):
-                    print(err)
-                }
-            })
+            player.play()
             
         case .pause:
             player!.pause()
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
-            
-            guard timer != nil else {
-                invalidateTimer()
-                return
-            }
             
         case .resume:
             player!.play()
@@ -132,42 +128,34 @@ class AudioManager {
             
         case .next:
             
-            invalidateTimer()
-            
             previousTracks.insert(currentQueue!, at: 0)
-            currentQueue = audioQueue.popLast()
-            print(audioQueue.count)
+            print("current Queue: ", audioQueue)
             
+            currentQueue = audioQueue.removeFirst()
+//
+            getTrack(track: currentQueue!)
             
-           if audioQueue.count < 1 {
-               NetworkManager.Get(url: "track?isRandom=true") { ( data: Track?, error: NetworkError) in
-                   switch( error){
-                   case .success:
-//                        print(data)
-                       self.audioQueue.append(data!)
-                       print(audioQueue)
-                       currentQueue = audioQueue.popLast()
-                       
-                       getTrack(track: currentQueue!)
-                       
+            if audioQueue.isEmpty {
+                NetworkManager.Get(url: "track?isRandom=true") { ( data: Track?, error: NetworkError) in
+                    switch( error){
+                    case .success:
 
-                   case .notfound:
-                       print("url not found")
-                       
-                   case .servererr:
-                       print( "internal server error")
-                   }
-               }
-          
-           }else{
-               getTrack(track: currentQueue!)
+                        self.audioQueue.append(data!)
 
-           }
+                    case .notfound:
+                        print("url not found")
+                        
+                    case .servererr:
+                        print( "internal server error")
+                    }
+                }
+            }
+            
            
         case .previous:
             
-            guard timer != nil else {
-                invalidateTimer()
+//            guard timer != nil else {
+//                invalidateTimer()
 //                print("Time is valid ")
 //                print(timer.isValid)
                 
@@ -180,15 +168,15 @@ class AudioManager {
                 
                 getTrack(track: currentQueue!)
                 
-                return
-            }
+//                return
+//            }
         }
     }
-    static func getAudioQueue() -> [Track]{
+    func getAudioQueue() -> [Track]{
         return audioQueue
     }
     
-    static func getCurrentTrack() -> Track{
+    func getCurrentTrack() -> Track{
         guard currentQueue != nil else{
             print( "queue is empty")
             return Track(id: "", title: "Title", artistId: "", name: "Artist", imageURL: "", albumId: "", audioURL: "")
@@ -199,36 +187,21 @@ class AudioManager {
         
     }
     
-    @objc static func checkTrackIsEnded(){
-         let formater = DateComponentsFormatter()
-//        print("time: ", player.duration)
-//        print("remainder: ", 1000 % Int(player!.duration)  )
-//        print("Duration: ", formater.string(from: player!.duration)!)
-//        print("CurrentDuration:", formater.string(from: player!.currentTime)!)
-//        print("\n")
+    @objc func checkTrackIsEnded(timer: Timer) -> Bool{
         
         if(Int(player!.currentTime) >= Int(player!.duration - 1)){
-            
-            
+            timer.invalidate()
             playerController(option: .next)
-            timer = nil
+            
             
             print("track Ended")
             
             //TODO: // add track to play history
+            
+            return true
         }
-    
-    }
-    
-    static func setTimer(time: Timer){
-        timer = time
-    }
-    
-    static func invalidateTimer(){
-        guard timer != nil else {
-            return
-        }
-        timer.invalidate()
+        
+        return false
     }
 }
 
