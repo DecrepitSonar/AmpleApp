@@ -84,10 +84,11 @@ class AudioManager {
                 
                 do{
                     self.player = try AVAudioPlayer(data: data)
+                    
                     if( self.player.prepareToPlay()) {
                         self.player.play()
                         
-                        NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: ["track" : self.currentQueue])
+                        NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: nil)
                         NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
                     }
                     
@@ -132,7 +133,7 @@ class AudioManager {
             print("current Queue: ", audioQueue)
             
             currentQueue = audioQueue.removeFirst()
-//
+
             getTrack(track: currentQueue!)
             
             if audioQueue.isEmpty {

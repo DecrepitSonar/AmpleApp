@@ -24,8 +24,8 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuap÷p.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -88,8 +88,10 @@ class NetworkManager {
     }
     static func Post<T: Decodable, D: Encodable>(url: String, data: D, completion: @escaping (T?, NetworkError) -> ()){
         
-        let url = URL(string: "\(baseURL)/\(url)")
-        var request = URLRequest(url: url!)
+        let _url = URL(string: "\(baseURL)/\(url)")
+        print(baseURL)
+        print(_url)
+        var request = URLRequest(url: _url!)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         
@@ -350,7 +352,7 @@ class NetworkManager {
                     print(response)
                     return
                 }
-//                print( httpresponse)
+                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "audio/mpeg" else {
                     completion(.failure(.ServerError))
 //                    print("mime err")

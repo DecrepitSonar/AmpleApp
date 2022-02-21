@@ -10,44 +10,18 @@ import AVFAudio
 
 class PlayerViewController: UIViewController {
     
-    let audioManager = AudioManager.shared
-    
     var currentTrack: Track!
+    var timer: Timer!
+    
+    let audioManager = AudioManager.shared
     let formatter = DateComponentsFormatter()
     
-    var timer: Timer!
     var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-    
-    let image = UIImageView()
-    
-    let closeBtn = UIButton()
-    
-    let totalTrackTime = UILabel()
-    let totalTimeLapsed = UILabel()
-    
-    let optionBtn = UIButton()
-    let likeBtn = UIButton()
-    let shareBtn = UIButton()
-    
-    let artist = UILabel()
-    let trackTitle = UILabel()
-     
-    let slider = UISlider()
-    
-    let forwardBtn = UIButton()
-    let playBtn = UIButton()
-    let prevBtn = UIButton()
-    
-    let shuffleBtn = UIButton()
-    let repeatBtn = UIButton()
-    
-    let queue = UIButton()
     
     var animator: UIViewPropertyAnimator!
     
     let playbtnImg = UIImage(systemName: "play.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,72 +32,33 @@ class PlayerViewController: UIViewController {
         formatter.zeroFormattingBehavior = [ .dropTrailing ]
         
         navigationController?.isToolbarHidden = true
+        
         currentTrack = audioManager.getCurrentTrack()
+        
         view.addSubview(effect)
-        effect.frame = view.bounds
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updatePlayer), name: Notification.Name("update"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateTrackTiming), name: Notification.Name("update"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
-//        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updatePlayer),
+                                               name: Notification.Name("update"),
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateTrackTiming),
+                                               name: Notification.Name("update"),
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(togglePlayBtn),
+                                               name: NSNotification.Name("isPlaying"),
+                                               object: nil)
         
-        timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
+        timer =  Timer.scheduledTimer(timeInterval: 1,
+                                      target: self,
+                                      selector: #selector(updateTrackTiming),
+                                      userInfo: nil,
+                                      repeats: true)
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
-
-        image.setUpImage(url:  currentTrack.imageURL)
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.layer.cornerRadius = 5
-        image.clipsToBounds = true
+        
         view.addSubview(image)
-        
-        let prevbtnImg = UIImage(systemName: "backward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
-       
-        let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
-        
-        let optionBtnImg = UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        let sharebtnImg = UIImage(systemName: "square.and.arrow.up", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        let likeBtnImg = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        
-        let shuffleImg = UIImage(systemName: "shuffle", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        let repeatImg = UIImage(systemName: "repeat", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        
-        prevBtn.setImage(prevbtnImg, for: .normal)
-        prevBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        prevBtn.addTarget(self, action: #selector(prev), for: .touchUpInside)
-        
-        if( audioManager.player != nil){
-            audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
-        }
-    
-        playBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
-        playBtn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
-        
-        forwardBtn.setImage(forwardbtnImg, for: .normal)
-        forwardBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        forwardBtn.addTarget(self, action: #selector(playnext), for: .touchUpInside)
-        
-        shuffleBtn.setImage(shuffleImg, for: .normal)
-        shuffleBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-    
-        repeatBtn.setImage(repeatImg, for: .normal)
-        repeatBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        artist.text = currentTrack.name
-        artist.textColor = .label
-        artist.setFont(with: 12)
-        
-        trackTitle.text = currentTrack.title
-        trackTitle.widthAnchor.constraint(equalToConstant: 340).isActive = true
-        
-        optionBtn.setImage(optionBtnImg, for: .normal)
-        optionBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        shareBtn.setImage(sharebtnImg, for: .normal)
-        shareBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        likeBtn.setImage(likeBtnImg, for: .normal)
-        likeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
         let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, shareBtn, optionBtn])
         optionStack.axis = .horizontal
@@ -141,43 +76,18 @@ class PlayerViewController: UIViewController {
         buttonStack.distribution = .fillProportionally
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         
-        slider.setThumbImage(UIImage(), for: .normal)
-        slider.value = 0
-        slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        slider.maximumValue = Float(audioManager.player.duration)
-        slider.addTarget(self, action: #selector(onSliderTouchOrDrag(sender:event:)), for: .valueChanged)
-        
-        totalTrackTime.setFont(with: 12)
-        totalTrackTime.text = formatter.string(from: audioManager.player.currentTime - audioManager.player.duration)
-        
-        totalTimeLapsed.setFont(with: 12)
-        totalTimeLapsed.text = formatter.string(from: audioManager.player.currentTime)
-    
         let sliderStack = UIStackView(arrangedSubviews: [ totalTimeLapsed, totalTrackTime ])
         sliderStack.axis = .horizontal
         sliderStack.spacing = 10
         sliderStack.distribution = .equalSpacing
         
-        let queueImag = UIImage(systemName: "list.number", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        
-        queue.setImage(queueImag, for: .normal)
-        queue.translatesAutoresizingMaskIntoConstraints = false
-        queue.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        queue.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
-        
         let stackControls = UIStackView(arrangedSubviews: [labelStack, sliderStack, slider, buttonStack, optionStack ])
-        
         stackControls.axis = .vertical
         stackControls.spacing = 25
         stackControls.distribution = .equalSpacing
         stackControls.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(stackControls)
-        
-        closeBtn.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-        closeBtn.translatesAutoresizingMaskIntoConstraints = false
-        closeBtn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
-        closeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
 
         view.addSubview(closeBtn)
 ////
@@ -187,6 +97,7 @@ class PlayerViewController: UIViewController {
             image.heightAnchor.constraint(equalToConstant: 340),
             image.widthAnchor.constraint(equalToConstant: 340),
             
+            trackTitle.widthAnchor.constraint(equalToConstant: 340),
             
             slider.widthAnchor.constraint(equalToConstant:  340),
             slider.heightAnchor.constraint(equalToConstant: 10),
@@ -201,8 +112,29 @@ class PlayerViewController: UIViewController {
 //
         ])
         
+    }
+    
+    override func viewWillLayoutSubviews() {
+        
+        effect.frame = view.bounds
+        
+        image.setUpImage(url:  currentTrack.imageURL)
+        
+        artist.text = currentTrack.name
+        
+        trackTitle.text = currentTrack.title
+        
+        slider.maximumValue = Float(audioManager.player.duration)
+        slider.value = Float(audioManager.player.currentTime)
+        
+        totalTrackTime.text = formatter.string(from: audioManager.player.currentTime - audioManager.player.duration)
+        totalTimeLapsed.text = formatter.string(from: audioManager.player.currentTime)
         
         
+        if( audioManager.player != nil){
+            audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
+        }
+    
     }
 
     @objc func onSliderTouchOrDrag(sender: UISlider, event: UIEvent){
@@ -221,7 +153,6 @@ class PlayerViewController: UIViewController {
             }
         }
     }
-    
     @objc func togglePlayState(){
         
         if(audioManager.player!.isPlaying && audioManager.player != nil){
@@ -232,12 +163,10 @@ class PlayerViewController: UIViewController {
             audioManager.playerController(option: .resume)
         }
     }
-    
     @objc func playnext(){
         
         audioManager.playerController(option: .next)
     }
-    
     @objc func prev(){
         audioManager.playerController(option: .previous)
         timer =  Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
@@ -257,10 +186,8 @@ class PlayerViewController: UIViewController {
             }
         }
     }
-    
     @objc func updateTrackTiming(){
         
-//        print(audioManager.checkTrackIsEnded(timer: timer))
         if audioManager.checkTrackIsEnded(timer: timer) {
             timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
             slider.maximumValue = Float(audioManager.player.duration)
@@ -276,8 +203,6 @@ class PlayerViewController: UIViewController {
         }
         
     }
-    
-    
     @objc func openQueue(){
         
         let view = TrackQueueListViewController()
@@ -287,7 +212,6 @@ class PlayerViewController: UIViewController {
         present(view, animated: true)
                 
     }
-    
     @objc func closePlayer(){
         dismiss(animated: true)
         print("animator")
@@ -298,6 +222,8 @@ class PlayerViewController: UIViewController {
         timer =  Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTrackTiming), userInfo: nil, repeats: true)
         
         DispatchQueue.main.async {
+            
+//            self.loadView()
             self.slider.maximumValue = Float(self.audioManager.player.duration)
             self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.duration)
             self.slider.setNeedsDisplay()
@@ -309,6 +235,132 @@ class PlayerViewController: UIViewController {
         }
     }
 
+    let image: UIImageView = {
+        let img = UIImageView()
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.layer.cornerRadius = 5
+        img.clipsToBounds = true
+        return img
+    }()
+    let closeBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let totalTrackTime: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 12)
+        return label
+    }()
+    let totalTimeLapsed: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 12)
+        return label
+    }()
+    let optionBtn: UIButton = {
+        
+        let optionBtnImg = UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(optionBtnImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let likeBtn: UIButton = {
+        let likeBtnImg = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(likeBtnImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let shareBtn: UIButton = {
+        
+        let sharebtnImg = UIImage(systemName: "square.and.arrow.up", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(sharebtnImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let artist: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.setFont(with: 12)
+        return label
+    }()
+    let trackTitle: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        return label
+    }()
+    let slider: UISlider = {
+        let view = UISlider()
+        view.setThumbImage(UIImage(), for: .normal)
+        view.value = 0
+        view.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        view.addTarget(self, action: #selector(onSliderTouchOrDrag(sender:event:)), for: .valueChanged)
+        return view
+    }()
+    let forwardBtn: UIButton = {
+        
+        let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+        
+        
+        let btn = UIButton()
+        btn.setImage(forwardbtnImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(playnext), for: .touchUpInside)
+        return btn
+    }()
+    let playBtn: UIButton = {
+        let btn = UIButton()
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+        btn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
+        return btn
+    }()
+    let prevBtn: UIButton = {
+        let prevbtnImg = UIImage(systemName: "backward.fill")!
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+        
+        let btn = UIButton()
+        btn.setImage(prevbtnImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(prev), for: .touchUpInside)
+        return btn
+    }()
+    let shuffleBtn: UIButton = {
+        
+        let shuffleImg = UIImage(systemName: "shuffle", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(shuffleImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let repeatBtn: UIButton = {
+        
+        let repeatImg = UIImage(systemName: "repeat", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(repeatImg, for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        return btn
+    }()
+    let queue: UIButton = {
+        
+        let queueImag = UIImage(systemName: "list.number", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        
+        let btn = UIButton()
+        btn.setImage(queueImag, for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
+        return btn
+    }()
 //    @objc func openQueueList(){
 //        
 //        let queue = TrackQueueListViewController()

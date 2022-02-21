@@ -187,12 +187,12 @@ class MiniPlayer: UIView {
     }
     
     @objc func nextTrack(){
-        AudioManager.shared.playerController(option: .next)
+        audioManager.playerController(option: .next)
         
     }
     @objc func togglePlayBtn(sender: Notification){
         
-        if (AudioManager.shared.player!.isPlaying){
+        if (audioManager.player!.isPlaying){
             DispatchQueue.main.async {
                 self.playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             }
@@ -203,20 +203,15 @@ class MiniPlayer: UIView {
             }
         }
     }
+    
     @objc func togglePlayState(){
-        guard player != nil else {
-            return
-        }
-        if(player!.isPlaying && player! != nil){
-            AudioManager.shared.playerController(option: .pause )
-            
-        } else {
-            AudioManager.shared.playerController(option: .resume)
-            
-        }
         
-        print("pressed")
-        NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
+        if(audioManager.player!.isPlaying && audioManager.player != nil){
+            audioManager.playerController(option: .pause)
+        }
+        else{
+            audioManager.playerController(option: .resume)
+        }
     }
     
     @objc func openPlayer(){
@@ -286,6 +281,7 @@ class customTab: UITabBarController, PlayerDelegate{
     override func viewDidLoad() {
         
         miniPlayer.delegate = self
+        
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .fullScreen
         

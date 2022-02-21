@@ -9,18 +9,26 @@ import Foundation
 import UIKit
 import AVFoundation
 
+protocol LoginFormViewDelegate {
+    func handleLogin()
+    func didAuthoriseUser(user: UserData)
+}
 
-class LoginForm: UIStackView{
+class LoginForm: UIStackView, LoginFormViewDelegate{
     
     var rootVc: UIViewController!
     
     let tabVc = customTab()
+    
+    var loginService = LoginService()
     
     var username: String?
     var password: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        loginService.delegate = self
         
         addArrangedSubview(UsernameTextField)
         addArrangedSubview(PasswordTextField)
@@ -42,11 +50,39 @@ class LoginForm: UIStackView{
         ])
         
         
-        
     }
     
     required init(coder: NSCoder) {
         fatalError("")
+    }
+    
+    @objc func handleLogin() {
+        
+        resignFirstResponder()
+        
+        print( username)
+        print(password)
+        guard username != nil && password != nil else{
+            return
+        }
+        
+        let formData = LoginCredentials(username: self.username!, password: self.password!)
+        
+        loginService.authenticateWithCredentials(credentials: formData)
+        
+    }
+    
+    func didAuthoriseUser(user: UserData) {
+        
+        
+        // TODO: Inititialize new user for core data model
+        
+        UserDefaults.standard.set(user.id, forKey: "userdata")
+        
+        DispatchQueue.main.async {
+            self.window!.rootViewController!.present(self.tabVc, animated: true)
+        }
+        
     }
     
     let LoginBtn: UIView = {
@@ -55,11 +91,10 @@ class LoginForm: UIStackView{
         btn.setupButton(label: "Login")
         btn.backgroundColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.8)
         btn.setTitleColor(UIColor.black, for: .normal)
-        btn.addTarget(self, action: #selector(signIn), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         
         return btn
     }()
-    
     let RegisterBtn: LargePrimaryButton = {
         
         let btn = LargePrimaryButton()
@@ -72,7 +107,6 @@ class LoginForm: UIStackView{
         
         return btn
     }()
-    
     let PasswordResetBtn: UIButton = {
         
         let btn = UIButton()
@@ -83,7 +117,6 @@ class LoginForm: UIStackView{
         
         return btn
     }()
-    
     let PasswordTextField: TextFieldWithPadding = {
 
         let field = TextFieldWithPadding()
@@ -95,13 +128,10 @@ class LoginForm: UIStackView{
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1).cgColor
         
-        field.addTarget(self, action: #selector(updatePasswordTxtField), for: .editingChanged)
+        field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
         field.isSecureTextEntry = true
-        
-        field.addTarget(self, action: #selector(openKeyboard(sender:)), for: .editingChanged)
         return field
     }()
-    
     let UsernameTextField: TextFieldWithPadding = {
         let field = TextFieldWithPadding()
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -111,12 +141,11 @@ class LoginForm: UIStackView{
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1).cgColor
         
-        field.addTarget(self, action: #selector(updateUsernameTxtField), for: .editingChanged)
-//        field.addTarget(self, action: #selector(openKeyboard(sender:)), for: .editingDidBegin)
+        field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
+        field.tag = 1
 //
         return field
     }()
-    
     let seperator: UIView = {
         
         let view = UIView(frame: .zero)
@@ -126,66 +155,86 @@ class LoginForm: UIStackView{
         
     }()
     
-    @objc func signIn(){
+    @objc func updateTextInputField(_sender: UITextField){
+            
+            if( _sender.tag == 1 ) {
+                username = _sender.text
+                return
+            }
+            
+            password = _sender.text
+    }
+}
+
+
+class LoginService {
+    
+    var delegate: LoginFormViewDelegate!
+    
+    func authenticateWithCredentials(credentials: LoginCredentials){
         
-        guard username != nil && password != nil else{
-            return
+        NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData?, error: NetworkError) in
+            switch(error){
+            case .servererr:
+                print(error.localizedDescription)
+            
+            case .success:
+                
+                self.delegate.didAuthoriseUser(user: data!)
+                
+            case .notfound:
+                print( error.localizedDescription)
+            }
         }
         
-        print("loggin gin")
-        let formData = LoginCredentials(username: self.username!, password: self.password!)
-//        print(formData)
-        
-        NotificationCenter.default.post(name: Notification.Name("isLoggedIn"), object: nil, userInfo: ["credentials" : formData as? LoginCredentials])
     }
     
-    @objc func updateUsernameTxtField(_sender: UITextField){
-        
-        print(_sender.text as? String)
-        username = _sender.text
-        
-    }
-    
-    @objc func updatePasswordTxtField(_sender: UITextField){
-        print(_sender.text as? String)
-        password = _sender.text
-//        print(password!)
-    }
-    
-    @objc func openKeyboard(sender: UITextField){
-        sender.becomeFirstResponder()
-    }
 }
 
 
 class LoginViewController: UIViewController {
     
-    
-    let tabVc = customTab()
     var animation: UIViewPropertyAnimator!
-    
+    let tabVc = customTab()
     let loginForm = LoginForm()
     
+    override func viewWillAppear(_ animated: Bool) {
+
+        if(UserDefaults.standard.object(forKey: "userkey") == nil ){
+            print("apearing")
+            setupForm()
+            return
+        }
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleLogin), name: NSNotification.Name("isLoggedIn"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(sender:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(dismissKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(sender:)),
+                                               name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(dismissKeyboard),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
 
     }
-    
-    @objc func dismissKeyboard(){
-        if viewLayer.contentOffset.y > 0 {
-            viewLayer.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+    override func viewDidLayoutSubviews() {
+        viewLayer.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 130)
+    }
+    override func viewWillLayoutSubviews() {
+        
+        let tabVc = customTab()
+        
+        if(UserDefaults.standard.object(forKey: "userdata") != nil ){
+            present(tabVc, animated: true)
         }
     }
     
     func setupForm(){
         
         view.addSubview(viewLayer)
-        viewLayer.addSubview(bgImage)
         
+        viewLayer.addSubview(bgImage)
         viewLayer.addSubview(logo)
         
         loginForm.layer.zPosition = 3
@@ -212,76 +261,16 @@ class LoginViewController: UIViewController {
         ])
         
     }
-
-    @objc func handleLogin(sender: Notification){
-        
-        let alert = UIAlertController()
-        let alertOkAction = UIAlertAction(title: "OK", style: .cancel) { alert in
-            self.dismiss(animated: true)
-        }
     
-        alert.addAction(alertOkAction)
-        if let sender = sender.userInfo as NSDictionary?{
-            if let formData = sender.object(forKey: "credentials") as? LoginCredentials{
-             
-                guard formData.username != nil && formData.password != nil else {
-                   return
-                }
-                
-    
-            let credentials = LoginCredentials(username: formData.username, password: formData.password)
-//
-            NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData?, error: NetworkError) in
-                switch(error){
-                case .servererr:
-                    print(error.localizedDescription)
-                
-                case .success:
-                    UserDefaults.standard.set(data!.id, forKey: "userdata")
-                
-                    DispatchQueue.main.async {
-                        self.present(self.tabVc, animated: true)
-                    }
-                case .notfound:
-                    print( error.localizedDescription)
-                }
-            }
-                
-            }
+    @objc func dismissKeyboard(){
+        if viewLayer.contentOffset.y > 0 {
+            viewLayer.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
         }
-
     }
-
     @objc func keyboardWillShow(sender: Notification){
-        print("keyboard shown")
         viewLayer.setContentOffset(CGPoint(x: 0, y: 200), animated: true)
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-
-        if(UserDefaults.standard.object(forKey: "userkey") == nil ){
-            print("apearing")
-            setupForm()
-            return
-        }
-        
-        
-
-    }
-    
-    override func viewDidLayoutSubviews() {
-        viewLayer.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 130)
-    }
-    
-    override func viewWillLayoutSubviews() {
-        
-        let tabVc = customTab()
-        
-        if(UserDefaults.standard.object(forKey: "userdata") != nil ){
-            present(tabVc, animated: true)
-        }
-    }
-    
+   
     let viewLayer: UIScrollView = {
         
         let view = UIScrollView(frame: CGRect(x: 0,
@@ -294,7 +283,6 @@ class LoginViewController: UIViewController {
         return view
         
     }()
-    
     let bgImage: UIImageView = {
         
         let bgImage = UIImageView(image: UIImage(named: "music"))
@@ -304,7 +292,6 @@ class LoginViewController: UIViewController {
         return bgImage
         
     }()
-    
     let logo: UILabel = {
         
         let label = UILabel()
