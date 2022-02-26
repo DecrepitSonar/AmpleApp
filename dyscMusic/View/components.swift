@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import AudioToolbox
+import AVFAudio
 
 class AViCard: UIView {
 
@@ -18,7 +19,7 @@ class AViCard: UIView {
         super.init(frame: frame)
 //
     }
-
+    
     required init?(coder: NSCoder){
         fatalError("")
     }
@@ -98,7 +99,7 @@ class TextFieldWithPadding: UITextField {
     
 }
 
-class MiniPlayer: UIView {
+class MiniPlayer: UIView, AVAudioPlayerDelegate {
     
     let player = AudioManager.shared.player
     let audioManager = AudioManager.shared
@@ -110,7 +111,6 @@ class MiniPlayer: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(setTrack(sender:)), name: Notification.Name("trackChange"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: NSNotification.Name("update"), object: nil)
         
@@ -161,19 +161,7 @@ class MiniPlayer: UIView {
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    
-//    @objc func setTrack(sender: Notification){
-////
-//        if let object = sender.userInfo as NSDictionary? {
-//            if let track = object["track"] {
-//
-//                print("settings track")
-//                AudioManager.shared.initPlayer(track: track as? Track, tracks: nil)
-//            }
-////            return
-//        }
-//    }
-    
+
     @objc func updateMiniPlayer(sender: Notification){
         
         DispatchQueue.main.async {
@@ -185,14 +173,13 @@ class MiniPlayer: UIView {
             
         }
     }
-    
     @objc func nextTrack(){
         audioManager.playerController(option: .next)
         
     }
     @objc func togglePlayBtn(sender: Notification){
         
-        if (audioManager.player!.isPlaying){
+        if (audioManager.player.isPlaying){
             DispatchQueue.main.async {
                 self.playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             }
@@ -203,17 +190,15 @@ class MiniPlayer: UIView {
             }
         }
     }
-    
     @objc func togglePlayState(){
         
-        if(audioManager.player!.isPlaying && audioManager.player != nil){
+        if(audioManager.player.isPlaying && audioManager.player != nil){
             audioManager.playerController(option: .pause)
         }
         else{
             audioManager.playerController(option: .resume)
         }
     }
-    
     @objc func openPlayer(){
         print("pressed player")
         
@@ -272,11 +257,12 @@ class MiniPlayer: UIView {
     }()
     
 }
-class customTab: UITabBarController, PlayerDelegate{
+class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     
     let animate = CABasicAnimation()
 
     let miniPlayer = MiniPlayer()
+    
     
     override func viewDidLoad() {
         
@@ -290,8 +276,6 @@ class customTab: UITabBarController, PlayerDelegate{
         miniPlayer.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
         miniPlayer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-        
-
     }
     
     func openPlayer() {
@@ -306,23 +290,29 @@ class customTab: UITabBarController, PlayerDelegate{
     override func viewWillAppear(_ animated: Bool) {
         
         let browse = UINavigationController(rootViewController: MusicViewController())
-        browse.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "globe.americas.fill"), tag: 0)
+        browse.tabBarItem = UITabBarItem(title: "Browse",
+                                         image: UIImage(systemName: "globe.americas.fill"),
+                                         tag: 0)
         
-//        let musicVc = UINavigationController(rootViewController: MusicViewController())
-//        musicVc.tabBarItem = UITabBarItem(title: "Browse", image: UIImage(systemName: "waveform.path.ecg"), tag: 1)
-//
-//        let videoVc = UINavigationController(rootViewController: VideoViewController())
-//        videoVc.tabBarItem = UITabBarItem(title: "Video", image: UIImage(systemName: "play.tv"), tag: 2)
-//
         let searchVc = UINavigationController(rootViewController: SearchViewController())
-        searchVc.tabBarItem = UITabBarItem(title: "Search", image: UIImage(systemName: "magnifyingglass"), tag: 3)
+        searchVc.tabBarItem = UITabBarItem(title: "Search",
+                                           image: UIImage(systemName: "magnifyingglass"),
+                                           tag: 3)
                                            
         let library = UINavigationController(rootViewController: Library())
-        library.tabBarItem = UITabBarItem(title: "Library", image: UIImage(systemName: "books.vertical"), tag: 4)
+        library.tabBarItem = UITabBarItem(title: "Library",
+                                          image: UIImage(systemName: "books.vertical"),
+                                          tag: 4)
         
-        tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255,
+                                        green: 227 / 255,
+                                        blue: 77 / 255,
+                                        alpha: 0.5)
         
-        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255,
+                                              green: 22 / 255,
+                                              blue: 22 / 255,
+                                              alpha: 1)
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 

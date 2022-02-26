@@ -17,9 +17,14 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        queue = AudioManager.shared.audioQueue
+        queue = audioQueue
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(reloadTable),
+                                               name: Notification.Name("update"),
+                                               object: nil)
 
         tableview = UITableView()
         tableview.delegate = self
@@ -39,6 +44,12 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         effect.frame = view.frame
         tableview.frame = view.frame
     }
+    
+    @objc func reloadTable(){
+        tableview.reloadData()
+        print("updating queue view")
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         switch section{
@@ -46,7 +57,7 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
             return 1
         
         case 1:
-            return AudioManager.shared.audioQueue.count
+            return audioQueue.count
             
         default:
             return AudioManager.shared.previousTracks.count
