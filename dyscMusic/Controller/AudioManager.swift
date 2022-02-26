@@ -70,17 +70,11 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                     self.player.delegate = self
                     
                     print("playing retrieved track")
-                    if( self.player.prepareToPlay()) {
-                        self.player.play()
+                    self.player.prepareToPlay()
+                    self.player.play()
     
-                        guard self.isPlaying != nil else {
-                            self.isPlaying = true
-                            
-                            NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: nil)
-                            NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
-                            return
-                        }
-                    }
+                    NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: nil)
+                    NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
                     
                     print("initialize player")
                 }

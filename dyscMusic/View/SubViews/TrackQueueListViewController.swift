@@ -46,7 +46,9 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     @objc func reloadTable(){
-        tableview.reloadData()
+        DispatchQueue.main.async{
+            self.tableview.reloadData()
+        }
         print("updating queue view")
     }
     
