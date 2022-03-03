@@ -29,7 +29,7 @@ class AViCard: UIView {
         setupLabel(name: name)
     }
     func setupImg(img: String){
-        imgView.setUpImage(url: img)
+//        imgView.setUpImage(url: img)
         imgView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.layer.cornerRadius = 35
@@ -80,6 +80,7 @@ class LargePrimaryButton: UIButton{
 }
 
 class TextFieldWithPadding: UITextField {
+    
     var textPadding = UIEdgeInsets(
         top: 0,
         left: 20,
@@ -105,7 +106,6 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
     let audioManager = AudioManager.shared
     
     var timer = Timer()
-    
     var delegate: PlayerDelegate?
     
     override init(frame: CGRect) {
@@ -115,41 +115,38 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: NSNotification.Name("update"), object: nil)
         
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlayer)))
-        
-        translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
         layer.cornerRadius = 5
-        addSubview(img)
+        translatesAutoresizingMaskIntoConstraints = false
+        addSubview(container)
+        
+        container.addSubview(img)
         
         trackLabel.widthAnchor.constraint(equalToConstant: 120).isActive = true
         
-        let trackInfoStack = UIStackView(arrangedSubviews: [artistLabel, trackLabel])
+        let trackInfoStack = UIStackView(arrangedSubviews: [trackLabel, artistLabel])
         trackInfoStack.axis = .vertical
         trackInfoStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(trackInfoStack)
         
-        let buttonStack = UIStackView(arrangedSubviews: [playBtn, playNext])
-        buttonStack.axis = .horizontal
-        buttonStack.translatesAutoresizingMaskIntoConstraints = false
-        buttonStack.spacing = 20
-        
-        addSubview(buttonStack)
+        addSubview(playBtn)
 
         NSLayoutConstraint.activate([
             
             widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20),
             heightAnchor.constraint(equalToConstant: 70),
             
-            img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-            img.centerYAnchor.constraint(equalTo: centerYAnchor),
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.topAnchor.constraint(equalTo: topAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            buttonStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            buttonStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            img.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10),
+            img.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10),
+            img.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            
+            playBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            playBtn.centerYAnchor.constraint(equalTo: container.centerYAnchor),
             
             trackInfoStack.leadingAnchor.constraint(equalTo: img.trailingAnchor, constant: 20),
             trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -164,14 +161,28 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
 
     @objc func updateMiniPlayer(sender: Notification){
         
-        DispatchQueue.main.async {
-         
-            self.isHidden = false
-            self.img.setUpImage(url: self.audioManager.currentQueue!.imageURL)
-            self.artistLabel.text = self.audioManager.currentQueue!.name
-            self.trackLabel.text = self.audioManager.currentQueue!.title
-            
+        
+        NetworkManager.getImage(with: self.audioManager.currentQueue!.imageURL) { result in
+            switch(result){
+            case .success(let data):
+                
+                DispatchQueue.main.async {
+                    self.isHidden = false
+                    self.img.image = UIImage(data: data)
+                    self.artistLabel.text = self.audioManager.currentQueue!.name
+                    self.trackLabel.text = self.audioManager.currentQueue!.title
+                    self.backgroundColor = self.img.image?.averageColor
+                }
+                
+                
+            case .failure(let err):
+                print(err)
+                return
+            }
         }
+        
+       
+        
     }
     @objc func nextTrack(){
         audioManager.playerController(option: .next)
@@ -205,6 +216,15 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         delegate?.openPlayer()
     }
    
+    let container: UIView = {
+        let view = UIView()
+        view.backgroundColor =  UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
+        view.layer.cornerRadius = 5
+        return view
+    }()
     let img: UIImageView = {
         
         let view = UIImageView()
@@ -237,7 +257,7 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         btn.setImage(UIImage(systemName: "play.fill"), for: .normal)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         btn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
-        
+        btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
     let playNext: UIButton = {
@@ -263,7 +283,6 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
 
     let miniPlayer = MiniPlayer()
     
-    
     override func viewDidLoad() {
         
         miniPlayer.delegate = self
@@ -284,7 +303,8 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
            
         print("presenting player")
         player.modalPresentationStyle = .overFullScreen
-        presentingViewController?.presentedViewController?.present(player, animated: true)
+        self.selectedViewController?.present(player, animated: true)
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {

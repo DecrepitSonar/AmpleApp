@@ -394,6 +394,137 @@ class TrackHistorySlider: UICollectionViewCell, Cell {
         print("History Track")
     }
 }
+class LargeArtistAvi: UICollectionViewCell, Cell {
+    
+    static var reuseIdentifier: String = "largeArtistAvi"
+    
+    var gesture: CustomGestureRecognizer!
+    var vc: UINavigationController!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setupContainer()
+        
+        NSLayoutConstraint.activate([
+        
+            image.leadingAnchor.constraint(equalTo: leadingAnchor),
+            image.trailingAnchor.constraint(equalTo: trailingAnchor),
+            image.topAnchor.constraint(equalTo: topAnchor),
+            image.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.topAnchor.constraint(equalTo: topAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            artistLabel.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10),
+            artistLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10),
+            
+            options.topAnchor.constraint(equalTo: container.topAnchor, constant: 10),
+            options.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10),
+            
+//            followBtn.bottomAnchor.constraint(equalTo: artistLabel.topAnchor, constant: 5),
+//            followBtn.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10)
+            
+        ])
+        
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        image.setUpImage(url: item.imageURL)
+        artistLabel.text = item.name
+        
+        gesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        gesture.id = item.id
+        
+        self.vc = rootVc
+        container.addGestureRecognizer(gesture)
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        let profile = ProfileViewController()
+        profile.artistId = _sender.id
+        print("pressed")
+        vc.pushViewController(profile, animated: true)
+    }
+    
+    func setupContainer(){
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradientLayer.locations = [0.2, 1.3]
+        
+        contentView.addSubview(image)
+        addSubview(container)
+        
+        container.layer.zPosition = 2
+        
+        gradientLayer.frame = frame
+        container.layer.addSublayer(gradientLayer)
+
+        container.addSubview(artistLabel)
+        artistLabel.layer.zPosition = 2
+        container.addSubview(options)
+//        container.addSubview(followBtn)
+    }
+    
+    let image: UIImageView = {
+        let img = UIImageView()
+        img.clipsToBounds = true
+        img.layer.cornerRadius = 5
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.contentMode = .scaleAspectFill
+        
+        return img
+    }()
+    
+    let container: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.3)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    
+    let artistLabel: UILabel = {
+        let label = UILabel()
+        label.setBoldFont(with: 15)
+        label.tintColor = .label
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    let options: UIButton = {
+        
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.tintColor = .white
+        return btn
+    }()
+    
+    let followBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Follow", for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel?.setFont(with: 15)
+//        btn.layer.borderColor = UIColor.red.cgColor
+//        btn.layer.borderWidth = 1
+//        btn.layer.cornerRadius = 10
+//        btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
+//        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+//        btn.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        return btn
+    }()
+}
 
 // Track Overview Cells
 class TrackDetailStrip: UICollectionViewCell, Cell{
@@ -1235,27 +1366,56 @@ class SectionHeader: UICollectionReusableView, GestureAction {
         super.init(frame: frame)
         
         let seperator = UIView(frame: .zero)
-        seperator.backgroundColor = .quaternaryLabel
-        
-        title.textColor = .label
-        title.setFont(with: 10)
-        title.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
-        
+    
         tagline.textColor = .secondaryLabel
         tagline.font = UIFont.boldSystemFont(ofSize: 17)
         
-        
-//        moreBtn.setTitle("more", for: .normal)
-        moreBtn.titleLabel?.setFont(with: 10)
-        moreBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
-        let hstack = UIStackView(arrangedSubviews: [tagline, moreBtn ])
-        hstack.axis = .horizontal
-        hstack.distribution = .equalSpacing
-        
-        let stackView = UIStackView(arrangedSubviews: [title, hstack, seperator])
+        let stackView = UIStackView(arrangedSubviews: [tagline])
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
+        stackView.axis = .horizontal
+        addSubview(stackView)
+        stackView.spacing = 5
+        
+        NSLayoutConstraint.activate([
+            
+            seperator.heightAnchor.constraint(equalToConstant: 1),
+            
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
+            
+        ])
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+      
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
+}
+class SectionFooter: UICollectionReusableView, GestureAction {
+  
+    static let reuseIdentifier: String = "sectionFooter"
+    
+    let title = UILabel()
+    let tagline = UILabel()
+    let moreBtn = UIButton()
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        let seperator = UIView(frame: .zero)
+    
+        tagline.textColor = .secondaryLabel
+        tagline.font = UIFont.boldSystemFont(ofSize: 17)
+        
+        let stackView = UIStackView(arrangedSubviews: [tagline])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
         addSubview(stackView)
         stackView.spacing = 5
         
@@ -1283,11 +1443,11 @@ class SectionHeader: UICollectionReusableView, GestureAction {
 
 // Profile VC Components
 class ProfileHeader: UICollectionViewCell, Cell {
+    
     func didTap(_sender: CustomGestureRecognizer) {
         
     }
     
-  
     static var reuseIdentifier: String =  "profile Header"
     
     let container = UIView(frame: .zero)
@@ -1323,7 +1483,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
 
         setupGradient()
     }
-//
+
     func setupGradient(){
         
         let gradientLayer = CAGradientLayer()
@@ -1342,7 +1502,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
         stack.alignment = .center
         stack.spacing = 10
 
-        let containerStack = UIStackView(arrangedSubviews: [stack, followBtn, subscribersLabel  ])
+        let containerStack = UIStackView(arrangedSubviews: [subscribersLabel, stack, followBtn  ])
         containerStack.axis = .vertical
         containerStack.alignment = .leading
         containerStack.spacing = 7
@@ -1359,7 +1519,6 @@ class ProfileHeader: UICollectionViewCell, Cell {
     @objc func didTapFollowBtn() {
         
     }
-    
     @objc func didTapInfoBtn(){
         
     }
@@ -1500,7 +1659,7 @@ class ProfileHead: UIView{
         stack.alignment = .center
         stack.spacing = 10
 
-        let containerStack = UIStackView(arrangedSubviews: [followBtn, subscribersLabel, stack  ])
+        let containerStack = UIStackView(arrangedSubviews: [subscribersLabel, stack, followBtn ])
         containerStack.axis = .vertical
         containerStack.alignment = .leading
         containerStack.spacing = 7

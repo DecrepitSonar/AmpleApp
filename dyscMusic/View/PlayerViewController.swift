@@ -16,7 +16,7 @@ class PlayerViewController: UIViewController {
     let audioManager = AudioManager.shared
     let formatter = DateComponentsFormatter()
     
-    var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    var effect = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     var animator: UIViewPropertyAnimator!
     
@@ -26,6 +26,13 @@ class PlayerViewController: UIViewController {
     let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!
         .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     
+    override func loadView() {
+        super.loadView()
+        
+        currentTrack = audioManager.getCurrentTrack()
+        view.backgroundColor = image.image?.averageColor
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.systemRed
@@ -36,8 +43,8 @@ class PlayerViewController: UIViewController {
         
         navigationController?.isToolbarHidden = true
         
-        currentTrack = audioManager.getCurrentTrack()
         
+          
         
         timer =  Timer.scheduledTimer(timeInterval: 1,
                                       target: self,
@@ -67,7 +74,7 @@ class PlayerViewController: UIViewController {
                                       userInfo: nil,
                                       repeats: true)
         
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
+//        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
         
         view.addSubview(image)
         
@@ -139,6 +146,7 @@ class PlayerViewController: UIViewController {
         
         trackTitle.text = audioManager.currentQueue!.title
         
+//        slider.setThumbImage(sliderThumbImage, for: .normal)
         slider.maximumValue = Float(audioManager.player.duration)
         slider.value = Float(audioManager.player.currentTime)
         
@@ -149,6 +157,7 @@ class PlayerViewController: UIViewController {
         if( audioManager.player != nil){
             audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
         }
+        view.backgroundColor = image.image?.averageColor
     }
     
     @objc func onSliderTouchOrDrag(sender: UISlider, event: UIEvent){
@@ -237,6 +246,14 @@ class PlayerViewController: UIViewController {
         dismiss(animated: true)
         print("animator")
     }
+    @objc func saveTrack(){
+//        if(audioManager.isSaved){
+//            NetworkManager.Delete(url: <#T##String#>, completion: <#T##(NetworkError) -> ()#>)
+//        }
+//        else{
+//            NetworkManager.Post(url: <#T##String#>, data: <#T##Encodable#>, completion: <#T##(Decodable?, NetworkError) -> ()#>)
+//        }
+    }
 
     let image: UIImageView = {
         let img = UIImageView()
@@ -274,10 +291,19 @@ class PlayerViewController: UIViewController {
     }()
     let likeBtn: UIButton = {
         let likeBtnImg = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+        let likeBtnImgFill = UIImage(systemName: "suit.heart.fill", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
         
         let btn = UIButton()
-        btn.setImage(likeBtnImg, for: .normal)
+        
+        if(AudioManager.shared.isSaved){
+            btn.setImage(likeBtnImgFill, for: .normal)
+        }
+        else{
+            btn.setImage(likeBtnImg, for: .normal)
+        }
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(saveTrack), for: .touchUpInside)
+        
         return btn
     }()
     let shareBtn: UIButton = {
@@ -364,5 +390,11 @@ class PlayerViewController: UIViewController {
         btn.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
         return btn
     }()
-    
+    let sliderThumbImage: UIView = {
+        let thumb = UIView()
+        thumb.heightAnchor.constraint(equalToConstant: 5).isActive = true
+        thumb.widthAnchor.constraint(equalToConstant: 5)
+        thumb.backgroundColor = .red
+        return thumb
+    }()
 }

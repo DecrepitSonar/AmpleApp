@@ -80,7 +80,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         UserDefaults.standard.set(user.id, forKey: "userdata")
         
         DispatchQueue.main.async {
-            self.window!.rootViewController!.present(self.tabVc, animated: true)
+            self.window!.rootViewController = self.tabVc
         }
         
     }
@@ -220,14 +220,6 @@ class LoginViewController: UIViewController {
     }
     override func viewDidLayoutSubviews() {
         viewLayer.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 130)
-    }
-    override func viewWillLayoutSubviews() {
-        
-        let tabVc = customTab()
-        
-        if(UserDefaults.standard.object(forKey: "userdata") != nil ){
-            present(tabVc, animated: true)
-        }
     }
     
     func setupForm(){

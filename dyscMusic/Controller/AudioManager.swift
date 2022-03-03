@@ -30,6 +30,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
     var progressBar: UISlider!
     var timer: Timer!
     var isPlaying: Bool!
+    var isSaved: Bool = false
     
     // initialize player with track queue or track
     func initPlayer( track: Track?, tracks: [Track]?){
@@ -58,6 +59,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
     }
     func getTrack( track: Track){
 
+        // Retrieve net current track from network
         NetworkManager.getAudioTrack(track: track.audioURL!) { result in
             
             switch(result){
@@ -72,6 +74,12 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                     print("playing retrieved track")
                     self.player.prepareToPlay()
                     self.player.play()
+                    
+                    if audioQueue.isEmpty{
+                        self.currentQueue = track
+                    }else{
+                        self.currentQueue = audioQueue.removeFirst()
+                    }
     
                     NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: nil)
                     NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
@@ -90,6 +98,21 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                 print( err)
             }
         }
+        
+        // Check if track is saved by user
+//        let user = UserDefaults.standard.object(forKey: "userdata")
+//        NetworkManager.Get(url: "user/savedTracks?id=\(track.id)&&user=\(user!)") {(data: Bool?, error: NetworkError) in
+//
+//            switch(error){
+//            case .success:
+//                self.isSaved = true
+//
+//            default:
+//                self.isSaved = false
+//                return
+//            }
+//
+//        }
         
     }
     func playerController(option: PlayerControls){
@@ -128,7 +151,6 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                     case .success:
 
                         self.getTrack(track: data!)
-                        self.currentQueue = data!
                     
                     case .notfound:
                         print("url not found")
@@ -139,7 +161,6 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                 }
             }
             else{
-                currentQueue = audioQueue.removeFirst()
                 getTrack(track: currentQueue!)
             }
            
@@ -174,22 +195,22 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
         
     }
     
-    @objc func checkTrackIsEnded() -> Bool{
-        
-        if(player.currentTime == player.duration){
-            
-            timer.invalidate()
-//            playerController(option: .next)
-            
-            print("track Ended")
-            
-            //TODO: // add track to play history
-            
-            return true
-        }
-        
-        return false
-    }
+//    @objc func checkTrackIsEnded() -> Bool{
+//
+//        if(player.currentTime == player.duration){
+//
+//            timer.invalidate()
+////            playerController(option: .next)
+//
+//            print("track Ended")
+//
+//            //TODO: // add track to play history
+//
+//            return true
+//        }
+//
+//        return false
+//    }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         if( flag ){

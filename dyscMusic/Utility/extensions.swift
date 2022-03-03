@@ -32,6 +32,7 @@ extension UILabel {
     
 }
 extension UIImageView {
+    
     func setUpImage(url: String){
         
         isUserInteractionEnabled = true
@@ -40,6 +41,7 @@ extension UIImageView {
             switch(result){
             case .success(let data):
                 self.image = UIImage(data: data)
+                
             case .failure(let err):
                 print(err)
                 return

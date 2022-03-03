@@ -75,11 +75,14 @@ class MusicViewController: UIViewController, PlayerDelegate {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: SectionFooter.reuseIdentifier)
+        
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
 //        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
         collectionView.register(TrackHistorySlider.self, forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionView.register(LargeArtistAvi.self, forCellWithReuseIdentifier: LargeArtistAvi.reuseIdentifier)
         
         createDataSource()
         reloadData()
@@ -107,6 +110,13 @@ class MusicViewController: UIViewController, PlayerDelegate {
                                                    TrendingSection.self,
                                                    with: item,
                                                    indexPath: IndexPath)
+            case "Artists":
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   LargeArtistAvi.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
             default:
 //                print("Adding default section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
@@ -124,6 +134,11 @@ class MusicViewController: UIViewController, PlayerDelegate {
                 return nil
             }
             
+            guard let sectionFooter = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
+                print("could not dequeue supplementory view")
+                return nil
+            }
+            
             guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
             guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
             
@@ -134,8 +149,20 @@ class MusicViewController: UIViewController, PlayerDelegate {
             
             return sectionHeader
         }
+//
+//        datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
+//
+//            guard let sectionFooter = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionFooter.reuseIdentifier, for: IndexPath) as? SectionFooter else{
+//                print("could not dequeue supplementory view")
+//                return nil
+//            }
+//
+//            guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
+//            guard (self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp)) != nil else { return nil}
+//
+//            return sectionFooter
+//        }
         
-    
     }
     
     func reloadData(){
@@ -166,6 +193,9 @@ class MusicViewController: UIViewController, PlayerDelegate {
             case "Trending":
 //                print("configuring trending section layout")
                 return LayoutManager.createTrendingSection(using: section)
+            
+            case "Artists":
+                return LayoutManager.largeImageLayout(using: section)
                 
 //            case "":
 //                return LayoutManager.createWideLayout(using: section)

@@ -86,6 +86,7 @@ class LayoutManager {
         print("configured layout for History Section")
         
         let sectionheader = createSectionHeader()
+//        let sectionFooter = createSectionFooter()
         layoutSection.boundarySupplementaryItems = [sectionheader]
         
         return layoutSection
@@ -141,7 +142,26 @@ class LayoutManager {
         return section
         
     }
-    
+    static func largeImageLayout(using: Any) -> NSCollectionLayoutSection {
+        
+        let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.40), heightDimension: .fractionalHeight(0.25))
+//        let group = NSCollectionLayoutGroup(layoutSize: groupSize)
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: layoutGroup)
+        section.orthogonalScrollingBehavior = .groupPaging
+        section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
+        
+        let sectionheader = createSectionHeader()
+        section.boundarySupplementaryItems = [sectionheader]
+        
+        return section
+        
+    }
     // Header Layout
     static func createHeaderLayout(using: Any) -> NSCollectionLayoutSection{
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -156,10 +176,18 @@ class LayoutManager {
         return layoutSection
     }
     
+    // ReusableViews
     static func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem{
         let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
       
         let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+        
+        return supplementoryItem
+    }
+    static func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+        
+        let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
         
         return supplementoryItem
     }

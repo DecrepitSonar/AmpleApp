@@ -71,7 +71,12 @@ class Library: UIViewController {
         
         view.addSubview(collectionView)
         
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(SectionHeader.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(SectionFooter.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+                                withReuseIdentifier: SectionFooter.reuseIdentifier)
         
         collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
@@ -140,6 +145,19 @@ class Library: UIViewController {
             
             return sectionHeader
         }
+        
+//        datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
+//            
+//            guard let sectionFooter = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionFooter.reuseIdentifier, for: IndexPath) as? SectionFooter else{
+//                print("could not dequeue supplementory view")
+//                return nil
+//            }
+//            
+//            guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
+//            guard (self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp)) != nil else { return nil}
+//            
+//            return sectionFooter
+//        }
         
     
     }

@@ -24,25 +24,22 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
-    
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     
     static func Get<T: Decodable>(url: String, completion: @escaping (T?, NetworkError) -> ()){
         let url = URL(string: "\(baseURL)/\(url)")
         
-        print(url)
-        
         URLSession.shared.dataTask(with: url!){ data, response, error in
+            
             if error != nil {
 //                    completion(.failure(.servererr))
 //                    print(error)
             }
             
             guard let httpresponse = response as? HTTPURLResponse else {
-                
                 return
             }
             
@@ -58,6 +55,7 @@ class NetworkManager {
                 
                 case 500:
                     print("internal error")
+                
                 
                 break;
                 default:

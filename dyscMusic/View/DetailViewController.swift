@@ -26,15 +26,9 @@ class DetailViewController: UIViewController {
         super.loadView()
         view.addSubview(loadingView)
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = true
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = false
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -58,14 +52,16 @@ class DetailViewController: UIViewController {
             }
         }
     }
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
     
     func loadTableview(){
         tableview = UITableView(frame: .zero, style: .grouped)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame
-        
+
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableview.register(TrackCell.self, forCellReuseIdentifier: TrackCell.reuseIdentifier)
         tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -89,6 +85,7 @@ class DetailViewController: UIViewController {
         header.vc = navigationController
         header.tracks = data!.items!
         header.artistId = data!.artistId!
+        
         self.tableview.tableHeaderView = header
         
         header.album = data
@@ -101,11 +98,9 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data!.items!.count
     }
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Tracks"
     }
-    
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         
         let date = Date()
@@ -114,7 +109,6 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
         
         return "Published \(publishDate)"
     }
-
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
          let favouritAction = UIContextualAction(style: .normal, title: "") { (action, view, completion) in
@@ -142,13 +136,11 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
         
         return UISwipeActionsConfiguration(actions: [favouritAction])
     }
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         AudioManager.shared.initPlayer(track: data!.items![indexPath.row], tracks: nil)
 //        NotificationCenter.default.post(name: NSNotification.Name("trackChange"), object: nil, userInfo: ["track" : data!.items![indexPath.row]])
     }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
@@ -159,6 +151,4 @@ extension DetailViewController: UITableViewDelegate, UITableViewDataSource{
         cell.backgroundColor = .clear
         return cell
     }
-    
-    
 }

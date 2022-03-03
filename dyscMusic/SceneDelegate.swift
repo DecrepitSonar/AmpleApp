@@ -19,8 +19,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
+        
+        guard UserDefaults.standard.objectIsForced(forKey: "userdata") == nil else {
+            window?.rootViewController = customTab()
+            window?.makeKeyAndVisible()
+            
+            return
+        }
+        
         window?.rootViewController = LoginViewController()
-   
         window?.makeKeyAndVisible()
     }
 
