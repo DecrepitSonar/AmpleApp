@@ -148,6 +148,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             return cell
         }
+        
         if(trackHistory.count > 0 ){
             
             switch(trackHistory[indexPath.row].type){

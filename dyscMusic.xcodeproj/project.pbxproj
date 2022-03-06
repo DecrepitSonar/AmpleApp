@@ -49,6 +49,7 @@
 		2211AC8727B7DB560039F9B8 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2211AC6A27B7DB560039F9B8 /* Protocols.swift */; };
 		2274037E27B7F15400DEFCAE /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2274037C27B7F15400DEFCAE /* User+CoreDataClass.swift */; };
 		2274037F27B7F15400DEFCAE /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2274037D27B7F15400DEFCAE /* User+CoreDataProperties.swift */; };
+		22B096CF27D44D7E00E42DCF /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B096CE27D44D7E00E42DCF /* CoreDataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		2211AC6A27B7DB560039F9B8 /* Protocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		2274037C27B7F15400DEFCAE /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
 		2274037D27B7F15400DEFCAE /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		22B096CE27D44D7E00E42DCF /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +203,7 @@
 			children = (
 				2211AC3C27B7DB180039F9B8 /* NetworkManager.swift */,
 				2211AC3D27B7DB180039F9B8 /* AudioManager.swift */,
+				22B096CE27D44D7E00E42DCF /* CoreDataManager.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -426,6 +429,7 @@
 				2211AC7127B7DB560039F9B8 /* aboutVc.swift in Sources */,
 				2211AC7B27B7DB560039F9B8 /* ArtistProfileVc.swift in Sources */,
 				2211AC6C27B7DB560039F9B8 /* SearchViewController.swift in Sources */,
+				22B096CF27D44D7E00E42DCF /* CoreDataManager.swift in Sources */,
 				2211AC7E27B7DB560039F9B8 /* OverViewController.swift in Sources */,
 				2211AC8127B7DB560039F9B8 /* LoginViewController.swift in Sources */,
 				2211AC7227B7DB560039F9B8 /* NotificationSettingsVc.swift in Sources */,
@@ -609,11 +613,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JR68HFY6D7;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = dyscMusic/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Dysc;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -637,11 +643,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JR68HFY6D7;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = dyscMusic/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Dysc;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

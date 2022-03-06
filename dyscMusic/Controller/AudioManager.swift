@@ -71,6 +71,8 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                     self.player = try AVAudioPlayer(data: data)
                     self.player.delegate = self
                     
+                    self.previousTracks.insert(self.currentQueue!, at: 0)
+                    
                     print("playing retrieved track")
                     self.player.prepareToPlay()
                     self.player.play()
@@ -138,10 +140,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
             
         case .next:
             
-            print("inserting current track in previously played")
-            previousTracks.insert(currentQueue!, at: 0)
             
-            print("new current track: ", audioQueue)
 
             if audioQueue.isEmpty {
                 

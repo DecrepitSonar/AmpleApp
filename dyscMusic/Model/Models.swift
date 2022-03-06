@@ -12,7 +12,7 @@ struct UserData: Decodable {
     var username: String
     var password: String
     var email: String
-//    var joinDate: String
+    var joinDate: String
     var following: [Artist]
     var albums: [Album]
     var playlists: [Album]

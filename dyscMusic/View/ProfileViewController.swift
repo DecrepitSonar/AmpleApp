@@ -12,7 +12,6 @@ class ProfileViewController: UIViewController {
     var artistId: String?
     var data: ProfileObject!
     var header: ProfileHead!
-    
     var tableview: UITableView!
     
     let loadingView: UIView = {
@@ -25,17 +24,15 @@ class ProfileViewController: UIViewController {
         super.loadView()
         view.addSubview(loadingView)
     }
-    
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
+//        navigationController?.navigationBar.isHidden = true
     }
-    
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = false
+//        navigationController?.navigationBar.isHidden = false
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350))
 
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -59,23 +56,27 @@ class ProfileViewController: UIViewController {
             }
         }
     }
-    
+     
     func initTable(){
       
         tableview = UITableView(frame: view.frame, style: .grouped)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableview.backgroundColor = .orange
         tableview.contentInsetAdjustmentBehavior = .never
-        tableview.backgroundColor = .clear
-        tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        tableview.separatorColor = UIColor.clear
         tableview.bounces = false
-        tableview.rowHeight = UITableView.automaticDimension
-        tableview.estimatedRowHeight  = 100
+        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
+        tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
+        tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         
-        tableview.register(ProfileContentSection.self, forCellReuseIdentifier: ProfileContentSection.reuseIdentifier)
+//        header.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        view.backgroundColor = .red
         initHeader()
+//        tableview.backgroundView = header
+        tableview.tableHeaderView = header
+        
         view.addSubview(tableview)
     }
     
@@ -96,40 +97,78 @@ class ProfileViewController: UIViewController {
         
         header.subscribersLabel.text = " \(data.type) • Subscribers: \(subscribers)"
         header.setupHeader(artist: artist)
-        tableview.tableHeaderView = header
         
     }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-        let offset = tableview.contentOffset.y
-        
-        print(offset)
-        
-        if(offset < 350 ){
-            header.image.center.y =  header.center.y + offset
-            return
-        }
-
-    }
-
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//
+//        let offset = tableview.contentOffset.y
+//
+////        print(offset)
+//
+//        if(offset < 350 ){
+//            header.image.center.y =  header.center.y + offset
+//            return
+//        }
+//
+//    }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return data.items[section].items!.count
+        } else {return 1}
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return data.items.count
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = TableSectionHeader()
+        header.label.text = data.items[section].tagline
+        return header
+    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UIScreen.main.bounds.height
+        switch indexPath.section {
+        case 0:
+            return 60
+        default:
+            return 200
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableview.dequeueReusableCell(withIdentifier: ProfileContentSection.reuseIdentifier, for: indexPath) as! ProfileContentSection
-        cell.navigationController = navigationController
-        cell.section = data.items
         
-        return cell
+        let items = data.items[indexPath.section].items
+        
+        switch indexPath.section {
+        case 0:
+            let cell = tableview.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
+            cell.configure(with: items![indexPath.row])
+            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+            cell.selectionStyle = .none
+            return cell
+            
+        default:
+            let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier, for: indexPath) as! AlbumFlowSection
+            cell.configure(data: items!, navigationController: self.navigationController!)
+            return cell
+            
+        }
     }
-    
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = data.items[indexPath.section].items![indexPath.row]
+        
+        let track = Track(id: item.id,
+                          type: item.type,
+                          trackNum: UInt(item.trackNum!),
+                          title: item.title!,
+                          artistId: item.artistId!,
+                          name: item.name!,
+                          imageURL: item.imageURL,
+                          albumId: item.albumId!,
+                          audioURL: item.audioURL,
+                          playCount: Int(item.playCount!))
+        
+        AudioManager.shared.initPlayer(track: track, tracks: nil)
+    }
 }

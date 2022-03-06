@@ -49,7 +49,6 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
             seperator.heightAnchor.constraint(equalToConstant: 1)
         ])
         
-        
     }
     
     required init(coder: NSCoder) {
@@ -99,10 +98,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = LargePrimaryButton()
         btn.setupButton(label: "Sign Up")
-//        btn.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//        btn.layer.borderWidth = 1
         btn.layer.borderColor =  UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-//        btn.setTitleColor(UIColor.black, for: .normal)
         btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1), for: .normal)
         
         return btn
@@ -287,7 +283,7 @@ class LoginViewController: UIViewController {
     let logo: UILabel = {
         
         let label = UILabel()
-        label.text = "PlayBase"
+        label.text = "Dysc"
         label.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Helvetica Neue", size: 30)

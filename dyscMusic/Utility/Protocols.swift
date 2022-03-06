@@ -35,9 +35,7 @@ protocol SelfConfigureingCell {
     @objc func didTap(_sender: CustomGestureRecognizer)
 }
 
-protocol Cell : SelfConfigureingCell & GestureAction {
-    
-}
+protocol Cell : SelfConfigureingCell & GestureAction {}
 
 
 protocol TableCell{

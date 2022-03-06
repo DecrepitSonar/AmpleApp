@@ -20,15 +20,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        guard UserDefaults.standard.objectIsForced(forKey: "userdata") == nil else {
-            window?.rootViewController = customTab()
+        guard UserDefaults.standard.object(forKey: "userdata") != nil else {
+            
+            window?.rootViewController = LoginViewController()
             window?.makeKeyAndVisible()
             
             return
         }
         
-        window?.rootViewController = LoginViewController()
+        
+        window?.rootViewController = customTab()
         window?.makeKeyAndVisible()
+      
+     
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
