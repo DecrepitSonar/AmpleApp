@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import CoreData
+
 
 class Library: UIViewController {
     
@@ -13,16 +15,14 @@ class Library: UIViewController {
     
     var collectionView: UICollectionView!
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>!
-    let user = UserDefaults.standard.object(forKey: "userdata")
+    
+    let user = UserDefaults.standard.value(forKey: "user")
     
     override func loadView() {
         super.loadView()
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        
-        let btn = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(openSettings))
-        navigationController?.navigationItem.rightBarButtonItem = btn
-        
+      
         title = "Library"
         
         NetworkManager.Get(url: "library?user=\(user!)") { (data: [LibObject]?, error: NetworkError) in
@@ -57,11 +57,6 @@ class Library: UIViewController {
         
     }
     
-    @objc func openSettings(){
-        let view = SettingsViewController()
-        
-        navigationController?.pushViewController(view, animated: true)
-    }
     func initDataSource(){
         
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -74,13 +69,14 @@ class Library: UIViewController {
         collectionView.register(SectionHeader.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: SectionHeader.reuseIdentifier)
-        collectionView.register(SectionFooter.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                withReuseIdentifier: SectionFooter.reuseIdentifier)
+        collectionView.register(SectionHeaderWithButton.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
         collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
         collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionView.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
         
         createDataSource()
         reloadData()
@@ -102,14 +98,13 @@ class Library: UIViewController {
                                                    ArtistSection.self,
                                                    with: item,
                                                    indexPath: IndexPath)
-                
-            case "History":
-
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   TrendingSection.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
+//            case "Video History":
+//
+//                return LayoutManager.configureVideoCell(collectionView: collectionView,
+//                                                        navigationController: self.navigationController,
+//                                                        SmallVideoPoster.self, with: item as VideoItemModel,
+//                                                        indexPath: IndexPath)
+            
                 
             case "Saved Tracks":
 
@@ -130,7 +125,7 @@ class Library: UIViewController {
         
         datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
             
-            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
+            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier, for: IndexPath) as? SectionHeaderWithButton else{
                 print("could not dequeue supplementory view")
                 return nil
             }
@@ -142,6 +137,21 @@ class Library: UIViewController {
         
             sectionHeader.tagline.text = section.tagline
             sectionHeader.title.text = section.type
+            sectionHeader.navigationController = self!.navigationController
+            
+            switch( section.type){
+            case "Artists":
+                sectionHeader.vc = ArtistFollowViewController()
+                
+            case "Playlist":
+                sectionHeader.vc = PlaylistsViewController()
+                
+            case "Saved Albums":
+                sectionHeader.vc = AlbumCollectionViewController()
+                
+            default:
+                break
+            }
             
             return sectionHeader
         }
@@ -185,7 +195,10 @@ class Library: UIViewController {
                 case "Artists":
                     return LayoutManager.createAviSliderSection(using: section)
                     
-                case "History":
+                case "Video History":
+                return LayoutManager.createWideLayout(using: section)
+                
+                case "Track History":
                     return LayoutManager.createTrendingSection(using: section)
                     
                 case "Saved Tracks":

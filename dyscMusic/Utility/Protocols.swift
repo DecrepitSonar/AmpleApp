@@ -36,7 +36,10 @@ protocol SelfConfigureingCell {
 }
 
 protocol Cell : SelfConfigureingCell & GestureAction {}
-
+protocol VideoCell {
+    static var reuseIdentifier: String { get }
+    func configure(with: VideoItemModel, navigationController: UINavigationController)
+}
 
 protocol TableCell{
     static var reuseIdentifier: String { get }

@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import CoreData
 
 public class DynamicTableView: UITableView {
     
@@ -25,9 +26,10 @@ public class DynamicTableView: UITableView {
 class SearchViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
 
     var tableview: UITableView!
+    let dataManager = DataMananager()
     
     let Genres = ["R&B", "Hip-Hop", "Rap", "Soul", "Jazz", "Pop"]
-    var trackHistory = [LibItem](){
+    var trackHistory = [NSManagedObject](){
         didSet{
             DispatchQueue.main.async {
                 self.tableview.reloadData()
@@ -54,21 +56,23 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         tableview.separatorColor = UIColor.clear
         tableview.rowHeight = UITableView.automaticDimension
         
-        let user = UserDefaults.standard.object(forKey: "userdata")
+        guard let items = dataManager.getAllSearchHistoryItems() else {
+            return
+        }
 
-        NetworkManager.Get(url: "search/history?userId=\(user!)", completion: { (data: [LibItem]?, error: NetworkError) in
-        
-            switch(error){
-            case .notfound:
-                print("Url not found")
-                
-            case .servererr:
-                print("server error")
-                
-            case .success:
-                self.trackHistory = data!
-            }
-        })
+//        NetworkManager.Get(url: "search/history?userId=\(user)", completion: { (data: [LibItem]?, error: NetworkError) in
+//
+//            switch(error){
+//            case .notfound:
+//                print("Url not found")
+//
+//            case .servererr:
+//                print("server error")
+//
+//            case .success:
+//                self.trackHistory = data!
+//            }
+//        })
 
         view.addSubview(tableview)
         
@@ -149,16 +153,16 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             return cell
         }
         
-        if(trackHistory.count > 0 ){
-            
-            switch(trackHistory[indexPath.row].type){
-            case "Artist":
-                return configureTableCell(tableview: tableView, AviTableCell.self, with: trackHistory[indexPath.row], indexPath: indexPath)
-                
-            default:
-                return configureTableCell(tableview: tableView, TrackStrip.self, with: trackHistory[indexPath.row], indexPath: indexPath)
-            }
-        }
+//        if(trackHistory.count > 0 ){
+//
+//            switch(trackHistory[indexPath.row].value(forKey: "type") as! String){
+//            case "Artist":
+//                return configureTableCell(tableview: tableView, AviTableCell.self, with: trackHistory[indexPath.row], indexPath: indexPath)
+//
+//            default:
+//                return configureTableCell(tableview: tableView, TrackStrip.self, with: trackHistory[indexPath.row], indexPath: indexPath)
+//            }
+//        }
         else{
             let cell = tableview.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
             cell.textLabel?.text = "No Recent Searchs"

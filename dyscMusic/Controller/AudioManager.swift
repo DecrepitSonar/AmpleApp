@@ -215,6 +215,9 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
         if( flag ){
             print("AudioPlayer Finnished")
             AudioManager.shared.playerController(option: .next)
+            
+            // add track to listening history
+//            NetworkManager.Post(url: <#T##String#>, data: <#T##Encodable#>, completion: <#T##(Decodable?, NetworkError) -> ()#>)
         }
     }
 }

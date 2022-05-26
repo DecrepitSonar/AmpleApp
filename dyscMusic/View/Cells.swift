@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 class FeaturedHeader: UICollectionViewCell, Cell{
 
@@ -17,24 +18,39 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     override init(frame: CGRect){
         super.init(frame: frame)
         
-        title.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        let stackview = UIStackView(arrangedSubviews: [image])
+        let stackview = UIStackView(arrangedSubviews: [ image])
         stackview.translatesAutoresizingMaskIntoConstraints = false
+        stackview.axis = .vertical
+        stackview.spacing = 10
         
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         
-        contentView.addSubview(image)
-        image.addGestureRecognizer(tapGesture)
+        contentView.addSubview(stackview )
+        container.addGestureRecognizer(tapGesture)
+        contentView.addSubview(container)
+            
+        container.addSubview(featuredTrackImage)
+        container.addSubview(artistName)
+        container.addSubview(title)
+        
         NSLayoutConstraint.activate([
-            image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            image.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
+            image.heightAnchor.constraint(equalToConstant: 200),
+            
+            container.topAnchor.constraint(equalTo: image.topAnchor),
+            container.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
+            container.heightAnchor.constraint(equalToConstant: 200),
+            
+            featuredTrackImage.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            featuredTrackImage.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
+            
+            artistName.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
+            artistName.bottomAnchor.constraint(equalTo: title.topAnchor),
+            
+            title.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
+            title.bottomAnchor.constraint(equalTo: featuredTrackImage.bottomAnchor)
+            
         ])
-//
-//        stackview.axis = .vertical
-//        stackview.spacing = 10
         
     }
     
@@ -45,18 +61,16 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         self.NavVc = rootVc
-        
-//        image.image = UIImage(named: catalog.imageURL)
-        image.setUpImage(url: catalog.imageURL)
-       
+        image.setUpImage(url: catalog.posterImage!, interactable: true)
+        featuredTrackImage.setUpImage(url: catalog.imageURL!, interactable: true)
         tapGesture.id = catalog.id
         
         title.text = catalog.title
-        
+        artistName.text = catalog.artist
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        let view = DetailViewController()
+        let view = AlbumViewController()
         view.albumId = _sender.id!
         
         print("presenting...")
@@ -65,7 +79,11 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         
     }
     
-    let tagline = UILabel()
+    let tagline: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        return label
+    }()
     let image: UIImageView = {
         
         let image = UIImageView()
@@ -76,7 +94,168 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         
         return image
     }()
-    let title = UILabel()
+
+    let container: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(displayP3Red: 0, green: 0, blue: 0, alpha: 0.4)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    
+    let title: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setFont(with: 17)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let artistName: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setFont(with: 12)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let featuredTrackImage: UIImageView = {
+        let view = UIImageView()
+//        view.backgroundColor = .red
+        view.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
+        view.contentMode = .scaleAspectFill
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    
+    
+}
+class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
+    
+    static var reuseIdentifier: String = "videoPosterHeader"
+    
+    var player: AVPlayer!
+    var playerLayer: AVPlayerLayer!
+    var videoObject: VideoItemModel!
+    var playerItem: AVPlayerItem!
+    
+    var gesture: CustomGestureRecognizer!
+    var NVC: UINavigationController!
+    
+    func configure(with: VideoItemModel, navigationController: UINavigationController) {
+            
+        videoObject = with
+        
+        backgroundColor = .black
+        let videoURL = URL(string: with.videoURL)
+        playerItem = AVPlayerItem(url: videoURL!)
+        player.replaceCurrentItem(with: playerItem)
+        player.play()
+        player.volume = 0
+
+        title.text = with.title
+        artistName.text = with.artist
+        
+        NVC = navigationController
+        
+        gesture = CustomGestureRecognizer(target: self, action: #selector(didTapVideo(sender:)))
+        
+        gesture.video = with
+        
+        container.addGestureRecognizer(gesture)
+    }
+    
+    @objc func didTapVideo(sender: CustomGestureRecognizer){
+        
+        
+//        print("pressed")
+        let videoView = VideoViewController()
+        videoView.selectedVido = videoObject.id
+        videoView.modalPresentationStyle = .overFullScreen
+        videoView.modalTransitionStyle = .coverVertical
+        
+        player.rate = 0
+        NVC.present(videoView, animated: true)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addSubview(container)
+        
+        player = AVPlayer()
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer.frame = container.bounds
+        playerLayer.videoGravity = .resizeAspectFill
+        
+        container.layer.addSublayer(playerLayer)
+        
+        let labelStack = UIStackView(arrangedSubviews: [artistName, title])
+        labelStack.axis = .vertical
+        labelStack.distribution = .fillProportionally
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
+              
+        container.addSubview(labelStack)
+        container.addSubview(muteBtn)
+
+        NSLayoutConstraint.activate([
+            labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            labelStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
+            
+            muteBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            muteBtn.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20)
+        ])
+    }
+        
+    required init?(coder: NSCoder) {
+        fatalError("no storyboard")
+    }
+    @objc func toggleMute(sender: UIButton){
+        print("mute btn pressed")
+        if(player.volume < 1){
+            player.volume = 1
+            DispatchQueue.main.async {
+                self.muteBtn.setImage(UIImage(systemName: "speaker.wave.2.circle.fill"), for: .normal)
+                self.muteBtn.setNeedsDisplay()
+            }
+        }else{
+            player.volume = 0
+            DispatchQueue.main.async {
+                self.muteBtn.setImage(UIImage(systemName: "speaker.slash.circle.fill"), for: .normal)
+                self.muteBtn.setNeedsDisplay()
+            }
+        }
+    }
+    
+    let container: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 40, height: 200))
+        return view
+    }()
+    
+    let muteBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "speaker.slash.circle.fill"), for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.addTarget(self, action: #selector(toggleMute(sender:)), for: .touchUpInside)
+        return btn
+    }()
+    
+    let title: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 15)
+        label.textColor = .label
+        return label
+    }()
+    
+    let artistName: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 15)
+        label.textColor = .label
+        return label
+    }()
     
 }
 class ArtistSection: UICollectionViewCell,  Cell{
@@ -120,7 +299,7 @@ class ArtistSection: UICollectionViewCell,  Cell{
         self.NavVc = rootVc!
     
         print("Seting up Artist")
-        artistAvi.configureCard(img: catalog.imageURL, name: catalog.name!)
+        artistAvi.configureCard(img: catalog.imageURL!, name: catalog.name!)
         print(catalog)
         
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
@@ -155,7 +334,6 @@ class TrendingSection: UICollectionViewCell, Cell{
         
         image.contentMode = .scaleAspectFit
         image.clipsToBounds = true
-//        image.layer.cornerRadius = 10
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.translatesAutoresizingMaskIntoConstraints = false
         
@@ -167,7 +345,6 @@ class TrendingSection: UICollectionViewCell, Cell{
         listenCount.setFont(with: 10)
         listenCount.textColor = .secondaryLabel
         listenCount.textAlignment = .right
-//        listenCount.numberOfLines = 0
         listenCount.translatesAutoresizingMaskIntoConstraints = false
         listenCount.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
@@ -189,13 +366,13 @@ class TrendingSection: UICollectionViewCell, Cell{
         
         NSLayoutConstraint.activate([
             
-            image.heightAnchor.constraint(equalToConstant: 100),
-            image.widthAnchor.constraint(equalToConstant: 50),
+            image.heightAnchor.constraint(equalToConstant: 35),
+            image.widthAnchor.constraint(equalToConstant: 35),
             
             stackview.topAnchor.constraint(equalTo: topAnchor),
-            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
         
             listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
         ])
@@ -209,14 +386,14 @@ class TrendingSection: UICollectionViewCell, Cell{
         
         vc = rootVc!
         
-        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
+        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL!, albumId: catalog.albumId!, audioURL: catalog.audioURL)
         
         
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         tapGesture?.track = track
         self.addGestureRecognizer(tapGesture!)
         
-        image.setUpImage(url: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
         title.text = catalog.title
         artist.text = catalog.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
@@ -273,8 +450,8 @@ class MediumImageSlider: UICollectionViewCell, Cell{
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            image.heightAnchor.constraint(equalToConstant: 150),
-            image.widthAnchor.constraint(equalToConstant: 150),
+            image.heightAnchor.constraint(equalToConstant: 125),
+            image.widthAnchor.constraint(equalToConstant: 125),
             
 //            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
             
@@ -296,7 +473,7 @@ class MediumImageSlider: UICollectionViewCell, Cell{
         
         addGestureRecognizer(tapgesture!)
         
-        image.setUpImage(url: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
         title.text = catalog.title
         artist.text = catalog.name
     }
@@ -311,9 +488,14 @@ class MediumImageSlider: UICollectionViewCell, Cell{
             let view = PlaylistViewController()
             view.id = _sender.id!
             vc?.pushViewController(view, animated: true)
+        
+        case "Track":
+            let view = TrackViewController()
+            view.trackId = _sender.id!
+            vc?.pushViewController(view, animated: true)
             
         default:
-            let view = DetailViewController()
+            let view = AlbumViewController()
             view.albumId = _sender.id!
             vc?.pushViewController(view, animated: true)
             
@@ -386,7 +568,7 @@ class TrackHistorySlider: UICollectionViewCell, Cell {
         
         addGestureRecognizer(tapgesture!)
         
-        image.setUpImage(url: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
         title.text = catalog.title
         artist.text = catalog.name
     }
@@ -438,7 +620,7 @@ class LargeArtistAvi: UICollectionViewCell, Cell {
     }
     
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
-        image.setUpImage(url: item.imageURL)
+        image.setUpImage(url: item.imageURL!, interactable: true)
         artistLabel.text = item.name
         
         gesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
@@ -527,6 +709,95 @@ class LargeArtistAvi: UICollectionViewCell, Cell {
     }()
 }
 
+class SmallVideoPoster: UICollectionViewCell, VideoCell {
+    
+    static var reuseIdentifier: String = "smallVideoPoster"
+    
+    var navigation: UINavigationController!
+    var video: VideoItemModel!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addSubview(posterImage)
+        let contentStack = UIStackView(arrangedSubviews: [artistLabel, title, viewCountLabel])
+        contentStack.axis = .vertical
+        contentStack.distribution = .fillProportionally
+        contentStack.spacing = 5
+        contentStack.alignment = .leading
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(contentStack)
+        
+        NSLayoutConstraint.activate([
+            posterImage.heightAnchor.constraint(equalToConstant: 100),
+            posterImage.widthAnchor.constraint(equalToConstant: 200),
+//            posterImage.topAnchor.constraint(equalTo: topAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            contentStack.topAnchor.constraint(equalTo: posterImage.bottomAnchor, constant: 10)
+            
+        ])
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(displayVideoView)))
+        
+    }
+    
+    @objc func displayVideoView(){
+        
+        let videoView = VideoViewController()
+        videoView.selectedVido = video.id
+        videoView.modalPresentationStyle = .overFullScreen
+        videoView.modalTransitionStyle = .coverVertical
+        
+        navigation.present(videoView, animated: true)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("no storboard provided")
+    }
+    
+    func configure(with: VideoItemModel, navigationController: UINavigationController) {
+    
+        artistLabel.text = with.artist
+        title.text = with.title
+        viewCountLabel.text = "Views: \(String(with.views))"
+        posterImage.setUpImage(url: with.posterURL!, interactable: false)
+        
+        self.video = with
+        self.navigation = navigationController
+    }
+    
+    let posterImage: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let title: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 12)
+        label.textColor = .label
+        return label
+    }()
+    
+    let artistLabel: UILabel = {
+        let label = UILabel()
+        label.setFont(with:  10 )
+        label.textColor = .secondaryLabel
+        return label
+    }()
+    
+    let viewCountLabel: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 10)
+        label.textColor = .secondaryLabel
+        return label
+    }()
+}
+
 // Track Overview Cells
 class TrackDetailStrip: UICollectionViewCell, Cell{
     static var reuseIdentifier: String = "track"
@@ -574,12 +845,11 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         fatalError("")
     }
     
-    
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         
         vc = rootVc
         
-        trackImage.setUpImage(url: item.imageURL)
+        trackImage.setUpImage(url: item.imageURL!, interactable: true)
         trackTitleLabel.text = item.title
         artistNameLabel.text = item.name
         
@@ -587,7 +857,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
                           title: item.title!,
                           artistId: item.artistId!,
                           name: item.name!,
-                          imageURL: item.imageURL,
+                          imageURL: item.imageURL!,
                           albumId: item.albumId!,
                           audioURL: item.audioURL!)
         
@@ -651,7 +921,7 @@ class TrackCell: UITableViewCell{
     
     var tapGesture: CustomGestureRecognizer!
     var options: CustomGestureRecognizer!
-    var user = UserDefaults.standard.object(forKey: "userdata")
+    var user = UserDefaults.standard.value(forKey: "user")
     var isSaved: Bool = false
     var track: Track!
     
@@ -666,7 +936,7 @@ class TrackCell: UITableViewCell{
         
         selectionStyle = .none
         
-        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, likedBtn, optionsBtn])
+        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, videoButton, likedBtn])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
@@ -677,21 +947,11 @@ class TrackCell: UITableViewCell{
         
         NSLayoutConstraint.activate([
             
-//            trackImage.heightAnchor.constraint(equalToConstant: 50),
-//            trackImage.widthAnchor.constraint(equalToConstant: 50),
-//            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
-//
-            optionsBtn.widthAnchor.constraint(equalToConstant: 30 ),
-            optionsBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            
             horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             horizontalStack.topAnchor.constraint(equalTo: topAnchor),
             horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-        
-        optionsBtn.addTarget(self, action: #selector(openOptionsView(_sender:)), for: .touchUpInside)
-        likedBtn.addTarget(self, action: #selector(toggleSave), for: .touchUpInside)
         
     }
     
@@ -704,23 +964,9 @@ class TrackCell: UITableViewCell{
         
         track = item
         
-        trackImage.setUpImage(url: item.imageURL)
+        trackImage.setUpImage(url: item.imageURL, interactable: true)
         trackTitleLabel.text = item.title
         artistNameLabel.text = item.name
-        
-//        let track = Track(id: item.id,
-//                          title: item.title!,
-//                          artistId: item.artistId!,
-//                          name: item.name!,
-//                          imageURL: item.imageURL,
-//                          albumId: item.albumId!,
-//                          audioURL: item.audioURL!)
-        
-//        tapGesture.track = item
-//        addGestureRecognizer(tapGesture)
-        
-//        options.track = item
-//        optionsBtn.addGestureRecognizer(options)
         
         print("Initialized cell")
         
@@ -739,6 +985,11 @@ class TrackCell: UITableViewCell{
                 }
                 
             }
+        }
+        
+        guard item.videoId == nil else {
+            videoButton.isHidden = false
+            return
         }
         
     }
@@ -790,7 +1041,6 @@ class TrackCell: UITableViewCell{
     }
     
     @objc func didTap(_sender: CustomGestureRecognizer){
-        
         AudioManager.shared.initPlayer(track: _sender.track, tracks: nil)
     }
     
@@ -836,11 +1086,20 @@ class TrackCell: UITableViewCell{
         btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         return btn
     }()
+    let videoButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "play.tv"), for: .normal)
+        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        button.isHidden = true
+        button.layer.zPosition = 2
+        return button
+    }()
     
 }
 
 // headers
-
 class PlaylistsDetailHeader: UIView{
     
     static let reuseableIdentifier: String = "image Header"
@@ -1034,7 +1293,7 @@ class PlaylistsDetailHeader: UIView{
     }()
     
 } // Depricated
-class DetailHeaders: UIView{
+class DetailHeader: UICollectionViewCell{
     
     static let reuseableIdentifier: String = "image Header"
     
@@ -1060,7 +1319,7 @@ class DetailHeaders: UIView{
         playBtn.addTarget(self, action: #selector(playAllTracks), for: .touchUpInside)
         playBtn.isUserInteractionEnabled = true
         
-        setupGradient()
+//        setupGradient()/
         
         let btnStack = UIStackView(arrangedSubviews: [playBtn,shuffleBtn])
         btnStack.axis = .horizontal
@@ -1068,7 +1327,7 @@ class DetailHeaders: UIView{
         btnStack.distribution = .fillEqually
         btnStack.spacing = 10
 
-        let TirtiaryStack = UIStackView(arrangedSubviews: [likebtn, queueBtn, shareBtn, downloadBtn, ellipis])
+        let TirtiaryStack = UIStackView(arrangedSubviews: [likebtn, shareBtn, downloadBtn, ellipis])
         TirtiaryStack.axis = .horizontal
         TirtiaryStack.translatesAutoresizingMaskIntoConstraints = false
         TirtiaryStack.distribution = .equalCentering
@@ -1087,20 +1346,11 @@ class DetailHeaders: UIView{
         
         addSubview(ContainerStack)
         
-        likebtn.addTarget(self, action: #selector(savedBtnTapped), for: .touchUpInside)
-        
         NSLayoutConstraint.activate([
-            imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -100),
-            imageContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 100),
-            imageContainer.topAnchor.constraint(equalTo: topAnchor),
-            imageContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-////
-            container.topAnchor.constraint(equalTo: imageContainer.topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             albumImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             albumImage.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//
+
             albumImage.heightAnchor.constraint(equalToConstant: 355),
             albumImage.widthAnchor.constraint(equalToConstant:350),
 
@@ -1108,9 +1358,9 @@ class DetailHeaders: UIView{
             artistAviImage.widthAnchor.constraint(equalToConstant: 20),
 
             ContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            ContainerStack.topAnchor.constraint(equalTo: imageContainer.topAnchor, constant: 75),
-            ContainerStack.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
-////
+            ContainerStack.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            ContainerStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+
             btnStack.trailingAnchor.constraint(equalTo: ContainerStack.trailingAnchor),
         ])
 
@@ -1120,7 +1370,7 @@ class DetailHeaders: UIView{
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func savedBtnTapped(){
+    func savedBtnTapped(){
 
         
         if( !isSaved){
@@ -1164,7 +1414,6 @@ class DetailHeaders: UIView{
         
         likebtn.setNeedsDisplay()
     }
-    
     func checkIfAlbumIsSaved(){
         NetworkManager.Get(url: "user/saved?id=\(album.id)&&userId=\(user!)") { (data: Album?, error: NetworkError) in
             
@@ -1191,13 +1440,29 @@ class DetailHeaders: UIView{
         view.artistId = artistId
         vc?.pushViewController(view, animated: true)
     }
-
     @objc func playAllTracks(){
         
         AudioManager.shared.initPlayer(track: nil, tracks: tracks)
 
     }
-    
+    @objc func didTapButton(sender: UIButton){
+        
+        switch(sender.tag){
+        case 0:
+            savedBtnTapped()
+            print("Save")
+        case 1:
+            print( "Share")
+        case 2:
+            print("Download")
+        case 3:
+            print("Options")
+            let vc = OptionsViewController()
+            vc.modalPresentationStyle = .popover
+            window?.rootViewController?.present(vc, animated: true)
+        default: return
+        }
+    }
     func setupGradient(){
         
         let gradientLayer = CAGradientLayer()
@@ -1238,7 +1503,6 @@ class DetailHeaders: UIView{
         image.clipsToBounds = true
         image.layer.cornerRadius = 5
         image.translatesAutoresizingMaskIntoConstraints = false
-
         return image
     }()
     let trackTitle: UILabel = {
@@ -1246,50 +1510,46 @@ class DetailHeaders: UIView{
         label.textColor = .white
         label.setFont(with: 25)
         label.numberOfLines = 0
-        
         return label
     }()
     
     let likebtn: UIButton = {
-        
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "heart"), for: .normal)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        
+        btn.tag = 0
         return btn
     }()
-    let queueBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(systemName: "list.triangle"), for: .normal)
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        return btn
-    }()
+    
     let shareBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        btn.tag = 1
         return btn
     }()
     let downloadBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "arrow.down"), for: .normal)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        btn.tag = 2
         return btn
     }()
     let ellipis: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.tag = 3
+        btn.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return btn
     }()
   
     var playBtn: UIButton = {
         
-        let btnConfig = UIImage.SymbolConfiguration(pointSize: 20)
-        let btnImage = UIImage(systemName: "play.fill", withConfiguration: btnConfig)
-        
         let btn = UIButton()
-        btn.setImage(btnImage, for: .normal)
+        btn.setSystemImageWithConfigureation(systemImage: "play.fill", size: 20)
         btn.setTitle("Play", for: .normal)
         btn.layer.borderWidth = 1
         btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
@@ -1367,21 +1627,22 @@ class SectionHeader: UICollectionReusableView, GestureAction {
         super.init(frame: frame)
         
         let seperator = UIView(frame: .zero)
-    
-        tagline.textColor = .secondaryLabel
+        seperator.backgroundColor = .tertiaryLabel
+        
+        tagline.textColor = .label
         tagline.font = UIFont.boldSystemFont(ofSize: 17)
         
         let stackView = UIStackView(arrangedSubviews: [tagline])
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
+        stackView.axis = .vertical
         addSubview(stackView)
-        stackView.spacing = 5
+        stackView.spacing = 10
         
         NSLayoutConstraint.activate([
             
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
@@ -1398,33 +1659,42 @@ class SectionHeader: UICollectionReusableView, GestureAction {
         
     }
 }
-class SectionFooter: UICollectionReusableView, GestureAction {
+class SectionHeaderWithButton: UICollectionReusableView, GestureAction {
   
-    static let reuseIdentifier: String = "sectionFooter"
+    static let reuseIdentifier: String = "sectionHeaderWithButton"
     
     let title = UILabel()
     let tagline = UILabel()
     let moreBtn = UIButton()
     
+    var navigationController: UINavigationController!
+    var vc: UIViewController!
+    
     override init(frame: CGRect){
         super.init(frame: frame)
         
         let seperator = UIView(frame: .zero)
-    
-        tagline.textColor = .secondaryLabel
+        seperator.backgroundColor = .tertiaryLabel
+        
+        tagline.textColor = .label
         tagline.font = UIFont.boldSystemFont(ofSize: 17)
         
-        let stackView = UIStackView(arrangedSubviews: [tagline])
+        let hstack = UIStackView(arrangedSubviews: [tagline, button ])
+        hstack.distribution = .equalSpacing
+        hstack.axis = .horizontal
+        
+        
+        let stackView = UIStackView(arrangedSubviews: [hstack])
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
+        stackView.axis = .vertical
         addSubview(stackView)
-        stackView.spacing = 5
+        stackView.spacing = 10
         
         NSLayoutConstraint.activate([
             
             seperator.heightAnchor.constraint(equalToConstant: 1),
             
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
@@ -1438,8 +1708,17 @@ class SectionFooter: UICollectionReusableView, GestureAction {
     }
       
     func didTap(_sender: CustomGestureRecognizer) {
-        
+        navigationController.pushViewController(vc, animated: true)
     }
+    
+    let button: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("See More", for: .normal)
+        btn.titleLabel?.setFont(with: 10)
+        btn.tintColor = .secondaryLabel
+        btn.addTarget(self, action: #selector(didTap(_sender:)), for: .touchUpInside)
+        return btn
+    }()
 }
 
 // Profile VC Components
@@ -1480,7 +1759,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
         let subscribers = NumberFormatter.localizedString(from: NSNumber(value: item.subscribers!), number: NumberFormatter.Style.decimal)
         subscribersLabel.text = "Subscribers: \(subscribers)"
 
-        image.setUpImage(url: item.imageURL)
+        image.setUpImage(url: item.imageURL!, interactable: true)
 
         setupGradient()
     }
@@ -1489,7 +1768,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
         
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
-        gradientLayer.locations = [0.2, 1.3]
+        gradientLayer.locations = [0.1, 0.3]
         
         gradientLayer.frame = frame
         
@@ -1579,7 +1858,7 @@ class ProfileHeader: UICollectionViewCell, Cell {
 class ProfileHead: UIView{
   
     static var reuseIdentifier: String =  "profile Header"
-    var user = UserDefaults.standard.object(forKey: "userdata")
+    var user = UserDefaults.standard.value(forKey: "user")!
     
     var isFollowed = false
     var artist: Artist!
@@ -1593,15 +1872,15 @@ class ProfileHead: UIView{
     override init(frame: CGRect){
         super.init( frame: frame)
         
-        backgroundColor = .red
         addSubview(image)
-        layer.zPosition = -3
+        
+        infoBtn.layer.zPosition = 5
         
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor),
             image.leadingAnchor.constraint(equalTo: leadingAnchor),
             image.trailingAnchor.constraint(equalTo: trailingAnchor),
-            image.bottomAnchor.constraint(equalTo: bottomAnchor)
+            image.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -68),
         ])
         
     }
@@ -1613,15 +1892,13 @@ class ProfileHead: UIView{
     func setupHeader(artist: Artist){
         
         self.artist = artist
-        NetworkManager.Get(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { ( result: Data?, error: NetworkError ) in
+        NetworkManager.Get(url: "user/subscriptions?id=\(artist.id)&&user=\(user)") { ( result: Data?, error: NetworkError ) in
             switch(error){
             case .notfound:
             
                 self.isFollowed = false
                 DispatchQueue.main.async {
                     self.followBtn.setTitle("Follow", for: .normal)
-                    self.followBtn.layer.borderWidth = 1
-                    self.followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
                 }
             
             case .servererr:
@@ -1633,8 +1910,6 @@ class ProfileHead: UIView{
               
                 DispatchQueue.main.async {
                     self.followBtn.setTitle("Following", for: .normal)
-                    self.followBtn.layer.borderWidth = 0
-                    self.followBtn.layer.borderColor = UIColor.clear.cgColor
                 }
             }
         }
@@ -1648,36 +1923,31 @@ class ProfileHead: UIView{
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         gradientLayer.locations = [0.1, 1.3]
         
-        gradientLayer.frame = frame
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height-68)
         
-        container.frame = frame
+        container.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - 68)
         
         addSubview(container)
         container.layer.addSublayer(gradientLayer)
         
-        let stack = UIStackView(arrangedSubviews: [name, verifiedIcon ])
+        let stack = UIStackView(arrangedSubviews: [ followBtn, optionsBtn])
         stack.axis = .horizontal
-        stack.alignment = .center
+//        stack.alignment = .center
+        stack.distribution = .fillProportionally
         stack.spacing = 10
 
-        let containerStack = UIStackView(arrangedSubviews: [subscribersLabel, stack, followBtn ])
+        let containerStack = UIStackView(arrangedSubviews: [name,stack, subscribersLabel])
         containerStack.axis = .vertical
         containerStack.alignment = .leading
-        containerStack.spacing = 7
+        containerStack.spacing = 10
         containerStack.translatesAutoresizingMaskIntoConstraints = false
     
         container.addSubview(containerStack)
-        container.addSubview(infoBtn)
         
         NSLayoutConstraint.activate([
             containerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             containerStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-            
-            infoBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: 20),
-            infoBtn.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 20),
-            infoBtn.heightAnchor.constraint(equalToConstant: 20),
-            infoBtn.widthAnchor.constraint(equalToConstant: 20)
         ])
     }
     
@@ -1685,7 +1955,7 @@ class ProfileHead: UIView{
         
         if(!isFollowed){
             
-            NetworkManager.Post(url: "user/subscriptions?id=\(user!)", data: artist) { ( data: Data?, error: NetworkError) in
+            NetworkManager.Post(url: "user/subscriptions?id=\(user)", data: artist) { ( data: Data?, error: NetworkError) in
                 switch(error){
                 case .notfound:
                     print("internal error")
@@ -1698,8 +1968,6 @@ class ProfileHead: UIView{
                     self.isFollowed = true
                     DispatchQueue.main.async {
                         self.followBtn.setTitle("Following", for: .normal)
-                        self.followBtn.layer.borderWidth = 0
-                        self.followBtn.layer.borderColor = UIColor.clear.cgColor
                     }
                     
                 }
@@ -1708,7 +1976,7 @@ class ProfileHead: UIView{
         }
         else{
 
-            NetworkManager.Delete(url: "user/subscriptions?id=\(artist.id)&&user=\(user!)") { error in
+            NetworkManager.Delete(url: "user/subscriptions?id=\(artist.id)&&user=\(user)") { error in
                 switch(error){
                 case .servererr:
                     print("Internal server error")
@@ -1720,8 +1988,6 @@ class ProfileHead: UIView{
                     self.isFollowed = false
                     DispatchQueue.main.async {
                         self.followBtn.setTitle("Follow", for: .normal)
-                        self.followBtn.layer.borderWidth = 1
-                        self.followBtn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
                     }
                     
                 }
@@ -1746,7 +2012,7 @@ class ProfileHead: UIView{
     }()
     var name: UILabel = {
         let label = UILabel()
-        label.setFont(with: 30)
+        label.setBoldFont(with: 40)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -1754,25 +2020,15 @@ class ProfileHead: UIView{
         let image = UIImageView()
         return image
     }()
-    
-    let infoBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(systemName: "info.circle"), for: .normal)
-        
-        btn.tintColor = .red
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        return btn
-    }()
-    
     let followBtn: UIButton = {
         let btn = UIButton()
         btn.setTitle("Follow", for:  .normal)
         btn.titleLabel!.setFont(with: 12)
-        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5), for: .normal)
+        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.6), for: .normal)
         btn.widthAnchor.constraint(equalToConstant: 100).isActive = true
         btn.layer.borderWidth = 1
-        btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
         btn.layer.cornerRadius = 5
+        btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.6).cgColor
         btn.addTarget(self, action: #selector(didTapFollowBtn), for: .touchUpInside)
         
         return btn
@@ -1781,8 +2037,15 @@ class ProfileHead: UIView{
     let optionsBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        btn.tintColor = .gray
         return btn
     }()
+    let infoBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        return btn
+    }()
+    
     let verifiedIcon: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "checkmark.seal.fill"), for: .normal)
@@ -1936,67 +2199,6 @@ class TableSectionHeader: UIView {
         return view
     }()
 }
-class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    static var reuseIdentifier: String = "AlbumFlow"
-    
-    var data = [LibItem]()
-    var vc: UINavigationController!
-    
-    var collectionview: UICollectionView! = nil
-
-    func configure(data: [LibItem], navigationController: UINavigationController){
-        
-        self.data = data
-        vc =  navigationController
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        layout.itemSize = CGSize(width: 150, height: 190)
-        
-        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionview.dataSource = self
-        collectionview.delegate = self
-        collectionview.translatesAutoresizingMaskIntoConstraints = false
-        collectionview.register(AlbumCover.self, forCellWithReuseIdentifier: AlbumCover.reuseIdentifier)
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionview.showsHorizontalScrollIndicator = false
-        
-        addSubview(collectionview)
-        
-        NSLayoutConstraint.activate([
-            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionview.topAnchor.constraint(equalTo: topAnchor),
-            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: AlbumCover.reuseIdentifier, for: indexPath) as! AlbumCover
-        
-        cell.configure(item: data[indexPath.row], navigationController: vc)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
-        
-        return data.count
-    }
-   
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
-    }
-
-}
 class AlbumCover: UICollectionViewCell {
      
     static let reuseIdentifier: String = "albumCover"
@@ -2010,7 +2212,6 @@ class AlbumCover: UICollectionViewCell {
     
     let container: UIView = {
         let view = UIView()
-//        view.backgroundColor = .red
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -2039,23 +2240,16 @@ class AlbumCover: UICollectionViewCell {
         stackview.alignment = .leading
         stackview.spacing = 0
         
-        addSubview(container)
-        container.addSubview(image)
-        container.addSubview(stackview)
+        addSubview(image)
+        addSubview(stackview)
         
         NSLayoutConstraint.activate([
 
-            container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            image.heightAnchor.constraint(equalToConstant: 150),
-            image.widthAnchor.constraint(equalToConstant: 150),
+            image.heightAnchor.constraint(equalToConstant: 125),
+            image.widthAnchor.constraint(equalToConstant: 125),
             
+            title.widthAnchor.constraint(equalToConstant: 125),
             stackview.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
-
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -10),
         ])
 
     }
@@ -2065,7 +2259,7 @@ class AlbumCover: UICollectionViewCell {
     }
     
     func configure(item: LibItem, navigationController: UINavigationController){
-        image.setUpImage(url: item.imageURL)
+        image.setUpImage(url: item.imageURL!, interactable: true)
         title.text = item.title
         artist.text = item.name
         
@@ -2079,11 +2273,9 @@ class AlbumCover: UICollectionViewCell {
     @objc func didSelectAlbum(sender: CustomGestureRecognizer){
      
         print("did tap image")
-        let view = DetailViewController()
+        let view = AlbumViewController()
         view.albumId = sender.id!
         vc?.pushViewController(view, animated: true)
-//        window?.rootViewController?.presentedViewController?.present(view, animated: true)
-//        window?.rootViewController?.presentedViewController?.navigationController?.pushViewController(view, animated: true)
     }
 }
 
@@ -2160,13 +2352,13 @@ class CollectionCell: UICollectionViewCell, Cell{
                       title: item.title!,
                       artistId: item.artistId!,
                       name: item.name!,
-                      imageURL: item.imageURL,
+                      imageURL: item.imageURL!,
                       albumId: item.albumId!,
                       audioURL: item.audioURL!,
                       playCount: nil)
         
         chartPosition.text = "1"
-        image.setUpImage(url: item.imageURL)
+        image.setUpImage(url: item.imageURL!, interactable: true)
         title.text = item.title
         artist.text = item.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: item.playCount!), number: .decimal)
@@ -2248,7 +2440,7 @@ class TrackStrip: UITableViewCell, TableCell{
     
     func configure(track: Track){
         
-        image.setUpImage(url: track.imageURL)
+        image.setUpImage(url: track.imageURL, interactable: true)
         name.text = track.title
         artist.text = track.name
         
@@ -2256,7 +2448,7 @@ class TrackStrip: UITableViewCell, TableCell{
     
     func configureWithSet(image: String, name: String, artist: String, type: String) {
 
-        self.image.setUpImage(url: image)
+        self.image.setUpImage(url: image, interactable: true)
         self.name.text = "\(type) • \(name)"
         self.artist.text = artist
         
@@ -2346,7 +2538,7 @@ class TrackWithPlayCount: UITableViewCell {
 //
 //        tapGesture?.track = track
         
-        image.setUpImage(url: catalog.imageURL)
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
         title.text = catalog.title
         artist.text = catalog.name
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
@@ -2357,6 +2549,67 @@ class TrackWithPlayCount: UITableViewCell {
 //    func didTap(_sender: CustomGestureRecognizer) {
 //        AudioManager.shared.initPlayer(track: track, tracks: nil)
 //    }
+}
+class LargeAviTableCell: UITableViewCell {
+    static var reuseableIdentifire: String = "LargeAvi"
+    
+    func configure(data: Artist){
+    
+        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        image.setUpImage(url: data.imageURL, interactable: true)
+        
+        ArtistNameLabel.text = data.name
+        
+        let stack = UIStackView(arrangedSubviews: [image, ArtistNameLabel])
+        stack.axis = .horizontal
+        stack.distribution = .equalSpacing
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 10
+        
+        addSubview(image)
+        addSubview(ArtistNameLabel)
+        addSubview(button)
+        
+        NSLayoutConstraint.activate([
+            image.centerYAnchor.constraint(equalTo: centerYAnchor),
+            image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            
+            ArtistNameLabel.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
+            ArtistNameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            button.centerYAnchor.constraint(equalTo: centerYAnchor)
+     
+        ])
+        
+    }
+    
+    let image: UIImageView = {
+        let img = UIImageView()
+        img.clipsToBounds = true
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.heightAnchor.constraint(equalToConstant:  100).isActive = true
+        img.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        img.contentMode = .scaleAspectFill
+        img.layer.cornerRadius = 50
+        return img
+    }()
+    
+    let ArtistNameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setFont(with: 15)
+        return label
+    }()
+    
+    let button: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.tintColor = .secondaryLabel
+        return btn
+    }()
+    
 }
 class AviTableCell: UITableViewCell, TableCell{
     
@@ -2404,7 +2657,7 @@ class AviTableCell: UITableViewCell, TableCell{
     }
     
     func configureWithSet(image: String, name: String, artist: String, type: String) {
-        self.image.setUpImage(url: image)
+        self.image.setUpImage(url: image, interactable: true)
         self.artist.text = "\(type) • \(artist)"
     }
     
@@ -2505,4 +2758,259 @@ class SettingsCell: UITableViewCell {
         
     }
     
+}
+class PlayListCell: UICollectionViewCell {
+    
+    static var reuseIdentifier: String = "playlistCell"
+    
+    let image: UIImageView = {
+        let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    let label: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(image)
+        addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
+            label.leadingAnchor.constraint(equalTo: image.leadingAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+}
+class AlbumCell: UICollectionViewCell {
+    
+    static var reuseIdentifier: String = "albumCell"
+    
+    let image: UIImageView = {
+        let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    let name: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setFont(with: 10)
+        view.textColor = .secondaryLabel
+        return view
+    }()
+    let title: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setFont(with: 12)
+        view.textColor = .label
+        return view
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(image)
+        addSubview(name)
+        addSubview(title)
+        
+        NSLayoutConstraint.activate([
+            title.leadingAnchor.constraint(equalTo: image.leadingAnchor),
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
+            
+            name.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 5),
+            name.leadingAnchor.constraint(equalTo: image.leadingAnchor)
+            
+            
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+}
+
+class ArtistFlowSectionContainer: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    static var reuseIdentifier: String = "artistFlowViewContainer"
+    var nvc: UINavigationController!
+    var artists: [LibItem]!
+    
+    var collectionview: UICollectionView!
+    
+    func configureCell(items: [LibItem], navigationController: UINavigationController){
+        
+        nvc = navigationController
+        artists = items
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        layout.itemSize = CGSize(width: 100, height: 130)
+
+        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.translatesAutoresizingMaskIntoConstraints = false
+        collectionview.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
+        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionview.showsHorizontalScrollIndicator = false
+        
+        addSubview(collectionview)
+        
+        NSLayoutConstraint.activate([
+            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionview.topAnchor.constraint(equalTo: topAnchor),
+            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return artists.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: ArtistSection.reuseIdentifier, for: indexPath) as! ArtistSection
+        
+        cell.configure(with: artists[indexPath.row], rootVc: nvc, indexPath: nil)
+        
+        return cell
+    }
+    
+}
+class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    static var reuseIdentifier: String = "AlbumFlow"
+    
+    var data = [LibItem]()
+    var vc: UINavigationController!
+    
+    var collectionview: UICollectionView! = nil
+
+    func configure(data: [LibItem], navigationController: UINavigationController){
+        
+        self.data = data
+        vc =  navigationController
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        layout.itemSize = CGSize(width: 130, height: 190)
+        
+        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.translatesAutoresizingMaskIntoConstraints = false
+        collectionview.register(AlbumCover.self, forCellWithReuseIdentifier: AlbumCover.reuseIdentifier)
+        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionview.showsHorizontalScrollIndicator = false
+        
+        addSubview(collectionview)
+        
+        NSLayoutConstraint.activate([
+            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionview.topAnchor.constraint(equalTo: topAnchor),
+            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: AlbumCover.reuseIdentifier, for: indexPath) as! AlbumCover
+        
+        cell.configure(item: data[indexPath.row], navigationController: vc)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        
+        return data.count
+    }
+   
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20
+    }
+
+}
+class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource{
+    
+    static let reuseIdentifier: String = "videoCollection"
+    var collectionView: UICollectionView!
+    
+    var data = [VideoItemModel]()
+    var vc: UINavigationController!
+    
+    var collectionview: UICollectionView! = nil
+
+    func configure(data: [VideoItemModel], navigationController: UINavigationController){
+        
+        
+        self.data = data
+        vc =  navigationController
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        layout.itemSize = CGSize(width: 200, height: 100)
+
+        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.translatesAutoresizingMaskIntoConstraints = false
+        collectionview.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
+        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        collectionview.backgroundColor = .red
+        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionview.showsHorizontalScrollIndicator = false
+        
+        addSubview(collectionview)
+        
+        NSLayoutConstraint.activate([
+            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionview.topAnchor.constraint(equalTo: topAnchor),
+            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: SmallVideoPoster.reuseIdentifier, for: indexPath) as! SmallVideoPoster
+        
+        cell.configure(with: data[indexPath.row], navigationController: vc)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        
+        return data.count
+    }
+   
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+
 }

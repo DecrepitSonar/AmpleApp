@@ -13,8 +13,6 @@ extension UITextField {
     func addBottomBorder(){
         let bottomLine = CALayer()
         bottomLine.frame = CGRect(x: 0, y: self.frame.size.height - 1, width: self.frame.size.width, height: 1)
-//        backgroundColor = .white
-//        textColor = .black
         bottomLine.cornerRadius = 10
         borderStyle = .none
         layer.addSublayer(bottomLine)
@@ -33,17 +31,19 @@ extension UILabel {
 }
 extension UIImageView {
     
-    func setUpImage(url: String){
+    
+    func setUpImage(url: String, interactable: Bool){
         
-        isUserInteractionEnabled = true
+        isUserInteractionEnabled = interactable
         
         NetworkManager.getImage(with: url) { result in
             switch(result){
             case .success(let data):
                 self.image = UIImage(data: data)
+                return 
                 
             case .failure(let err):
-                print(err)
+                print("image request Err", err)
                 return
             }
         }

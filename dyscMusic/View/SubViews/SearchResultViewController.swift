@@ -86,7 +86,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             
         case "Album":
         
-            let detailVc = DetailViewController()
+            let detailVc = AlbumViewController()
             print(data[indexPath.row])
             detailVc.albumId = data[indexPath.row].id
             
@@ -104,7 +104,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
                               title: item.title!,
                               artistId: item.artistId!,
                               name: item.name!,
-                              imageURL: item.imageURL,
+                              imageURL: item.imageURL!,
                               albumId: item.albumId!,
                               audioURL: item.audioURL!,
                               playCount: nil)
@@ -158,16 +158,15 @@ func configureTableCell<T: TableCell>( tableview: UITableView, _ cellType: T.Typ
     guard let cell = tableview.dequeueReusableCell(withIdentifier: T.reuseIdentifier, for: indexPath) as? T else {
         fatalError("")
     }
-    
+     
     switch(item.type){
         
     case "Artist":
-        cell.configureWithSet(image: item.imageURL, name: "", artist: item.name!, type: item.type!)
+        cell.configureWithSet(image: item.imageURL!, name: "", artist: item.name!, type: item.type!)
 
     default:
-        cell.configureWithSet(image: item.imageURL, name: item.title!, artist: item.name!, type: item.type!)
+        cell.configureWithSet(image: item.imageURL!, name: item.title!, artist: item.name!, type: item.type!)
     }
-    
     
     return cell
 

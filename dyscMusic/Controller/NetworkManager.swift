@@ -14,7 +14,6 @@ enum NetworkError: Error{
     case success
     case notfound
     case servererr
-    
 }
 
 enum AuthenticationStatus: Error{
@@ -24,8 +23,8 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8080/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     
@@ -72,7 +71,6 @@ class NetworkManager {
                 
                     do {
                         let dataResponse = try decoder.decode(T.self, from: data!)
-                        print(dataResponse)
                         completion(dataResponse, .success)
                     }
                     catch{
@@ -103,7 +101,7 @@ class NetworkManager {
         let task = URLSession.shared.uploadTask(with: request, from: encoded) { data, response, error in
             
             if error != nil {
-//                    print( error)
+                    print( error)
             }
             
             guard let response = response as? HTTPURLResponse else {
@@ -118,9 +116,7 @@ class NetworkManager {
                     print("reponse ok")
                         
                     guard let mimeType = response.mimeType, mimeType == "application/json" else {
-            
                         completion(nil, .success)
-                        
                         return
                     }
                 
@@ -162,7 +158,7 @@ class NetworkManager {
                 return
             }
 
-            print(response.statusCode)
+//            print(response.statusCode)
 
             switch(response.statusCode){
             case 200:
@@ -218,7 +214,6 @@ class NetworkManager {
                 
                 do {
                     let data = try JSONDecoder().decode(T.self, from: data!)
-                    print(data)
                     completion(data, .success)
                 }
                 catch{
@@ -226,7 +221,6 @@ class NetworkManager {
                 }
 
             case 500:
-//                completion( )
                 print("")
 
             case 403:
@@ -241,7 +235,7 @@ class NetworkManager {
         }.resume()
         
     }
-//
+
     static func loadLibraryContent(id: String, completion: @escaping (Result<[LibObject], NetworkError>) -> Void){
         let url = URL(string: "\(baseURL)/library?user=\(id)")
 
@@ -325,7 +319,7 @@ class NetworkManager {
 //                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
                     completion(.failure(.ServerError))
-//                    print("mime err")
+                    print("mime err")
                     return
                 }
 
@@ -398,6 +392,7 @@ class NetworkManager {
         
         let url = URL(string: "\(baseURL)track?id=\(id)")
         print("requested id:", id)
+        
         URLSession.shared.dataTask(with: url!){ data, response, error in
                    DispatchQueue.main.async {
                        if error != nil {

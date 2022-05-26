@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -19,18 +20,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
+        window?.overrideUserInterfaceStyle = .dark
         
-        guard UserDefaults.standard.object(forKey: "userdata") != nil else {
-            
+        guard let user = UserDefaults.standard.object(forKey: "user") else {
             window?.rootViewController = LoginViewController()
             window?.makeKeyAndVisible()
-            
             return
         }
         
-        
+//     let userKeyChain = Keychainwrapper
+//        do{
+//            try managedContext.fetch(fetchRequest)
+//
         window?.rootViewController = customTab()
-        window?.makeKeyAndVisible()
+            window?.makeKeyAndVisible()
+//        }
+//        catch( let err as NSError){
+//            print( err )
+            
+//        }
       
      
     }

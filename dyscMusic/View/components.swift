@@ -10,13 +10,17 @@ import UIKit
 import AudioToolbox
 import AVFAudio
 
-class AViCard: UIView {
+protocol CellComponent {
+    
+}
+class AViCard: UIView, CellComponent {
 
     let imgView = UIImageView()
     let label = UILabel()
 
     override init(frame: CGRect){
         super.init(frame: frame)
+//        backgroundColor = .yellow
 //
     }
     
@@ -29,7 +33,7 @@ class AViCard: UIView {
         setupLabel(name: name)
     }
     func setupImg(img: String){
-        imgView.setUpImage(url: img)
+        imgView.setUpImage(url: img, interactable: true)
         imgView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imgView.layer.cornerRadius = 35
@@ -42,7 +46,7 @@ class AViCard: UIView {
         // configure constraints
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        imgView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
+        imgView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
 
     }
     func setupLabel(name: String){
@@ -174,7 +178,6 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
                     self.backgroundColor = self.img.image?.averageColor
                 }
                 
-                
             case .failure(let err):
                 print(err)
                 return
@@ -298,7 +301,8 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     }
     
     func openPlayer() {
-        let player = PlayerViewController()
+        
+        let player = UINavigationController(rootViewController: PlayerViewController())
         print("opening player")
            
         print("presenting player")
@@ -308,8 +312,8 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        let browse = UINavigationController(rootViewController: MusicViewController())
+
+        let browse = UINavigationController(rootViewController: MainViewController())
         browse.tabBarItem = UITabBarItem(title: "Browse",
                                          image: UIImage(systemName: "globe.americas.fill"),
                                          tag: 0)
@@ -317,12 +321,12 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
         let searchVc = UINavigationController(rootViewController: SearchViewController())
         searchVc.tabBarItem = UITabBarItem(title: "Search",
                                            image: UIImage(systemName: "magnifyingglass"),
-                                           tag: 3)
+                                           tag: 1)
                                            
-        let library = UINavigationController(rootViewController: Library())
+        let library = UINavigationController(rootViewController: LibraryViewController())
         library.tabBarItem = UITabBarItem(title: "Library",
                                           image: UIImage(systemName: "books.vertical"),
-                                          tag: 4)
+                                          tag: 2)
         
         tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255,
                                         green: 227 / 255,
@@ -336,7 +340,7 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [library, browse, searchVc]
+        self.viewControllers = [browse, library, searchVc]
     
     }
 

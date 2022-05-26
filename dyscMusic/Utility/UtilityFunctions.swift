@@ -13,6 +13,7 @@ class CustomGestureRecognizer: UITapGestureRecognizer{
     var id: String?
     var track: Track?
     var tracks: [Track]?
+    var video: VideoItemModel?
 }
 
 class LayoutManager {
@@ -23,11 +24,29 @@ class LayoutManager {
     
         let layoutItems = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.90), heightDimension: .estimated(320))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.90), heightDimension: .estimated(200))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 10)
+        layoutSection.orthogonalScrollingBehavior = .groupPaging
+        
+        let sectionheader = createSectionHeader()
+        layoutSection.boundarySupplementaryItems = [sectionheader]
+        print("configured header layout")
+        return layoutSection
+        
+    }
+    static func createFeaturedVideoHeader(using: Any) -> NSCollectionLayoutSection{
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+    
+        let layoutItems = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.90), heightDimension: .estimated(200))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
+        
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .groupPaging
         
         let sectionheader = createSectionHeader()
@@ -45,10 +64,10 @@ class LayoutManager {
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItems])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuous
         
-        let sectionheader = createSectionHeader()
+        let sectionheader = createSectionHeaderWithButton()
         layoutSection.boundarySupplementaryItems = [sectionheader]
         
         print("configuredd artist section layout")
@@ -57,17 +76,17 @@ class LayoutManager {
     static func createTrendingSection(using: Any) -> NSCollectionLayoutSection{
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.20))
         let items = NSCollectionLayoutItem(layoutSize: itemSize)
-        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0)
+        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0)
     
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.89), heightDimension: .fractionalHeight(0.35))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.90), heightDimension: .fractionalHeight(0.30))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for collection Section")
         
-        let sectionheader = createSectionHeader()
+        let sectionheader = createSectionHeaderWithButton()
         layoutSection.boundarySupplementaryItems = [sectionheader]
         
         return layoutSection
@@ -75,18 +94,35 @@ class LayoutManager {
     static func createMediumImageSliderSection(using: Any) -> NSCollectionLayoutSection{
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let items = NSCollectionLayoutItem(layoutSize: itemSize)
-        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.42), heightDimension: .fractionalHeight(0.23))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.36), heightDimension: .fractionalHeight(0.20))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
         
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 10, bottom: 0, trailing: 10)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 10)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         print("configured layout for History Section")
         
-        let sectionheader = createSectionHeader()
-//        let sectionFooter = createSectionFooter()
+        let sectionheader = createSectionHeaderWithButton()
+        layoutSection.boundarySupplementaryItems = [sectionheader]
+        
+        return layoutSection
+    }
+    static func twoRowCollectionSlider(using: Any) -> NSCollectionLayoutSection{
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.50))
+        let items = NSCollectionLayoutItem(layoutSize: itemSize)
+        items.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 10)
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.36), heightDimension: .fractionalHeight(0.45))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [items])
+        
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 10)
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+        print("configured layout for History Section")
+        
+        let sectionheader = createSectionHeaderWithButton()
         layoutSection.boundarySupplementaryItems = [sectionheader]
         
         return layoutSection
@@ -131,10 +167,12 @@ class LayoutManager {
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: size)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.50))
-        let group = NSCollectionLayoutGroup(layoutSize: groupSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.55), heightDimension: .fractionalHeight(0.17))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .groupPaging
+        section.orthogonalScrollingBehavior = .continuous
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 0, trailing: 10)
+        
         
         let header = createSectionHeader()
         section.boundarySupplementaryItems = [header]
@@ -146,7 +184,7 @@ class LayoutManager {
         
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: size)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.40), heightDimension: .fractionalHeight(0.25))
 //        let group = NSCollectionLayoutGroup(layoutSize: groupSize)
@@ -156,7 +194,7 @@ class LayoutManager {
         section.orthogonalScrollingBehavior = .groupPaging
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
         
-        let sectionheader = createSectionHeader()
+        let sectionheader = createSectionHeaderWithButton()
         section.boundarySupplementaryItems = [sectionheader]
         
         return section
@@ -184,10 +222,10 @@ class LayoutManager {
         
         return supplementoryItem
     }
-    static func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
+    static func createSectionHeaderWithButton() -> NSCollectionLayoutBoundarySupplementaryItem {
         let layout = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
-        
-        let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+      
+        let supplementoryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layout, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
         
         return supplementoryItem
     }
@@ -218,4 +256,18 @@ class LayoutManager {
         return cell
 
     }
+    
+    static func configureVideoCell<T: VideoCell>(collectionView: UICollectionView, navigationController: UINavigationController?, _ cellType: T.Type, with item: VideoItemModel, indexPath: IndexPath) -> T{
+        print("Configureing cell")
+
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, for: indexPath) as? T else {
+            fatalError("could not configure cell")
+        }
+        
+        cell.configure(with: item, navigationController: navigationController!)
+        
+        return cell
+
+    }
+    
 }

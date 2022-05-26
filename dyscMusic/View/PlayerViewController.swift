@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import AudioToolbox
 
 class PlayerViewController: UIViewController {
     
@@ -28,6 +28,7 @@ class PlayerViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
+        overrideUserInterfaceStyle = .dark
         
         currentTrack = audioManager.getCurrentTrack()
         view.backgroundColor = image.image?.averageColor
@@ -35,13 +36,15 @@ class PlayerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.systemRed
+//        view.backgroundColor = UIColor.systemRed
         
         formatter.unitsStyle = .positional
         formatter.allowedUnits = [ .minute, .second ]
         formatter.zeroFormattingBehavior = [ .dropTrailing ]
         
-        navigationController?.isToolbarHidden = true
+        navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.down"), style: .plain, target: nil, action: nil)
+        
+//        navigationController?.isToolbarHidden = true
         
         
           
@@ -78,7 +81,11 @@ class PlayerViewController: UIViewController {
         
         view.addSubview(image)
         
-        let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, shareBtn, optionBtn])
+        if audioManager.currentQueue?.videoId == nil{
+            videoAvailabilityBtn.setImage(UIImage(systemName: "display.trianglebadge.exclamationmark"), for: .normal)
+        }
+        
+        let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, videoAvailabilityBtn, shareBtn, optionBtn])
         optionStack.axis = .horizontal
         optionStack.alignment = .leading
         optionStack.spacing = 20
@@ -110,9 +117,14 @@ class PlayerViewController: UIViewController {
         stackControls.distribution = .equalSpacing
         stackControls.translatesAutoresizingMaskIntoConstraints = false
         
+        let pageTitleStack = UIStackView(arrangedSubviews: [closeBtn, pageTitle, optionBtn])
+        pageTitleStack.axis = .horizontal
+        pageTitleStack.distribution = .fillProportionally
+        pageTitleStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(pageTitleStack)
+        
         view.addSubview(stackControls)
-
-        view.addSubview(closeBtn)
 
         NSLayoutConstraint.activate([
 
@@ -120,7 +132,7 @@ class PlayerViewController: UIViewController {
             image.heightAnchor.constraint(equalToConstant: 340),
             image.widthAnchor.constraint(equalToConstant: 340),
             
-            trackTitle.widthAnchor.constraint(equalToConstant: 340),
+//            trackTitle.widthAnchor.constraint(equalToConstant: 340),
             
             slider.widthAnchor.constraint(equalToConstant:  340),
             slider.heightAnchor.constraint(equalToConstant: 10),
@@ -130,9 +142,10 @@ class PlayerViewController: UIViewController {
             
             image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -75),
             
-            closeBtn.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            closeBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
-//
+            pageTitleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            pageTitleStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pageTitleStack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            
         ])
         
     }
@@ -140,7 +153,7 @@ class PlayerViewController: UIViewController {
         
         effect.frame = view.bounds
         
-        image.setUpImage(url:  audioManager.currentQueue!.imageURL)
+        image.setUpImage(url:  audioManager.currentQueue!.imageURL, interactable: false)
         
         artist.text = audioManager.currentQueue!.name
         
@@ -158,6 +171,7 @@ class PlayerViewController: UIViewController {
             audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
         }
         view.backgroundColor = image.image?.averageColor
+        pageTitle.text = "Player"
     }
     
     @objc func onSliderTouchOrDrag(sender: UISlider, event: UIEvent){
@@ -229,7 +243,6 @@ class PlayerViewController: UIViewController {
             self.totalTimeLapsed.text = self.formatter.string(from: self.audioManager.player.currentTime )
             
             self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.currentTime - self.audioManager.player.duration)
-//            self.slider.setValue(Float(self.audioManager.player.currentTime), animated: true)
         }
         
     }
@@ -268,7 +281,14 @@ class PlayerViewController: UIViewController {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.layer.zPosition = 3
         return btn
+    }()
+    let pageTitle: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     let totalTrackTime: UILabel = {
         let label = UILabel()
@@ -397,4 +417,27 @@ class PlayerViewController: UIViewController {
         thumb.backgroundColor = .red
         return thumb
     }()
+    let videoAvailabilityBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "play.tv"), for: .normal)
+        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.addTarget(self, action: #selector(playAvailableVideo), for: .touchUpInside)
+        return btn
+    }()
+    
+    @objc func playAvailableVideo(){
+        let videoView = VideoViewController()
+        
+        guard audioManager.currentQueue!.videoId != nil else {
+            return
+        }
+        
+        videoView.selectedVido = audioManager.currentQueue!.videoId!
+    
+        videoView.title = "VideoPlayer"
+        navigationController?.pushViewController(videoView, animated: true)
+//        print("pressed")
+        audioManager.player.pause()
+        
+    }
 }

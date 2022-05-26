@@ -8,34 +8,101 @@
 import UIKit
 import Combine
 
-class MusicViewController: UIViewController, PlayerDelegate {
+class BrowserViewController: UIViewController {
+    
+    let pageScrollContainer: UIScrollView = {
+        let view = UIScrollView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let container: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+        view.backgroundColor = .red
+        return view
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "Browes"
+        
+    
+        let MusicViewController = V1()
+        let VideoViewController = V2()
 
-    override var prefersStatusBarHidden: Bool {
-        return true
+        pageScrollContainer.addSubview(MusicViewController.view!)
+        addChild(MusicViewController)
+        MusicViewController.view!.frame = view.frame
+        MusicViewController.didMove(toParent: self)
+
+        pageScrollContainer.addSubview(VideoViewController.view!)
+        addChild(VideoViewController)
+        VideoViewController.view!.frame = view.frame
+        VideoViewController.didMove(toParent: self)
+        view.addSubview(pageScrollContainer)
+        
+        NSLayoutConstraint.activate([
+            pageScrollContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pageScrollContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pageScrollContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            pageScrollContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            
+            MusicViewController.view!.leadingAnchor.constraint(equalTo: pageScrollContainer.leadingAnchor),
+            MusicViewController.view!.topAnchor.constraint(equalTo: pageScrollContainer.topAnchor),
+            MusicViewController.view!.bottomAnchor.constraint(equalTo: pageScrollContainer.bottomAnchor),
+            
+            VideoViewController.view!.leadingAnchor.constraint(equalTo: MusicViewController.view!.trailingAnchor),
+            VideoViewController.view!.topAnchor.constraint(equalTo: pageScrollContainer.topAnchor),
+            VideoViewController.view!.bottomAnchor.constraint(equalTo: pageScrollContainer.bottomAnchor)
+            
+            
+        ])
+        
     }
     
+    override func viewWillLayoutSubviews() {
+        pageScrollContainer.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
+    }
+    
+    let navContainer: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100))
+        view.backgroundColor = .green
+        return view
+    }()
+    
+}
+
+class V1: UIViewController{
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .orange
+    }
+}
+class V2: UIViewController{
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .yellow
+    }
+}
+class MusicViewController: UIViewController, PlayerDelegate {
+
 //    var section = NetworkManager.readJSONFromFile(fileName: "catalog")!
     var section = [LibObject]()
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     var collectionView: UICollectionView!
+    let user = UserDefaults.standard.value(forKey: "user")!
     
     override func loadView() {
         super.loadView()
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(openPlayer), name: NSNotification.Name("player"), object: nil)
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Browse"
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//        title = "Browse"
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
     }
     
     override func viewDidLoad() {
 
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(openQueue), name: NSNotification.Name("queue"), object: nil)
-        let user = UserDefaults.standard.object(forKey: "userdata") as! String
         
         NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
@@ -66,6 +133,7 @@ class MusicViewController: UIViewController, PlayerDelegate {
         navigationController!.present(player, animated: true)
 
     }
+    
     func initCollectionView(){
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
@@ -75,7 +143,7 @@ class MusicViewController: UIViewController, PlayerDelegate {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
-        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: SectionFooter.reuseIdentifier)
+        collectionView.register(SectionHeaderWithButton.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
 //        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
@@ -86,7 +154,7 @@ class MusicViewController: UIViewController, PlayerDelegate {
         
         createDataSource()
         reloadData()
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 190, right: 0)
     }
     
     func createDataSource(){
@@ -129,25 +197,40 @@ class MusicViewController: UIViewController, PlayerDelegate {
         
         datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
             
-            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
-                print("could not dequeue supplementory view")
-                return nil
-            }
-            
-            guard let sectionFooter = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
-                print("could not dequeue supplementory view")
-                return nil
-            }
             
             guard let firstApp = self?.datasource?.itemIdentifier(for: IndexPath) else { return nil}
             guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstApp) else { return nil}
             
             if section.tagline!.isEmpty{return nil}
         
-            sectionHeader.tagline.text = section.tagline
-            sectionHeader.title.text = section.type
+            switch section.type{
+            case "Trending":
+                
+                guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier, for: IndexPath) as? SectionHeaderWithButton else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+                
+                sectionHeader.tagline.text = section.tagline
+                sectionHeader.title.text = section.type
+                sectionHeader.navigationController = self!.navigationController
+                
+                return sectionHeader
+                
+            default:
+                
+                guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+                
+                sectionHeader.tagline.text = section.tagline
+                sectionHeader.title.text = section.type
+                
+                return sectionHeader
+                
+            }
             
-            return sectionHeader
         }
 //
 //        datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
@@ -194,6 +277,9 @@ class MusicViewController: UIViewController, PlayerDelegate {
 //                print("configuring trending section layout")
                 return LayoutManager.createTrendingSection(using: section)
             
+            case "Releases":
+                return LayoutManager.twoRowCollectionSlider(using: section)
+                
             case "Artists":
                 return LayoutManager.largeImageLayout(using: section)
                 

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import AVFoundation
+import CoreData
 
 protocol LoginFormViewDelegate {
     func handleLogin()
@@ -73,11 +74,10 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
     
     func didAuthoriseUser(user: UserData) {
         
+        print("did authorize user")
         
-        // TODO: Inititialize new user for core data model
-        
-        UserDefaults.standard.set(user.id, forKey: "userdata")
-        
+//      Inititialize new user for core data model
+        UserDefaults.standard.set(user.id, forKey: "user")
         DispatchQueue.main.async {
             self.window!.rootViewController = self.tabVc
         }
@@ -162,7 +162,6 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
     }
 }
 
-
 class LoginService {
     
     var delegate: LoginFormViewDelegate!
@@ -187,7 +186,6 @@ class LoginService {
     
 }
 
-
 class LoginViewController: UIViewController {
     
     var animation: UIViewPropertyAnimator!
@@ -195,7 +193,7 @@ class LoginViewController: UIViewController {
     let loginForm = LoginForm()
     
     override func viewWillAppear(_ animated: Bool) {
-
+        overrideUserInterfaceStyle = .dark
         if(UserDefaults.standard.object(forKey: "userkey") == nil ){
             print("apearing")
             setupForm()
@@ -288,6 +286,7 @@ class LoginViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Helvetica Neue", size: 30)
         label.font = UIFont.boldSystemFont(ofSize: 30)
+//        image.image = UIImage(named: "logo")
         return label
         
     }()

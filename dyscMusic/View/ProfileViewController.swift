@@ -25,17 +25,25 @@ class ProfileViewController: UIViewController {
         view.addSubview(loadingView)
     }
     override func viewWillAppear(_ animated: Bool) {
-//        navigationController?.navigationBar.isHidden = true
+        navigationController?.navigationBar.backgroundColor = .clear
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = true
     }
     override func viewWillDisappear(_ animated: Bool) {
-//        navigationController?.navigationBar.isHidden = false
+
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350))
-
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        let infoBtn = UIBarButtonItem(image: UIImage(systemName: "info.circle.fill"), style: .plain , target: nil, action: nil)
+        infoBtn.tintColor = .gray
+        navigationItem.rightBarButtonItem = infoBtn
+        
+        let backbutton = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: #selector(didTapBackButton))
+        backbutton.tintColor = .gray
+        navigationItem.leftBarButtonItem = backbutton
+        
+        header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 400))
         
         NetworkManager.Get(url: "artist?id=\(artistId!)") { (data: ProfileObject?, error: NetworkError ) in
             switch( error){
@@ -70,11 +78,9 @@ class ProfileViewController: UIViewController {
         tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
         tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
+        tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
         
-//        header.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        view.backgroundColor = .red
         initHeader()
-//        tableview.backgroundView = header
         tableview.tableHeaderView = header
         
         view.addSubview(tableview)
@@ -82,7 +88,7 @@ class ProfileViewController: UIViewController {
     
     func initHeader(){
         
-        header.image.setUpImage(url: data.imageURL)
+        header.image.setUpImage(url: data.imageURL, interactable: false)
         header.name.text = data.name
         let artist = Artist(id: data.artistId,
                                type: data.type,
@@ -111,12 +117,16 @@ class ProfileViewController: UIViewController {
 //        }
 //
 //    }
+    
+    @objc func didTapBackButton(_sender: UIBarButtonItem){
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        if section == 1 {
             return data.items[section].items!.count
         } else {return 1}
     }
@@ -129,28 +139,60 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         return header
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.section {
-        case 0:
+        let type = data.items[indexPath.section].type
+        
+        switch (type) {
+        case "Tracks":
             return 60
+        case "Videos":
+            return 150
         default:
             return 200
         }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let items = data.items[indexPath.section].items
+        let type = data.items[indexPath.section].type
         
-        switch indexPath.section {
-        case 0:
+        switch (type) {
+        case "Tracks":
+            
             let cell = tableview.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
-            cell.configure(with: items![indexPath.row])
+            cell.configure(with: data.items[indexPath.section].items![indexPath.row])
             cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             cell.selectionStyle = .none
             return cell
             
+        case "Videos":
+        
+            
+            let indexedItem = data.items[indexPath.section].items!
+            
+            var videos: [VideoItemModel] = []
+            
+            indexedItem.forEach { item in
+                
+                let video = VideoItemModel(id: item.id,
+                                           videoURL: item.videoURL!,
+                                           posterURL: item.posterURL,
+                                           title: item.title!,
+                                           artist: item.artist!,
+                                           artistImageURL: nil,
+                                           albumId: nil,
+                                           views: 0)
+                videos.append(video)
+            }
+            
+            let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
+            cell.configure(data: videos, navigationController: self.navigationController!)
+            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+            cell.selectionStyle = .none
+        
+            return cell
+            
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier, for: indexPath) as! AlbumFlowSection
-            cell.configure(data: items!, navigationController: self.navigationController!)
+            cell.configure(data: data.items[indexPath.section].items!, navigationController: self.navigationController!)
             return cell
             
         }
@@ -160,11 +202,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         
         let track = Track(id: item.id,
                           type: item.type,
-                          trackNum: UInt(item.trackNum!),
+                          trackNum: nil,
                           title: item.title!,
                           artistId: item.artistId!,
                           name: item.name!,
-                          imageURL: item.imageURL,
+                          imageURL: item.imageURL!,
                           albumId: item.albumId!,
                           audioURL: item.audioURL,
                           playCount: Int(item.playCount!))
