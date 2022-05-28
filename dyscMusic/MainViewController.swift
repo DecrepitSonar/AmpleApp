@@ -80,7 +80,7 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
-        
+//
         scrollView.bounds = view.bounds
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -112,17 +112,17 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        
+
         guard let text = searchController.searchBar.text else {
             return
         }
 
         let vc = searchController.searchResultsController as? SearchResultViewController
-        
+
         if (text.isEmpty){
             return
         }
-        
+
         NetworkManager.getSearchResult(query: text){ result in
             switch(result) {
             case .success(let data):
@@ -134,9 +134,9 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
             case .failure(let err):
                 vc?.data = []
             }
-            
+
         }
-    
+
         print(text)
     }
     

@@ -14,12 +14,18 @@ class LibraryViewController: UIViewController {
     var tableview: UITableView!
     
     let user = UserDefaults.standard.value(forKey: "user")!
+    let loadingView = LoadingViewController()
     
+    override func loadView(){
+        super.loadView()
+        
+        addChild(loadingView)
+        loadingView.didMove(toParent: self)
+        view.addSubview(loadingView.view)
+        
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let btn = UIBarButtonItem(image: UIImage(systemName: "gear"), style: .plain, target: self, action: #selector(openSettings))
-        navigationItem.rightBarButtonItem = btn
 
         title = "Library"
         
@@ -36,6 +42,7 @@ class LibraryViewController: UIViewController {
                 self.section = data!
                 
                 DispatchQueue.main.async {
+                    self.loadingView.removeFromParent()
                     self.initTableView()
                 }
             }
@@ -44,7 +51,6 @@ class LibraryViewController: UIViewController {
     
     @objc func openSettings(){
         let view = SettingsViewController()
-        
         navigationController?.pushViewController(view, animated: true)
     }
     func initTableView(){
@@ -61,7 +67,6 @@ class LibraryViewController: UIViewController {
         
         view.addSubview(tableview)
     }
-
 }
 
 extension LibraryViewController: UITableViewDelegate, UITableViewDataSource {

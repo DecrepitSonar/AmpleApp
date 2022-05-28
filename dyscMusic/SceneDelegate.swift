@@ -28,18 +28,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         
-//     let userKeyChain = Keychainwrapper
-//        do{
-//            try managedContext.fetch(fetchRequest)
-//
         window?.rootViewController = customTab()
-            window?.makeKeyAndVisible()
-//        }
-//        catch( let err as NSError){
-//            print( err )
-            
-//        }
-      
+        window?.makeKeyAndVisible()
      
     }
 

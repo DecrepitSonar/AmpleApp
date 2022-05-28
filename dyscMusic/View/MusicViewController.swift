@@ -86,7 +86,6 @@ class V2: UIViewController{
 }
 class MusicViewController: UIViewController, PlayerDelegate {
 
-//    var section = NetworkManager.readJSONFromFile(fileName: "catalog")!
     var section = [LibObject]()
     var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>?
     var collectionView: UICollectionView!
@@ -94,9 +93,6 @@ class MusicViewController: UIViewController, PlayerDelegate {
     
     override func loadView() {
         super.loadView()
-        
-//        navigationController?.navigationBar.prefersLargeTitles = true
-//        title = "Browse"
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
     }
     
@@ -142,15 +138,23 @@ class MusicViewController: UIViewController, PlayerDelegate {
         view.addSubview(collectionView)
         
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseIdentifier)
-        collectionView.register(SectionHeaderWithButton.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
+        collectionView.register(SectionHeader.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(SectionHeaderWithButton.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
-        collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-//        collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
-        collectionView.register(TrackHistorySlider.self, forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
-        collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
-        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
-        collectionView.register(LargeArtistAvi.self, forCellWithReuseIdentifier: LargeArtistAvi.reuseIdentifier)
+        collectionView.register(FeaturedHeader.self,
+                                forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
+        collectionView.register(TrackHistorySlider.self,
+                                forCellWithReuseIdentifier: TrackHistorySlider.reuseIdentifier)
+        collectionView.register(TrendingSection.self,
+                                forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
+        collectionView.register(MediumImageSlider.self,
+                                forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionView.register(LargeArtistAvi.self,
+                                forCellWithReuseIdentifier: LargeArtistAvi.reuseIdentifier)
         
         createDataSource()
         reloadData()
@@ -161,10 +165,9 @@ class MusicViewController: UIViewController, PlayerDelegate {
         
         
         datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
-//            print("creating datasource")
+
             switch self.section[IndexPath.section].type {
             case "Featured":
-////                print("Adding Featured Section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
                                                    navigationController: self.navigationController,
                                                    FeaturedHeader.self,
@@ -172,7 +175,6 @@ class MusicViewController: UIViewController, PlayerDelegate {
                                                    indexPath: IndexPath)
                 
             case "Trending":
-//                print("Adding Trending section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
                                                    navigationController: self.navigationController,
                                                    TrendingSection.self,
@@ -186,7 +188,6 @@ class MusicViewController: UIViewController, PlayerDelegate {
                                                    indexPath: IndexPath)
                 
             default:
-//                print("Adding default section")
                 return LayoutManager.configureCell(collectionView: self.collectionView,
                                                    navigationController: self.navigationController,
                                                    MediumImageSlider.self,
@@ -214,9 +215,23 @@ class MusicViewController: UIViewController, PlayerDelegate {
                 sectionHeader.tagline.text = section.tagline
                 sectionHeader.title.text = section.type
                 sectionHeader.navigationController = self!.navigationController
+                sectionHeader.vc = TrendingCollectionViewController()
                 
                 return sectionHeader
                 
+            case "History":
+                
+                guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier, for: IndexPath) as? SectionHeaderWithButton else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+                
+                sectionHeader.tagline.text = section.tagline
+                sectionHeader.title.text = section.type
+                sectionHeader.navigationController = self!.navigationController
+                sectionHeader.vc = TrendingCollectionViewController()
+                
+                return sectionHeader
             default:
                 
                 guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{

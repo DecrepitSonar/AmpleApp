@@ -30,8 +30,8 @@
             filePath = "dyscMusic/View/PlayerViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "shareBtn"
             landmarkType = "24">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "dyscMusic/Controller/AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
             landmarkName = "getAudioQueue()"
             landmarkType = "7">
          </BreakpointContent>
@@ -302,9 +302,166 @@
             filePath = "dyscMusic/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2227"
-            endingLineNumber = "2227"
+            startingLineNumber = "2238"
+            endingLineNumber = "2238"
             landmarkName = "init(frame:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dyscMusic/View/MusicViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "MusicViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D - 3ee363a0dca976f"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyscMusic.MusicViewController.__allocating_init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; dyscMusic.MusicViewController"
+                  moduleName = "dyscMusic"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bajo/Documents/code/musicApp/dyscMusic/View/MusicViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "31">
+               </Location>
+               <Location
+                  uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D - dfcbe2751a1e56c1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyscMusic.MusicViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; dyscMusic.MusicViewController"
+                  moduleName = "dyscMusic"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bajo/Documents/code/musicApp/dyscMusic/View/MusicViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "90"
+                  endingLineNumber = "90"
+                  offsetFromSymbolStart = "167">
+               </Location>
+               <Location
+                  uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D - 89d01bac704cf067"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyscMusic.MusicViewController.__allocating_init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;dyscMusic.MusicViewController&gt;"
+                  moduleName = "dyscMusic"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bajo/Documents/code/musicApp/dyscMusic/View/MusicViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "23">
+               </Location>
+               <Location
+                  uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D - dce9f6894981a885"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyscMusic.MusicViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;dyscMusic.MusicViewController&gt;"
+                  moduleName = "dyscMusic"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bajo/Documents/code/musicApp/dyscMusic/View/MusicViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "90"
+                  endingLineNumber = "90"
+                  offsetFromSymbolStart = "115">
+               </Location>
+               <Location
+                  uuid = "9EF30CDD-CE57-4C36-954F-9D1D6EE0A03D - 87e59c5cd19baf13"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "dyscMusic.MusicViewController.__deallocating_deinit"
+                  moduleName = "dyscMusic"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bajo/Documents/code/musicApp/dyscMusic/View/MusicViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED8EC561-CE12-45EC-845C-55AB0E8F4F0C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dyscMusic/View/LibraryViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "LibraryViewController"
+            landmarkType = "21">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED0BECD6-A62B-4AE7-892D-EFC8C561F583"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dyscMusic/View/ProfileViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "ProfileViewController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CCF08062-D48A-4284-B18C-B3346F59F570"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dyscMusic/View/Cells.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1294"
+            endingLineNumber = "1294"
+            landmarkName = "PlaylistsDetailHeader"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6E1E086D-FA6D-44F4-93F3-24547465F6D0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dyscMusic/Controller/NetworkManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "393"
+            endingLineNumber = "393"
+            landmarkName = "getTrack(id:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

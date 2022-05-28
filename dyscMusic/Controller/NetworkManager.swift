@@ -30,7 +30,7 @@ class NetworkManager {
     
     static func Get<T: Decodable>(url: String, completion: @escaping (T?, NetworkError) -> ()){
         let url = URL(string: "\(baseURL)/\(url)")
-        
+        print(url!)
         URLSession.shared.dataTask(with: url!){ data, response, error in
             
             if error != nil {

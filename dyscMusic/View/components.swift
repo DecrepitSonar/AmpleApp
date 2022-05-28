@@ -138,7 +138,7 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         NSLayoutConstraint.activate([
             
             widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20),
-            heightAnchor.constraint(equalToConstant: 70),
+            heightAnchor.constraint(equalToConstant: 50),
             
             container.leadingAnchor.constraint(equalTo: leadingAnchor),
             container.topAnchor.constraint(equalTo: topAnchor),
@@ -233,8 +233,8 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         let view = UIImageView()
         view.image = UIImage(named: "6lack")
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 30).isActive = true
         view.clipsToBounds = true
         
         return view
@@ -318,9 +318,9 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
                                          image: UIImage(systemName: "globe.americas.fill"),
                                          tag: 0)
         
-        let searchVc = UINavigationController(rootViewController: SearchViewController())
-        searchVc.tabBarItem = UITabBarItem(title: "Search",
-                                           image: UIImage(systemName: "magnifyingglass"),
+        let settings = UINavigationController(rootViewController: SettingsViewController())
+        settings.tabBarItem = UITabBarItem(title: "Settings",
+                                           image: UIImage(systemName: "gear"),
                                            tag: 1)
                                            
         let library = UINavigationController(rootViewController: LibraryViewController())
@@ -340,7 +340,7 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     
         tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [browse, library, searchVc]
+        self.viewControllers = [browse, library, settings]
     
     }
 

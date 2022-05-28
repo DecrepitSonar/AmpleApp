@@ -35,6 +35,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
     // initialize player with track queue or track
     func initPlayer( track: Track?, tracks: [Track]?){
         
+        print( tracks )
         print("init player")
         guard tracks != nil else {
             print(audioQueue.count )
@@ -51,7 +52,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
 
         audioQueue = []
         audioQueue = tracks!
-        currentQueue = audioQueue.removeFirst()
+//        currentQueue = audioQueue.removeFirst()
         print("current Track: ", currentQueue)
         
         playerController(option: .play)
@@ -127,6 +128,9 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                 getTrack(track: currentQueue!)    
                 return
             }
+            
+            print(audioQueue)
+//            getTrack(track: audioQueue.first!)
             
         case .pause:
             print("Track paused")

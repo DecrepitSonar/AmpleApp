@@ -12,14 +12,10 @@ class PlayerViewController: UIViewController {
     
     var currentTrack: Track!
     var timer: Timer!
-    
     let audioManager = AudioManager.shared
     let formatter = DateComponentsFormatter()
-    
     var effect = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    
     var animator: UIViewPropertyAnimator!
-    
     let playbtnImg = UIImage(systemName: "play.circle.fill")!
         .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     
@@ -36,18 +32,23 @@ class PlayerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = UIColor.systemRed
         
         formatter.unitsStyle = .positional
         formatter.allowedUnits = [ .minute, .second ]
         formatter.zeroFormattingBehavior = [ .dropTrailing ]
         
-        navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.down"), style: .plain, target: nil, action: nil)
+        title = audioManager.currentQueue!.title
         
-//        navigationController?.isToolbarHidden = true
+        let closeBtn = UIBarButtonItem(image: UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 15)), style: .plain, target: self, action: #selector(closePlayer))
+        closeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         
+        navigationItem.leftBarButtonItem = closeBtn
         
-          
+        let optionBtn = UIBarButtonItem(image: UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 15)), style: .plain, target: self, action: #selector(openOptionView))
+        
+        optionBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        
+        navigationItem.rightBarButtonItem = optionBtn
         
         timer =  Timer.scheduledTimer(timeInterval: 1,
                                       target: self,
@@ -77,15 +78,13 @@ class PlayerViewController: UIViewController {
                                       userInfo: nil,
                                       repeats: true)
         
-//        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
-        
         view.addSubview(image)
         
         if audioManager.currentQueue?.videoId == nil{
             videoAvailabilityBtn.setImage(UIImage(systemName: "display.trianglebadge.exclamationmark"), for: .normal)
         }
         
-        let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, videoAvailabilityBtn, shareBtn, optionBtn])
+        let optionStack = UIStackView(arrangedSubviews: [likeBtn,queue, videoAvailabilityBtn])
         optionStack.axis = .horizontal
         optionStack.alignment = .leading
         optionStack.spacing = 20
@@ -106,7 +105,7 @@ class PlayerViewController: UIViewController {
         timerStack.spacing = 5
         timerStack.distribution = .equalSpacing
         
-        let sliderStack = UIStackView(arrangedSubviews: [ timerStack, slider ])
+        let sliderStack = UIStackView(arrangedSubviews: [slider, timerStack ])
         sliderStack.axis = .vertical
         sliderStack.spacing = 5
         sliderStack.distribution = .equalSpacing
@@ -116,13 +115,6 @@ class PlayerViewController: UIViewController {
         stackControls.spacing = 25
         stackControls.distribution = .equalSpacing
         stackControls.translatesAutoresizingMaskIntoConstraints = false
-        
-        let pageTitleStack = UIStackView(arrangedSubviews: [closeBtn, pageTitle, optionBtn])
-        pageTitleStack.axis = .horizontal
-        pageTitleStack.distribution = .fillProportionally
-        pageTitleStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(pageTitleStack)
         
         view.addSubview(stackControls)
 
@@ -142,14 +134,12 @@ class PlayerViewController: UIViewController {
             
             image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -75),
             
-            pageTitleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            pageTitleStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            pageTitleStack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            
         ])
         
     }
     override func viewWillLayoutSubviews() {
+        
+        title = audioManager.currentQueue!.title
         
         effect.frame = view.bounds
         
@@ -171,7 +161,7 @@ class PlayerViewController: UIViewController {
             audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
         }
         view.backgroundColor = image.image?.averageColor
-        pageTitle.text = "Player"
+
     }
     
     @objc func onSliderTouchOrDrag(sender: UISlider, event: UIEvent){
@@ -255,9 +245,15 @@ class PlayerViewController: UIViewController {
         present(view, animated: true)
                 
     }
+    @objc func openOptionView(){
+        let vc =  OptionsViewController()
+        vc.track = audioManager.currentQueue
+        vc.type = .Track
+        vc.nvc = self.navigationController
+        navigationController!.present(UINavigationController(rootViewController: vc), animated: true)
+    }
     @objc func closePlayer(){
         dismiss(animated: true)
-        print("animator")
     }
     @objc func saveTrack(){
 //        if(audioManager.isSaved){
@@ -275,21 +271,7 @@ class PlayerViewController: UIViewController {
         img.clipsToBounds = true
         return img
     }()
-    let closeBtn: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(closePlayer), for: .touchUpInside)
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        btn.layer.zPosition = 3
-        return btn
-    }()
-    let pageTitle: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+
     let totalTrackTime: UILabel = {
         let label = UILabel()
         label.setFont(with: 12)
@@ -300,15 +282,7 @@ class PlayerViewController: UIViewController {
         label.setFont(with: 12)
         return label
     }()
-    let optionBtn: UIButton = {
-        
-        let optionBtnImg = UIImage(systemName: "ellipsis", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
-        
-        let btn = UIButton()
-        btn.setImage(optionBtnImg, for: .normal)
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        return btn
-    }()
+
     let likeBtn: UIButton = {
         let likeBtnImg = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
         let likeBtnImgFill = UIImage(systemName: "suit.heart.fill", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))

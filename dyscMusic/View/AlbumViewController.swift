@@ -57,23 +57,20 @@ class AlbumViewController: UIViewController {
     let user = UserDefaults.standard.value(forKey: "user")
     var header: DetailHeader!
     
-    var loadingView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-        view.backgroundColor = .red
-        
-        return view
-    }()
-    
-    override func loadView() {
+    let loadingView = LoadingViewController()
+    override func loadView(){
         super.loadView()
-        view.addSubview(loadingView)
+        
+        addChild(loadingView)
+        loadingView.didMove(toParent: self)
+        view.addSubview(loadingView.view)
+        
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
+//        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
         
         NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album?, error: NetworkError) in
             switch(error){
@@ -85,8 +82,7 @@ class AlbumViewController: UIViewController {
                 self.data = data!
                 
                 DispatchQueue.main.async {
-                    self.loadingView.removeFromSuperview()
-            
+                    self.loadingView.removeFromParent()
                     self.setup()
                 }
                 
@@ -105,15 +101,35 @@ class AlbumViewController: UIViewController {
         header.trackTitle.text = data?.title
         header.artistAviImage.setUpImage(url: data!.artistImgURL, interactable: true)
         header.vc = navigationController
-//        header.tracks = data!.items!
         header.artistId = data!.artistId!
+        header.type = data!.type
         
+        let trackItems = data?.items[0].items
+        var tracks: [Track] = []
         
+        trackItems!.forEach { item in
+            
+            print(item)
+            
+            let track = Track(id: item.id,
+                              type: item.type!,
+                              trackNum: item.trackNum!,
+                              title: item.title,
+                              artistId: item.artistId!,
+                              name: item.name!,
+                              imageURL: item.imageURL!,
+                              albumId: item.albumId!,
+                              audioURL: item.audioURL,
+                              playCount: item.playCount,
+                              videoId: item.videoURL)
+            
+            tracks.append(track)
+        }
         
-//        header.album = data
+        header.tracks
 //        header.checkIfAlbumIsSaved()
 
-        tableView = UITableView(frame: .zero, style: .plain)
+        tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(TrackCell.self, forCellReuseIdentifier: TrackCell.reuseIdentifier)
         tableView.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         tableView.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
@@ -126,6 +142,7 @@ class AlbumViewController: UIViewController {
         tableView.separatorColor = .clear
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
         tableView.frame = view.bounds
+        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         self.tableView.tableHeaderView = header
         view.addSubview(tableView)

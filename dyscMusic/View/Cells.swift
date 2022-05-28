@@ -1298,6 +1298,9 @@ class DetailHeader: UICollectionViewCell{
     static let reuseableIdentifier: String = "image Header"
     
     var tracks = [Track]()
+    var track: Track!
+    var type: String!
+    
     var vc: UINavigationController?
     var tapGesture: CustomGestureRecognizer!
     var artistId = String()
@@ -1316,7 +1319,7 @@ class DetailHeader: UICollectionViewCell{
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         artistAviImage.addGestureRecognizer(tapGesture!)
 
-        playBtn.addTarget(self, action: #selector(playAllTracks), for: .touchUpInside)
+        playBtn.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
         playBtn.isUserInteractionEnabled = true
         
 //        setupGradient()/
@@ -1440,9 +1443,16 @@ class DetailHeader: UICollectionViewCell{
         view.artistId = artistId
         vc?.pushViewController(view, animated: true)
     }
-    @objc func playAllTracks(){
+    @objc func playButtonTapped(){
         
-        AudioManager.shared.initPlayer(track: nil, tracks: tracks)
+        print( tracks)
+        switch(type){
+        case "Album":
+            AudioManager.shared.initPlayer(track: nil, tracks: tracks)
+        default:
+            AudioManager.shared.initPlayer(track: track, tracks: nil)
+        }
+        
 
     }
     @objc func didTapButton(sender: UIButton){
@@ -2206,6 +2216,7 @@ class AlbumCover: UICollectionViewCell {
     let image = UIImageView()
     let artist = UILabel()
     let title = UILabel()
+    var type: String!
     
     var vc: UINavigationController!
     var tapgesture: CustomGestureRecognizer!
@@ -2248,8 +2259,8 @@ class AlbumCover: UICollectionViewCell {
             image.heightAnchor.constraint(equalToConstant: 125),
             image.widthAnchor.constraint(equalToConstant: 125),
             
-            title.widthAnchor.constraint(equalToConstant: 125),
             stackview.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
+            stackview.widthAnchor.constraint(equalToConstant: 125)
         ])
 
     }
@@ -2262,20 +2273,38 @@ class AlbumCover: UICollectionViewCell {
         image.setUpImage(url: item.imageURL!, interactable: true)
         title.text = item.title
         artist.text = item.name
+        type = item.type
         
-        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didSelectAlbum(sender:)))
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         tapgesture.id = item.id
         
         image.addGestureRecognizer(tapgesture)
         vc = navigationController
     }
     
-    @objc func didSelectAlbum(sender: CustomGestureRecognizer){
-     
-        print("did tap image")
-        let view = AlbumViewController()
-        view.albumId = sender.id!
-        vc?.pushViewController(view, animated: true)
+    @objc func didTap(_sender: CustomGestureRecognizer) {
+
+        print(_sender.id!)
+        
+        
+        switch( type){
+        case "Playlist":
+            let view = PlaylistViewController()
+            view.id = _sender.id!
+            vc?.pushViewController(view, animated: true)
+        
+        case "Track":
+            let view = TrackViewController()
+            view.trackId = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        default:
+            let view = AlbumViewController()
+            view.albumId = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        }
+        
     }
 }
 
@@ -2469,6 +2498,8 @@ class TrackWithPlayCount: UITableViewCell {
     let title = UILabel()
     let artist = UILabel()
     let listenCount = UILabel()
+    var stackview: UIStackView!
+    
 //    var track: Track!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -2496,21 +2527,57 @@ class TrackWithPlayCount: UITableViewCell {
         listenCount.translatesAutoresizingMaskIntoConstraints = false
         listenCount.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
-        chartPosition.setFont(with: 10)
+        chartPosition.setBoldFont(with: 15)
         chartPosition.textColor = .secondaryLabel
+        chartPosition.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        
+    
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configureWithChart(with catalog: Track, index: Int?, withChart: Bool) {
+        
+//        vc = rootVc!
+        
+//        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
+//
+//        tapGesture?.track = track
+        
+        image.setUpImage(url: catalog.imageURL, interactable: true)
+        title.text = catalog.title
+        artist.text = catalog.name
+        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
         let innterStackview = UIStackView(arrangedSubviews: [title, artist])
         innterStackview.axis = .vertical
         innterStackview.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackview = UIStackView(arrangedSubviews: [image, innterStackview, listenCount] )
-        stackview.translatesAutoresizingMaskIntoConstraints = false
-        stackview.axis = .horizontal
-        stackview.alignment = .center
-        stackview.distribution = .fillProportionally
-        stackview.spacing = 10
+        switch(withChart){
+        case false:
+            
+            stackview = UIStackView(arrangedSubviews: [image, innterStackview, listenCount] )
+            stackview.translatesAutoresizingMaskIntoConstraints = false
+            stackview.axis = .horizontal
+            stackview.alignment = .center
+            stackview.distribution = .fillProportionally
+            stackview.spacing = 10
+            
+        default:
+            chartPosition.text = String(index! + 1)
+            
+            stackview = UIStackView(arrangedSubviews: [chartPosition, image, innterStackview, listenCount] )
+            stackview.translatesAutoresizingMaskIntoConstraints = false
+            stackview.axis = .horizontal
+            stackview.alignment = .center
+            stackview.distribution = .fillProportionally
+            stackview.spacing = 10
+            
+        }
         
-        addSubview(stackview)
+       addSubview(stackview)
         
         NSLayoutConstraint.activate([
             
@@ -2524,24 +2591,6 @@ class TrackWithPlayCount: UITableViewCell {
         
             listenCount.leadingAnchor.constraint(equalTo: stackview.trailingAnchor, constant: -38)
         ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("")
-    }
-    
-    func configure(with catalog: LibItem) {
-        
-//        vc = rootVc!
-        
-//        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
-//
-//        tapGesture?.track = track
-        
-        image.setUpImage(url: catalog.imageURL!, interactable: true)
-        title.text = catalog.title
-        artist.text = catalog.name
-        listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
     
     }
@@ -2932,8 +2981,8 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: AlbumCover.reuseIdentifier, for: indexPath) as! AlbumCover
-        
         cell.configure(item: data[indexPath.row], navigationController: vc)
+
         return cell
     }
     

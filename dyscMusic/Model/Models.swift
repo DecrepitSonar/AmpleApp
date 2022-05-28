@@ -13,10 +13,6 @@ struct UserData: Decodable {
     var password: String
     var email: String
     var joinDate: String
-    var following: [Artist]
-    var albums: [Album]
-    var playlists: [Album]
-    var listeningHistory: [Track]
 }
 
 struct LoginCredentials: Codable{

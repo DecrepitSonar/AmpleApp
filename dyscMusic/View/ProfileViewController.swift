@@ -14,15 +14,14 @@ class ProfileViewController: UIViewController {
     var header: ProfileHead!
     var tableview: UITableView!
     
-    let loadingView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-        view.backgroundColor = .red
-        return view
-    }()
-    
-    override func loadView() {
+    let loadingView = LoadingViewController()
+    override func loadView(){
         super.loadView()
-        view.addSubview(loadingView)
+        
+        addChild(loadingView)
+        loadingView.didMove(toParent: self)
+        view.addSubview(loadingView.view)
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.backgroundColor = .clear
@@ -52,7 +51,7 @@ class ProfileViewController: UIViewController {
                 self.data = data!
                 
                 DispatchQueue.main.async {
-                    self.loadingView.removeFromSuperview()
+                    self.loadingView.removeFromParent()
                     self.initTable()
                 }
                 
@@ -157,8 +156,22 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         switch (type) {
         case "Tracks":
             
+            let item = data.items[indexPath.section].items![indexPath.row]
+            
+            let track = Track(id: item.id,
+                              type: item.type,
+                              trackNum: nil,
+                              title: item.title!,
+                              artistId: item.artistId!,
+                              name: item.name!,
+                              imageURL: item.imageURL!,
+                              albumId: item.albumId!,
+                              audioURL: item.audioURL,
+                              playCount: Int(item.playCount!),
+                              videoId: nil)
+            
             let cell = tableview.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
-            cell.configure(with: data.items[indexPath.section].items![indexPath.row])
+            cell.configureWithChart(with: track, index: nil, withChart: false)
             cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             cell.selectionStyle = .none
             return cell

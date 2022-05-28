@@ -14,6 +14,8 @@ struct TrackDeailHeader: Codable{
     var name: String
     var artistId: String
     var imageURL: String
+    var albumId: String
+    var audioURL: String
     var items: [TrackDetailSections]
 }
 struct TrackDetailSections: Codable{
@@ -47,23 +49,21 @@ class TrackViewController: UIViewController {
     let user = UserDefaults.standard.value(forKey: "user")
     var header: DetailHeader!
     
-    var loadingView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-        view.backgroundColor = .red
-        
-        return view
-    }()
-    
-    override func loadView() {
+    let loadingView = LoadingViewController()
+    override func loadView(){
         super.loadView()
-        view.addSubview(loadingView)
+        
+        addChild(loadingView)
+        loadingView.didMove(toParent: self)
+        view.addSubview(loadingView.view)
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
+//        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
         
         NetworkManager.Get(url: "track?trackId=\(trackId)") { (data: TrackDeailHeader?, error: NetworkError) in
             switch(error){
@@ -73,11 +73,9 @@ class TrackViewController: UIViewController {
             case .success:
                 
                 self.data = data!
-                print("Data:", data )
                 
                 DispatchQueue.main.async {
-                    self.loadingView.removeFromSuperview()
-            
+                    self.loadingView.removeFromParent()
                     self.setup()
                 }
                 
@@ -96,13 +94,23 @@ class TrackViewController: UIViewController {
         header.trackTitle.text = data?.title
         header.artistAviImage.setUpImage(url: data!.imageURL, interactable: true)
         header.vc = navigationController
-//        header.tracks = data!.items!
+        
+        let item =  data!.items[0].items[0]
+        let track = Track(id: data!.id,
+                          type: data!.type,
+                          trackNum: nil,
+                          title: data!.title,
+                          artistId: data!.artistId,
+                          name: data!.name,
+                          imageURL: data!.imageURL,
+                          albumId: data!.albumId,
+                          audioURL: data!.audioURL,
+                          playCount: nil,
+                          videoId: "")
+        
+        header.track = track
+        
         header.artistId = data!.artistId
-        
-        
-        
-//        header.album = data
-//        header.checkIfAlbumIsSaved()
 
         tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(TrackCell.self, forCellReuseIdentifier: TrackCell.reuseIdentifier)
@@ -117,6 +125,7 @@ class TrackViewController: UIViewController {
         tableView.separatorColor = .clear
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
         tableView.frame = view.bounds
+        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         self.tableView.tableHeaderView = header
         view.addSubview(tableView)
