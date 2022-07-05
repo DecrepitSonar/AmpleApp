@@ -88,7 +88,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = LargePrimaryButton()
         btn.setupButton(label: "Login")
-        btn.backgroundColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.8)
+        btn.backgroundColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1)
         btn.setTitleColor(UIColor.black, for: .normal)
         btn.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         
@@ -98,8 +98,8 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = LargePrimaryButton()
         btn.setupButton(label: "Sign Up")
-        btn.layer.borderColor =  UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5).cgColor
-        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1), for: .normal)
+        btn.layer.borderColor =  UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5).cgColor
+        btn.setTitleColor(UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1), for: .normal)
         
         return btn
     }()
@@ -107,7 +107,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = UIButton()
         btn.setTitle("Forgot password?", for: .normal)
-        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1), for: .normal)
+        btn.setTitleColor(UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1), for: .normal)
         btn.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 10)
         btn.translatesAutoresizingMaskIntoConstraints = false
         
@@ -122,8 +122,9 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         field.placeholder = "Password"
         field.layer.cornerRadius = 8
         field.layer.borderWidth = 1
-        field.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1).cgColor
+        field.layer.borderColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.3).cgColor
         
+        field.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
         field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
         field.isSecureTextEntry = true
         return field
@@ -135,10 +136,11 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         field.placeholder = "Username / Email"
         field.layer.cornerRadius = 8
         field.layer.borderWidth = 1
-        field.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1).cgColor
+        field.layer.borderColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.3).cgColor
         
         field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
         field.tag = 1
+        field.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
 //
         return field
     }()
@@ -230,14 +232,14 @@ class LoginViewController: UIViewController {
         NSLayoutConstraint.activate([
 
             bgImage.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
-            bgImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 100),
+            bgImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
             
             
-            logo.topAnchor.constraint(equalTo: viewLayer.topAnchor, constant:350),
+            logo.topAnchor.constraint(equalTo: viewLayer.topAnchor, constant:250),
             logo.centerXAnchor.constraint(equalTo: viewLayer.centerXAnchor),
 
             loginForm.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loginForm.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 150),
+            loginForm.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 100),
             loginForm.leadingAnchor.constraint(equalTo: viewLayer.leadingAnchor, constant: 20),
             loginForm.trailingAnchor.constraint(equalTo: viewLayer.trailingAnchor, constant: -20),
             
@@ -271,23 +273,25 @@ class LoginViewController: UIViewController {
     }()
     let bgImage: UIImageView = {
         
-        let bgImage = UIImageView(image: UIImage(named: "music"))
-        bgImage.contentMode = .scaleAspectFill
+        let bgImage = UIImageView(image: UIImage(named: "default"))
+        bgImage.contentMode = .scaleAspectFit
         bgImage.translatesAutoresizingMaskIntoConstraints = false
-        bgImage.alpha = 0.2
+        bgImage.alpha = 0.3
         return bgImage
         
     }()
-    let logo: UILabel = {
+    let logo: UIImageView = {
         
-        let label = UILabel()
-        label.text = "Dysc"
-        label.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Helvetica Neue", size: 30)
-        label.font = UIFont.boldSystemFont(ofSize: 30)
-//        image.image = UIImage(named: "logo")
-        return label
+        let image = UIImageView()
+//        label.text = "Dysc"
+//        label.textColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.heightAnchor.constraint(equalToConstant: 125).isActive = true
+        image.widthAnchor.constraint(equalToConstant: 100).isActive = true
+//        image.font = UIFont(name: "Helvetica Neue", size: 30)
+//        image.font = UIFont.boldSystemFont(ofSize: 30)
+        image.image = UIImage(named: "logoasset")
+        return image
         
     }()
     

@@ -188,10 +188,10 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
         
         player = AVPlayer()
         playerLayer = AVPlayerLayer(player: player)
-        playerLayer.frame = container.bounds
+        playerLayer.frame = bounds
         playerLayer.videoGravity = .resizeAspectFill
         
-        container.layer.addSublayer(playerLayer)
+        layer.addSublayer(playerLayer)
         
         let labelStack = UIStackView(arrangedSubviews: [artistName, title])
         labelStack.axis = .vertical
@@ -200,13 +200,19 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
               
         container.addSubview(labelStack)
         container.addSubview(muteBtn)
+        container.layer.zPosition = 3
 
         NSLayoutConstraint.activate([
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.topAnchor.constraint(equalTo: topAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor),
+
             labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
             labelStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
-            
+
             muteBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
-            muteBtn.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20)
+            muteBtn.topAnchor.constraint(equalTo: container.topAnchor, constant: 20)
         ])
     }
         
@@ -231,7 +237,8 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
     }
     
     let container: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 40, height: 200))
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -247,6 +254,8 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
         let label = UILabel()
         label.setFont(with: 15)
         label.textColor = .label
+        label.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        label.numberOfLines = 2
         return label
     }()
     
@@ -1730,7 +1739,65 @@ class SectionHeaderWithButton: UICollectionReusableView, GestureAction {
         return btn
     }()
 }
-
+class TableviewSectionHeader: UIView {
+    
+    let title = UILabel()
+    let tagline = UILabel()
+    let moreBtn = UIButton()
+    
+    var navigationController: UINavigationController!
+    var vc: UIViewController!
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        let seperator = UIView(frame: .zero)
+        seperator.backgroundColor = .tertiaryLabel
+        
+        tagline.textColor = .label
+        tagline.font = UIFont.boldSystemFont(ofSize: 17)
+        
+        let hstack = UIStackView(arrangedSubviews: [tagline, button ])
+        hstack.distribution = .equalSpacing
+        hstack.axis = .horizontal
+        
+        
+        let stackView = UIStackView(arrangedSubviews: [hstack])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        addSubview(stackView)
+        stackView.spacing = 10
+        
+        NSLayoutConstraint.activate([
+            
+            seperator.heightAnchor.constraint(equalToConstant: 1),
+            
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            
+        ])
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+      
+    func didTap(_sender: CustomGestureRecognizer) {
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
+    let button: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("See More", for: .normal)
+        btn.titleLabel?.setFont(with: 10)
+        btn.tintColor = .secondaryLabel
+//        btn.addTarget(self, action: #selector(didTap(_sender:)), for: .touchUpInside)
+        return btn
+    }()
+}
 // Profile VC Components
 class ProfileHeader: UICollectionViewCell, Cell {
     

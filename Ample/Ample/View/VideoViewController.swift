@@ -94,7 +94,14 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
                }
            }
     }
-    
+    override var shouldAutorotate: Bool {
+        return false
+    }
+
+    //What screen orientations are supported
+//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+//        return .allButUpsideDown
+//    }
     func setupPlayer(video: VideoItemModel){
         
         videoURL = URL(string: String(video.videoURL))
@@ -105,12 +112,14 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         
         view.layer.addSublayer(playerLayer)
         playerLayer.frame = view.bounds
+        playerLayer.contentsCenter = CGRect(x: view.bounds.midX, y: view.bounds.midX, width: 100, height: 100)
 
         player.play()
 //        player.volume = 0
 //
         view.addSubview(controlContainer)
-        controlContainer.frame = view.bounds
+//        controlContainer.frame = view.bounds
+        controlContainer.translatesAutoresizingMaskIntoConstraints = false
         controlContainer.layer.zPosition = 1
 
         let videoControlls = UIStackView(arrangedSubviews: [prevBtn, playBtn, nextBtn])
@@ -127,8 +136,10 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
             playBtn.setSystemImageWithConfigureation(systemImage: "play.fill", size: 20)
         }
         
-        if audioPlayer.currentQueue! != nil {
+        if audioPlayer.currentQueue != nil {
+            
             audioPlayer.player.pause()
+            NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }
 
         controlContainer.isHidden = true
@@ -173,6 +184,11 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         
         NSLayoutConstraint.activate([
 
+            controlContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            controlContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            controlContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            controlContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             videoControlls.leadingAnchor.constraint(equalTo: controlContainer.leadingAnchor, constant: 50),
             videoControlls.trailingAnchor.constraint(equalTo: controlContainer.trailingAnchor, constant: -50),
             videoControlls.centerYAnchor.constraint(equalTo: controlContainer.centerYAnchor),

@@ -315,12 +315,12 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
 
         let music = UINavigationController(rootViewController: MusicViewController())
         music.tabBarItem = UITabBarItem(title: "Music",
-                                         image: UIImage(systemName: "globe.americas.fill"),
+                                         image: UIImage(systemName: "hifispeaker.2"),
                                          tag: 0)
         
-        let videos = UINavigationController(rootViewController: VideoLibraryViewController())
+        let videos = UINavigationController(rootViewController: VideoPageViewController())
         videos.tabBarItem = UITabBarItem(title: "Videos",
-                                         image: UIImage(systemName: "globe.americas.fill"),
+                                         image: UIImage(systemName: "display"),
                                          tag: 0)
 
         let library = UINavigationController(rootViewController: LibraryViewController())

@@ -12,6 +12,8 @@ class PlayerViewController: UIViewController {
     
     var currentTrack: Track!
     var timer: Timer!
+    var elapsedTimeInSecond: Int = 0
+    
     let audioManager = AudioManager.shared
     let formatter = DateComponentsFormatter()
     var effect = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
@@ -21,6 +23,10 @@ class PlayerViewController: UIViewController {
     
     let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!
         .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
+    
+    override open var shouldAutorotate: Bool {
+          return false
+      }
     
     override func loadView() {
         super.loadView()

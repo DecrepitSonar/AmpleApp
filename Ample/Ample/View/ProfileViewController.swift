@@ -44,7 +44,7 @@ class ProfileViewController: UIViewController {
         
         header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 400))
         
-        NetworkManager.Get(url: "artist?id=f65c7210ab215d55f9b8193e85044801d8661f16") { (data: ProfileObject?, error: NetworkError ) in
+        NetworkManager.Get(url: "artist?id=\(artistId!)") { (data: ProfileObject?, error: NetworkError ) in
             switch( error){
             case .success:
                 
@@ -104,18 +104,6 @@ class ProfileViewController: UIViewController {
         header.setupHeader(artist: artist)
         
     }
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//
-//        let offset = tableview.contentOffset.y
-//
-////        print(offset)
-//
-//        if(offset < 350 ){
-//            header.image.center.y =  header.center.y + offset
-//            return
-//        }
-//
-//    }
     
     @objc func didTapBackButton(_sender: UIBarButtonItem){
         navigationController?.popViewController(animated: true)

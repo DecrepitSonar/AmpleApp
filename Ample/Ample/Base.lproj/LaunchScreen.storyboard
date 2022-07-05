@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,15 +12,38 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo name" translatesAutoresizingMaskIntoConstraints="NO" id="9Jw-HH-fex">
+                                <rect key="frame" x="139" y="751" width="112" height="59"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="59" id="8p0-Fg-JSf"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="eJP-dT-RtZ">
+                                <rect key="frame" x="-299" y="358" width="988" height="128"/>
+                            </imageView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" red="0.086274512110000007" green="0.086274512110000007" blue="0.086274512110000007" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="eJP-dT-RtZ" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="9FW-8V-gxe"/>
+                            <constraint firstItem="eJP-dT-RtZ" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Pav-7O-DVr"/>
+                            <constraint firstItem="9Jw-HH-fex" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="139" id="Vhg-Gy-1mB"/>
+                            <constraint firstItem="9Jw-HH-fex" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="dzx-5F-Jq0"/>
+                            <constraint firstItem="eJP-dT-RtZ" firstAttribute="centerX" secondItem="9Jw-HH-fex" secondAttribute="centerX" id="vbt-fO-zKU"/>
+                            <constraint firstItem="eJP-dT-RtZ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="314" id="zLP-4h-jFF"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="50.769230769230766" y="374.64454976303318"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo" width="987.66668701171875" height="797.66668701171875"/>
+        <image name="logo name" width="1602.3333740234375" height="240"/>
+    </resources>
 </document>

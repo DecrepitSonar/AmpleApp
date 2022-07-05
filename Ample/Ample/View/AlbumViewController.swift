@@ -70,9 +70,9 @@ class AlbumViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image:UIImage(named: "chevron.left"), style: .plain, target: self, action: nil)
         
-        NetworkManager.Get(url: "album?albumId=457391c9c82bfdcbb4947278c0401e41") { (data: Album?, error: NetworkError) in
+        NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album?, error: NetworkError) in
             switch(error){
             case .servererr:
                 print(error.localizedDescription)
