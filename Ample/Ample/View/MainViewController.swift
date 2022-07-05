@@ -11,7 +11,8 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
 
     
     let viewOne = MusicViewController()
-    let viewTwo = VideoLibraryViewController()
+    let viewTwo = VideoPageViewController()
+    var segment: UISegmentedControl!
     
     let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -80,32 +81,44 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
-//
+
+        
+        segment = UISegmentedControl(items: ["Music", "Video", "Podcast"])
+        segment.sizeToFit()
+        if #available(iOS 13.0, *) {
+           segment.selectedSegmentTintColor = UIColor.red
+        } else {
+          segment.tintColor = UIColor.red
+        }
+        segment.selectedSegmentIndex = 0
+        self.navigationItem.titleView = segment
+        
+        view.addSubview(scrollView)
         scrollView.bounds = view.bounds
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(navigationContainer)
-        navigationContainer.addSubview(stack)
-        view.addSubview(scrollView)
-        scrollView.addSubview(containerOne)
+//        view.addSubview(navigationContainer)
+//        navigationContainer.addSubview(stack)
+//        view.addSubview(scrollView)
+//        scrollView.addSubview(containerOne)
 //
         addChild(viewOne)
         containerOne.addSubview(viewOne.view)
-//
         scrollView.addSubview(containerTwo)
+        
         addChild(viewTwo)
         containerTwo.addSubview(viewTwo.view)
         
         NSLayoutConstraint.activate([
             
-            scrollView.topAnchor.constraint(equalTo: navigationContainer.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            stack.topAnchor.constraint(equalTo: navigationContainer.topAnchor),
-            stack.leadingAnchor.constraint(equalTo: navigationContainer.leadingAnchor, constant: 20),
-            stack.bottomAnchor.constraint(equalTo: navigationContainer.bottomAnchor),
+//            
+//            stack.topAnchor.constraint(equalTo: navigationContainer.topAnchor),
+//            stack.leadingAnchor.constraint(equalTo: navigationContainer.leadingAnchor, constant: 20),
+//            stack.bottomAnchor.constraint(equalTo: navigationContainer.bottomAnchor),
 //            stack.trailingAnchor.constraint(equalTo: navigationContainer.trailingAnchor)
         ])
         
