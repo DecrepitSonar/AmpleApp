@@ -17,6 +17,7 @@ class VideoPageViewController: UIViewController {
         super.viewDidLoad()
 
         navigationController?.hidesBarsOnSwipe = true
+        
         NetworkManager.Get(url: "videos?user=\("4f975b33-4c28-4af8-8fda-bc1a58e13e56")") { (data: [VideoSectionModel]?, error: NetworkError) in
             switch(error){
             case .success:
@@ -45,11 +46,11 @@ class VideoPageViewController: UIViewController {
         tableview.frame = view.frame
         tableview.separatorColor = .clear
         
-        
         tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier )
         
         view.addSubview(tableview)
+        
     }
     
 }
@@ -165,7 +166,7 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 0
     }
     
 }

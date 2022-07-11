@@ -30,8 +30,8 @@
             filePath = "Ample/View/VideoPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "20"
-            endingLineNumber = "20"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -50,6 +50,84 @@
             endingLineNumber = "207"
             landmarkName = "togglePlayState()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "568A5F5D-29DF-4B21-8BBF-9EA1188CD7CA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ample/Controller/HomeViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "initCell(data:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "568A5F5D-29DF-4B21-8BBF-9EA1188CD7CA - 889761718dc5f0ff"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ample.LargeSliderCollection.reuseIdentifier.unsafeMutableAddressor : Swift.String"
+                  moduleName = "Ample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/Controller/HomeViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  uuid = "568A5F5D-29DF-4B21-8BBF-9EA1188CD7CA - 72514bfde6fee934"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static Ample.LargeSliderCollection.reuseIdentifier.getter : Swift.String"
+                  moduleName = "Ample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/Controller/HomeViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "95">
+               </Location>
+               <Location
+                  uuid = "568A5F5D-29DF-4B21-8BBF-9EA1188CD7CA - 41d8426c4415d538"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static Ample.LargeSliderCollection.reuseIdentifier.setter : Swift.String"
+                  moduleName = "Ample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/Controller/HomeViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "128">
+               </Location>
+               <Location
+                  uuid = "568A5F5D-29DF-4B21-8BBF-9EA1188CD7CA - 564a4ad18589de63"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static Ample.LargeSliderCollection.reuseIdentifier.modify : Swift.String with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Ample"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/Controller/HomeViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "15">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

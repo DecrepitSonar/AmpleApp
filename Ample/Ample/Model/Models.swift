@@ -43,6 +43,7 @@ struct LibObject: Codable, Hashable {
     var type: String
     var tagline: String?
     var items: [LibItem]?
+    var videos: [VideoItemModel]?
     var name: String?
     var artistImgURL: String?
     var title: String?
@@ -50,6 +51,7 @@ struct LibObject: Codable, Hashable {
     var artistId: String?
     var releaseDate: String?
 }
+
 
 struct LibItem: Codable, Hashable {  
     var id: String

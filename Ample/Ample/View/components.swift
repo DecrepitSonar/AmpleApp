@@ -313,7 +313,7 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
     
     override func viewWillAppear(_ animated: Bool) {
 
-        let music = UINavigationController(rootViewController: MainViewController())
+        let music = UINavigationController(rootViewController: HomeViewController())
         music.tabBarItem = UITabBarItem(title: "Music",
                                          image: UIImage(systemName: "hifispeaker.2"),
                                          tag: 0)

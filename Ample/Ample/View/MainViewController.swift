@@ -83,24 +83,19 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
         navigationItem.searchController = searchController
 
         
-        segment = UISegmentedControl(items: ["Music", "Video", "Podcast"])
-        segment.sizeToFit()
-        if #available(iOS 13.0, *) {
-           segment.selectedSegmentTintColor = UIColor.red
-        } else {
-          segment.tintColor = UIColor.red
-        }
-        segment.selectedSegmentIndex = 0
-        self.navigationItem.titleView = segment
+      
+        
         
         view.addSubview(scrollView)
         scrollView.bounds = view.bounds
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-//        view.addSubview(navigationContainer)
-//        navigationContainer.addSubview(stack)
-//        view.addSubview(scrollView)
-//        scrollView.addSubview(containerOne)
+        view.addSubview(navigationContainer)
+        navigationContainer.addSubview(segment)
+        segment.frame = navigationContainer.frame
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerOne)
 //
         addChild(viewOne)
         containerOne.addSubview(viewOne.view)
@@ -111,7 +106,7 @@ class MainViewController: UIViewController, UISearchResultsUpdating {
         
         NSLayoutConstraint.activate([
             
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: navigationContainer.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),

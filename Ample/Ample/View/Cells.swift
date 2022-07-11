@@ -25,33 +25,32 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         
-        contentView.addSubview(stackview )
+        contentView.addSubview(image )
         container.addGestureRecognizer(tapGesture)
         contentView.addSubview(container)
-            
+
         container.addSubview(featuredTrackImage)
         container.addSubview(artistName)
         container.addSubview(title)
-        
+
         NSLayoutConstraint.activate([
-            image.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
+            image.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
             image.heightAnchor.constraint(equalToConstant: 200),
-            
+
             container.topAnchor.constraint(equalTo: image.topAnchor),
-            container.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
+            container.widthAnchor.constraint(equalTo: contentView.widthAnchor),
             container.heightAnchor.constraint(equalToConstant: 200),
-            
+
             featuredTrackImage.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
             featuredTrackImage.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
-            
+
             artistName.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
             artistName.bottomAnchor.constraint(equalTo: title.topAnchor),
-            
+
             title.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
             title.bottomAnchor.constraint(equalTo: featuredTrackImage.bottomAnchor)
-            
+
         ])
-        
     }
     
     required init?(coder: NSCoder) {
@@ -64,7 +63,7 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         image.setUpImage(url: catalog.posterImage!, interactable: true)
         featuredTrackImage.setUpImage(url: catalog.imageURL!, interactable: true)
         tapGesture.id = catalog.id
-        
+
         title.text = catalog.title
         artistName.text = catalog.artist
     }
@@ -88,7 +87,6 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         
         let image = UIImageView()
         image.clipsToBounds = true
-        image.layer.cornerRadius = 5
         image.contentMode = .scaleAspectFill
         image.isUserInteractionEnabled = true
         
@@ -99,7 +97,6 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         let view = UIView()
         view.backgroundColor = UIColor(displayP3Red: 0, green: 0, blue: 0, alpha: 0.4)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 5
         return view
     }()
     
@@ -2325,6 +2322,7 @@ class AlbumCover: UICollectionViewCell {
 
             image.heightAnchor.constraint(equalToConstant: 125),
             image.widthAnchor.constraint(equalToConstant: 125),
+            image.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -10),
             
             stackview.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
             stackview.widthAnchor.constraint(equalToConstant: 125)
@@ -3030,20 +3028,21 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        layout.itemSize = CGSize(width: 130, height: 150)
+        layout.itemSize = CGSize(width: 130, height: 200)
         
-        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionview = UICollectionView(frame: contentView.bounds, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(AlbumCover.self, forCellWithReuseIdentifier: AlbumCover.reuseIdentifier)
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
     
         addSubview(collectionview)
         
         NSLayoutConstraint.activate([
+            contentView.heightAnchor.constraint(equalToConstant:  200),
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
             collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -3091,7 +3090,7 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
         vc =  navigationController
         
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         layout.itemSize = CGSize(width: 200, height: 150)
 
