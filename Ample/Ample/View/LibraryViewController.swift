@@ -60,7 +60,7 @@ class LibraryViewController: UIViewController {
         tableview.register(ArtistFlowSectionContainer.self, forCellReuseIdentifier: ArtistFlowSectionContainer.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
-        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.frame = view.bounds
         tableview.separatorColor = .clear
         

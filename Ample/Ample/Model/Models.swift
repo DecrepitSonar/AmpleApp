@@ -44,12 +44,6 @@ struct LibObject: Codable, Hashable {
     var tagline: String?
     var items: [LibItem]?
     var videos: [VideoItemModel]?
-    var name: String?
-    var artistImgURL: String?
-    var title: String?
-    var imageURL: String?
-    var artistId: String?
-    var releaseDate: String?
 }
 
 

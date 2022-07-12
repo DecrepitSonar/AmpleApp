@@ -23,8 +23,8 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-    static let baseURL = "http://localhost:8080/api/v1"
+    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//    static let baseURL = "http://localhost:8080/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
     
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -43,7 +43,7 @@ class NetworkManager {
                 return
             }
             
-//            print(httpresponse)
+            print(httpresponse)
             
             switch(httpresponse.statusCode){
         
@@ -314,7 +314,7 @@ class NetworkManager {
 //                    print(response)
                     return
                 }
-//                print( httpresponse)
+                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
                     completion(.failure(.ServerError))
                     print("mime err")

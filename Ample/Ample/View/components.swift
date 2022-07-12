@@ -318,9 +318,9 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
                                          image: UIImage(systemName: "hifispeaker.2"),
                                          tag: 0)
         
-        let videos = UINavigationController(rootViewController: VideoPageViewController())
+        let videos = UINavigationController(rootViewController: SearchViewController())
         videos.tabBarItem = UITabBarItem(title: "Videos",
-                                         image: UIImage(systemName: "display"),
+                                         image: UIImage(systemName: "magnifyingglass"),
                                          tag: 0)
 
         let library = UINavigationController(rootViewController: LibraryViewController())

@@ -17,14 +17,14 @@ class TrendingCollectionViewController: UIViewController {
     override func loadView() {
         super.loadView()
         
-        addChild(loadingView)
-        loadingView.didMove(toParent: self)
-        view.addSubview(loadingView.view)
+//        addChild(loadingView)
+//        loadingView.didMove(toParent: self)
+//        view.addSubview(loadingView.view)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController!.navigationBar.prefersLargeTitles = true
-        title = "Dysc Top 100"
+        title = "Ample Top 100"
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,7 @@ class TrendingCollectionViewController: UIViewController {
                 self.data = data!
                 
                 DispatchQueue.main.async {
-                    self.loadingView.removeFromParent()
+//                    self.loadingView.removeFromParent()
                     self.setupView()
                 }
             case .notfound:
@@ -50,7 +50,7 @@ class TrendingCollectionViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     func setupView(){
@@ -60,7 +60,7 @@ class TrendingCollectionViewController: UIViewController {
         tableView.dataSource = self
         tableView.frame = view.frame
         tableView.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
-        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableView.separatorColor = .clear
         view.addSubview(tableView)
     }

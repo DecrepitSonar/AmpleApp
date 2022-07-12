@@ -142,7 +142,7 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         collectionview.isPagingEnabled = true 
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-        collectionview.register(FeaturedVideoHeader.self, forCellWithReuseIdentifier: FeaturedVideoHeader.reuseIdentifier)
+//        collectionview.register(FeaturedVideoHeader.self, forCellWithReuseIdentifier: FeaturedVideoHeader.reuseIdentifier)
 //        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 //
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]

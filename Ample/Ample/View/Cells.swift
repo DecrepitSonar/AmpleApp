@@ -130,9 +130,7 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     
     
 }
-class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
-    
-    static var reuseIdentifier: String = "videoPosterHeader"
+class FeaturedVideoHeader: UIView {
     
     var player: AVPlayer!
     var playerLayer: AVPlayerLayer!
@@ -141,17 +139,21 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
     
     var gesture: CustomGestureRecognizer!
     var NVC: UINavigationController!
-    
+  
     func configure(with: VideoItemModel, navigationController: UINavigationController) {
-            
+        
+        
+        NotificationCenter.default.post(name: NSNotification.Name("SelectedVideo"), object: nil, userInfo: ["video" : with])
+        
+        backgroundColor = .red
         videoObject = with
         
         backgroundColor = .black
-        let videoURL = URL(string: with.videoURL)
-        playerItem = AVPlayerItem(url: videoURL!)
-        player.replaceCurrentItem(with: playerItem)
-        player.play()
-        player.volume = 0
+//        let videoURL = URL(string: with.videoURL)
+//        playerItem = AVPlayerItem(url: videoURL!)
+//        player.replaceCurrentItem(with: playerItem)
+//        player.play()
+//
 
         title.text = with.title
         artistName.text = with.artist
@@ -181,6 +183,9 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didSelectVideo(sender:)), name: NSNotification.Name("SelectedVideo"), object: nil)
+                                               
         addSubview(container)
         
         player = AVPlayer()
@@ -215,6 +220,23 @@ class FeaturedVideoHeader: UICollectionViewCell, VideoCell {
         
     required init?(coder: NSCoder) {
         fatalError("no storyboard")
+    }
+    
+    @objc func didSelectVideo(sender: Notification){
+        if let userInfo = sender.userInfo  {
+            let video = userInfo as NSDictionary
+            let selecedVideo = video.object(forKey: "video")! as! VideoItemModel
+            
+            let videoURL = URL(string: selecedVideo.videoURL)
+            playerItem = AVPlayerItem(url: videoURL!)
+            player.replaceCurrentItem(with: playerItem)
+            player.volume = 0
+            player.play()
+            
+            NotificationCenter.default.post(name: NSNotification.Name("updateSelection"), object: nil, userInfo: ["video" : selecedVideo.id])
+        }
+        
+     
     }
     @objc func toggleMute(sender: UIButton){
         print("mute btn pressed")
@@ -740,7 +762,7 @@ class SmallVideoPoster: UICollectionViewCell, VideoCell {
             posterImage.widthAnchor.constraint(equalToConstant: 200),
 //            posterImage.topAnchor.constraint(equalTo: topAnchor),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentStack.topAnchor.constraint(equalTo: posterImage.bottomAnchor, constant: 10)
             
         ])
@@ -778,6 +800,7 @@ class SmallVideoPoster: UICollectionViewCell, VideoCell {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
+        view.layer.cornerRadius = 5
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -964,7 +987,6 @@ class TrackCell: UITableViewCell{
     required init?(coder: NSCoder) {
         fatalError("")
     }
-    
     
     func configure(with item: Track) {
         
@@ -2613,7 +2635,10 @@ class TrackWithPlayCount: UITableViewCell {
         
         image.setUpImage(url: catalog.imageURL, interactable: true)
         title.text = catalog.title
+        title.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        
         artist.text = catalog.name
+        artist.widthAnchor.constraint(equalToConstant: 200).isActive = true
         listenCount.text = NumberFormatter.localizedString(from: NSNumber(value: catalog.playCount!), number: .decimal)
         
         let innterStackview = UIStackView(arrangedSubviews: [title, artist])
@@ -2648,12 +2673,12 @@ class TrackWithPlayCount: UITableViewCell {
             
             NSLayoutConstraint.activate([
                 
-                chartPosition.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+                chartPosition.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -20),
                 chartPosition.centerYAnchor.constraint(equalTo: centerYAnchor),
                 
                 image.heightAnchor.constraint(equalToConstant: 100),
                 image.widthAnchor.constraint(equalToConstant: 50),
-                image.leadingAnchor.constraint(equalTo: chartPosition.trailingAnchor, constant: -20),
+                image.leadingAnchor.constraint(equalTo: chartPosition.trailingAnchor, constant: 20),
                 image.centerYAnchor.constraint(equalTo: centerYAnchor),
                 
                 innterStackview.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
@@ -2983,7 +3008,7 @@ class ArtistFlowSectionContainer: UITableViewCell, UICollectionViewDelegate, UIC
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
         addSubview(collectionview)
@@ -3090,16 +3115,16 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
         vc =  navigationController
         
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         layout.itemSize = CGSize(width: 200, height: 150)
 
-        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionview = UICollectionView(frame: contentView.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
@@ -3107,6 +3132,7 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
         addSubview(collectionview)
         
         NSLayoutConstraint.activate([
+            contentView.heightAnchor.constraint(equalToConstant: 170),
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
             collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
