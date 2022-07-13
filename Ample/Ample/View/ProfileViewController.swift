@@ -15,25 +15,12 @@ class ProfileViewController: UIViewController {
     var tableview: UITableView!
     
     let loadingView = LoadingViewController()
-//    override func loadView(){
-//        super.loadView()
-//
-//        addChild(loadingView)
-//        loadingView.didMove(toParent: self)
-//        view.addSubview(loadingView.view)
-//
-//    }
-    override func viewWillAppear(_ animated: Bool) {
-//        navigationController?.navigationBar.backgroundColor = .clear
-//        navigationController?.navigationBar.shadowImage = UIImage()
-//        navigationController?.navigationBar.isTranslucent = true
-    }
-    override func viewWillDisappear(_ animated: Bool) {
 
-    }
+    override func viewWillAppear(_ animated: Bool) {}
+    override func viewWillDisappear(_ animated: Bool) {}
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .black
         
         let infoBtn = UIBarButtonItem(image: UIImage(systemName: "info.circle.fill"), style: .plain , target: nil, action: nil)
         infoBtn.tintColor = .gray
@@ -52,7 +39,6 @@ class ProfileViewController: UIViewController {
                 self.data = data!
                 
                 DispatchQueue.main.async {
-//                    self.loadingView.removeFromParent()
                     self.initTable()
                 }
                 
@@ -67,19 +53,21 @@ class ProfileViewController: UIViewController {
      
     func initTable(){
       
-        tableview = UITableView(frame: view.frame, style: .grouped)
+        tableview = UITableView()
+        tableview.frame = view.frame
         tableview.delegate = self
         tableview.dataSource = self
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableview.contentInsetAdjustmentBehavior = .never
-        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+
         tableview.separatorColor = UIColor.clear
         tableview.bounces = false
         tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
         tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
-        
+        tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableview.backgroundColor = .black
         initHeader()
         tableview.tableHeaderView = header
         
@@ -126,18 +114,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         header.label.text = data.items[section].tagline
         return header
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let type = data.items[indexPath.section].type
-        
-        switch (type) {
-        case "Tracks":
-            return 60
-        case "Videos":
-            return 150
-        default:
-            return 200
-        }
-    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let type = data.items[indexPath.section].type
@@ -161,7 +138,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableview.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
             cell.configureWithChart(with: track, index: nil, withChart: false)
-            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             cell.selectionStyle = .none
             return cell
             
@@ -187,7 +163,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
             cell.configure(data: videos, navigationController: self.navigationController!)
-            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             cell.selectionStyle = .none
         
             return cell

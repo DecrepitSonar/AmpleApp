@@ -130,8 +130,8 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     
     
 }
-class FeaturedVideoHeader: UIView {
-    
+class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
+   
     var player: AVPlayer!
     var playerLayer: AVPlayerLayer!
     var videoObject: VideoItemModel!
@@ -139,21 +139,13 @@ class FeaturedVideoHeader: UIView {
     
     var gesture: CustomGestureRecognizer!
     var NVC: UINavigationController!
-  
+    
     func configure(with: VideoItemModel, navigationController: UINavigationController) {
-        
-        
-        NotificationCenter.default.post(name: NSNotification.Name("SelectedVideo"), object: nil, userInfo: ["video" : with])
-        
-        backgroundColor = .red
-        videoObject = with
-        
-        backgroundColor = .black
-//        let videoURL = URL(string: with.videoURL)
-//        playerItem = AVPlayerItem(url: videoURL!)
-//        player.replaceCurrentItem(with: playerItem)
-//        player.play()
+        print( "video \(with) ")
+        setTrack(video: with)
 //
+        backgroundColor = .black
+        videoObject = with
 
         title.text = with.title
         artistName.text = with.artist
@@ -167,10 +159,23 @@ class FeaturedVideoHeader: UIView {
         container.addGestureRecognizer(gesture)
     }
     
+    func setTrack(video: VideoItemModel) {
+        
+        NotificationCenter.default.post(name: NSNotification.Name("videoSelected"), object: nil, userInfo: ["video" : video])
+        print("setting")
+        
+        let videoURL = URL(string: video.videoURL)
+        playerItem = AVPlayerItem(url: videoURL!)
+        player.replaceCurrentItem(with: playerItem)
+        player.volume = 0
+        player.play()
+        
+        title.text = video.title
+        artistName.text = video.artist
+        videoObject = video
+    }
     @objc func didTapVideo(sender: CustomGestureRecognizer){
         
-        
-//        print("pressed")
         let videoView = VideoViewController()
         videoView.selectedVideo = videoObject.id
         videoView.modalPresentationStyle = .overFullScreen
@@ -183,9 +188,6 @@ class FeaturedVideoHeader: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(didSelectVideo(sender:)), name: NSNotification.Name("SelectedVideo"), object: nil)
-                                               
         addSubview(container)
         
         player = AVPlayer()
@@ -222,22 +224,6 @@ class FeaturedVideoHeader: UIView {
         fatalError("no storyboard")
     }
     
-    @objc func didSelectVideo(sender: Notification){
-        if let userInfo = sender.userInfo  {
-            let video = userInfo as NSDictionary
-            let selecedVideo = video.object(forKey: "video")! as! VideoItemModel
-            
-            let videoURL = URL(string: selecedVideo.videoURL)
-            playerItem = AVPlayerItem(url: videoURL!)
-            player.replaceCurrentItem(with: playerItem)
-            player.volume = 0
-            player.play()
-            
-            NotificationCenter.default.post(name: NSNotification.Name("updateSelection"), object: nil, userInfo: ["video" : selecedVideo.id])
-        }
-        
-     
-    }
     @objc func toggleMute(sender: UIButton){
         print("mute btn pressed")
         if(player.volume < 1){
@@ -260,15 +246,14 @@ class FeaturedVideoHeader: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
     let muteBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "speaker.slash.circle.fill"), for: .normal)
+        btn.tintColor = .white
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.addTarget(self, action: #selector(toggleMute(sender:)), for: .touchUpInside)
         return btn
     }()
-    
     let title: UILabel = {
         let label = UILabel()
         label.setFont(with: 15)
@@ -277,7 +262,6 @@ class FeaturedVideoHeader: UIView {
         label.numberOfLines = 2
         return label
     }()
-    
     let artistName: UILabel = {
         let label = UILabel()
         label.setFont(with: 15)
@@ -360,6 +344,7 @@ class TrendingSection: UICollectionViewCell, Cell{
     
     override init(frame: CGRect){
         super.init(frame: frame)
+        
         
         image.contentMode = .scaleAspectFit
         image.clipsToBounds = true
@@ -2272,7 +2257,7 @@ class ProfileContentSection: UITableViewCell {
 class TableSectionHeader: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         addSubview(label)
         
         NSLayoutConstraint.activate([
@@ -2627,12 +2612,6 @@ class TrackWithPlayCount: UITableViewCell {
     
     func configureWithChart(with catalog: Track, index: Int?, withChart: Bool) {
         
-//        vc = rootVc!
-        
-//        track = Track(id: catalog.id, title: catalog.title!, artistId: catalog.artistId!, name: catalog.name!, imageURL: catalog.imageURL, albumId: catalog.albumId!, audioURL: catalog.audioURL)
-//
-//        tapGesture?.track = track
-        
         image.setUpImage(url: catalog.imageURL, interactable: true)
         title.text = catalog.title
         title.widthAnchor.constraint(equalToConstant: 200).isActive = true
@@ -2653,7 +2632,7 @@ class TrackWithPlayCount: UITableViewCell {
         case false:
             
             NSLayoutConstraint.activate([
-                
+                contentView.heightAnchor.constraint(equalToConstant: 55),
                 image.heightAnchor.constraint(equalToConstant: 100),
                 image.widthAnchor.constraint(equalToConstant: 50),
                 image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
@@ -3008,7 +2987,7 @@ class ArtistFlowSectionContainer: UITableViewCell, UICollectionViewDelegate, UIC
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
-//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionview.backgroundColor = .black
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
         addSubview(collectionview)
@@ -3060,7 +3039,7 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(AlbumCover.self, forCellWithReuseIdentifier: AlbumCover.reuseIdentifier)
-//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionview.backgroundColor = .black
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
     
@@ -3124,10 +3103,9 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
-//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
+        collectionview.backgroundColor = .black
         
         addSubview(collectionview)
         

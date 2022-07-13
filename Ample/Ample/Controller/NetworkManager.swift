@@ -307,14 +307,14 @@ class NetworkManager {
             DispatchQueue.main.async {
                 if error != nil {
                     completion(.failure(.ServerError))
-                    print(error)
+//                    print(error)
                 }
 
                 guard let httpresponse = response as? HTTPURLResponse else {
 //                    print(response)
                     return
                 }
-                print( httpresponse)
+//                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
                     completion(.failure(.ServerError))
                     print("mime err")

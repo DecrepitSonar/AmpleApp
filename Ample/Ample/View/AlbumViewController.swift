@@ -69,8 +69,8 @@ class AlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image:UIImage(named: "chevron.left"), style: .plain, target: self, action: nil)
+        view.backgroundColor = .black
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(image:UIImage(named: "chevron.left"), style: .plain, target: self, action: nil)
         
         NetworkManager.Get(url: "album?albumId=\(albumId)") { (data: Album?, error: NetworkError) in
             switch(error){
@@ -142,7 +142,7 @@ class AlbumViewController: UIViewController {
         tableView.separatorColor = .clear
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
         tableView.frame = view.bounds
-        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         self.tableView.tableHeaderView = header
         view.addSubview(tableView)

@@ -22,6 +22,9 @@ protocol AVPlaybackDelegate {
 protocol PlayerDelegate {
     func openPlayer()
 }
+protocol VideoHeaderPlaybackDelegate {
+    func setTrack(video: VideoItemModel)
+}
 protocol ProfileHeaderDelegate{
     func didTapFollowBtn()
 }

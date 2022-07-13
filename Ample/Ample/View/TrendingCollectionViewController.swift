@@ -28,7 +28,7 @@ class TrendingCollectionViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .black
         NetworkManager.Get(url: "trending") { (data: [Track]?, err: NetworkError) in
             switch( err ){
             case .success:
@@ -60,7 +60,7 @@ class TrendingCollectionViewController: UIViewController {
         tableView.dataSource = self
         tableView.frame = view.frame
         tableView.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
-//        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        tableView.backgroundColor = .black
         tableView.separatorColor = .clear
         view.addSubview(tableView)
     }

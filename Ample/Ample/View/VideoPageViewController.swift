@@ -17,6 +17,7 @@ class VideoPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .black
         navigationController?.hidesBarsOnSwipe = true
         title = "Videos"
         NetworkManager.Get(url: "videos?user=\("4f975b33-4c28-4af8-8fda-bc1a58e13e56")") { (data: [LibObject]?, error: NetworkError) in
@@ -41,23 +42,21 @@ class VideoPageViewController: UIViewController {
     func initCollectionView(){
         
         tableview = UITableView(frame: .zero, style: .grouped)
-//        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame
         tableview.separatorColor = .clear
-        
+        tableview.backgroundColor = .black
         tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier )
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
-        
         header = FeaturedVideoHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
         header.configure(with: section[0].videos![0], navigationController: self.navigationController!)
         tableview.tableHeaderView = header
         view.addSubview(tableview)
         
     }
-    
+
 }
 
 extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
@@ -73,7 +72,6 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if( section > 0 ){
             let header = TableviewSectionHeader()
-            
             header.tagline.text = self.section[section].tagline
             
             return header
@@ -88,6 +86,7 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
         switch( self.section[indexPath.section].type){
         case "featured":
             let cell = tableview.dequeueReusableCell(withIdentifier: LargeVideoHeaderCell.reuseIdentifier, for: indexPath) as! LargeVideoHeaderCell
+            cell.delegate = header.self
             cell.initialize(data: section[indexPath.section], navigationController: self.navigationController!)
             return cell
             
@@ -98,6 +97,7 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
+    
             cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
             return cell
         }
@@ -109,11 +109,12 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
 
 class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
+    
     static let reuseIdentifier: String  = "Featured Header Video"
 
     var data: LibObject!
     var nvc: UINavigationController!
-    
+    var delegate: VideoHeaderPlaybackDelegate!
     var collectionview: UICollectionView!
     
     let scrollContainer: UIScrollView = {
@@ -122,7 +123,6 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
         view.backgroundColor = .red
         return view
     }()
-    
     
     func initialize(data: LibObject, navigationController: UINavigationController){
 
@@ -133,10 +133,11 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 200, height: 100)
         
+        delegate.setTrack(video: data.videos![0])
+        
         collectionview = UICollectionView(frame: contentView.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
-//        collectionview.isPagingEnabled = true
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(MiniVideoCollection.self, forCellWithReuseIdentifier: MiniVideoCollection.reuseIdentifier)
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -158,7 +159,6 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: MiniVideoCollection.reuseIdentifier, for: indexPath) as! MiniVideoCollection
-    
         cell.configureView(data: data.videos![indexPath.row])
         return cell
     }
@@ -168,8 +168,9 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
         
         return data.videos!.count
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        NotificationCenter.default.post(name: NSNotification.Name("SelectedVideo"), object: nil, userInfo: ["video" : data.videos![indexPath.row]])
+        delegate.setTrack(video: data.videos![indexPath.row])
     }
    
     func collectionView(_ collectionView: UICollectionView,
@@ -180,17 +181,16 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
 }
 
-
 class MiniVideoCollection: UICollectionViewCell{
     
     static let reuseIdentifier: String = "MiniVidScroll"
-    var currentSelectedVideoId: String = ""
+    var currentSelectedVideoId: VideoItemModel!
     
     func configureView(data: VideoItemModel){
         
-        currentSelectedVideoId = data.id
+        NotificationCenter.default.addObserver(self, selector: #selector(didSelectVideo(sender:)), name: NSNotification.Name("videoSelected"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didSelectVideo(sender:)), name: NSNotification.Name("updateSelection"), object: nil)
+        currentSelectedVideoId = data
         
         addSubview(videoPoster)
         videoPoster.setUpImage(url: data.posterURL!, interactable: true)
@@ -217,19 +217,28 @@ class MiniVideoCollection: UICollectionViewCell{
         ])
     }
     
+    
     @objc func didSelectVideo(sender: Notification){
-        if let userInfo = sender.userInfo  {
-            let video = userInfo as NSDictionary
-            let selecedVideo = video.object(forKey: "video")! as! String
-
-            if(currentSelectedVideoId == selecedVideo ){
-                playStatusContainer.isHidden = false
-            }else{
-                playStatusContainer.isHidden = true
+        print("notification sent ")
+        if let userInfo = sender.userInfo {
+            let data = userInfo as NSDictionary
+            let selectedVideo = data.object(forKey: "video") as! VideoItemModel
+            
+            print( selectedVideo)
+            
+            if( selectedVideo.id == currentSelectedVideoId.id )  {
+                DispatchQueue.main.async {
+                    self.playStatusContainer.isHidden = false
+                }
+            }
+            else{
+                DispatchQueue.main.async {
+                    self.playStatusContainer.isHidden = true
+                }
             }
         }
         
-     
+        
     }
     
     let videoPoster: UIImageView = {

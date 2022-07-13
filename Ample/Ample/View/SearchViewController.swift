@@ -49,7 +49,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         navigationItem.searchController = searchController
         
         tableview = UITableView(frame: .zero, style: .grouped)
-        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame

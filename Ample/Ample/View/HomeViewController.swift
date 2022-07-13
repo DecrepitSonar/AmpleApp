@@ -21,10 +21,8 @@ class HomeViewController: UIViewController {
        
         
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
             case .success:
@@ -46,45 +44,33 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    func configureTableview(){
+    private func configureTableview(){
+        
         tableview = UITableView(frame: .zero, style: .grouped)
         tableview.delegate = self
         tableview.dataSource = self
-
         tableview.register(LargeSliderCollection.self, forCellReuseIdentifier: LargeSliderCollection.reuseIdentifier)
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         tableview.frame = view.frame
         tableview.separatorColor = .clear
+        tableview.backgroundColor = .black
         
         view.addSubview(tableview)
         
     }
-
 }
-
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if( section > 1 ){
+        if( section > 0 ){
             let header = TableviewSectionHeader()
-            
             header.tagline.text = self.data[section].tagline
-            
             return header
         }
         
-        return nil
-    }
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if( section == 0){
-            
-            let _view  = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-//            _view.backgroundColor = .red
-            return _view
-        }
         return nil
     }
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -109,12 +95,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }
     }
-    
-    
-}
-
-protocol customCellType {
-    func initCell(data: [LibItem]?)
 }
 
 class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -136,18 +116,12 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         layout.minimumInteritemSpacing = 0
         
         collectionview = UICollectionView(frame: contentView.frame, collectionViewLayout: layout)
-        
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.isPagingEnabled = true 
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-//        collectionview.register(FeaturedVideoHeader.self, forCellWithReuseIdentifier: FeaturedVideoHeader.reuseIdentifier)
-//        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//        collectionview.backgroundColor = .orange
-        
         collectionview.showsHorizontalScrollIndicator = false
         
         addSubview(collectionview)
@@ -155,7 +129,6 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         NSLayoutConstraint.activate([
             
             contentView.heightAnchor.constraint(equalToConstant: 200),
-//            contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
             
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
@@ -164,15 +137,10 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         ])
         
     }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print( scrollView.contentOffset)
-        
-    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.count
     }
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionview.dequeueReusableCell(withReuseIdentifier: FeaturedHeader.reuseIdentifier, for: indexPath) as! FeaturedHeader
         cell.configure(with: data[indexPath.row], rootVc: self.navigationController, indexPath: indexPath.row)
@@ -180,6 +148,7 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
     }
     
 }
+
 class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
    
     static let reuseIdentifier: String = "contentNav"
@@ -193,21 +162,21 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         layout.itemSize = CGSize(width: 200, height: 100)
         
         collectionView = UICollectionView(frame: contentView.frame, collectionViewLayout:  layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
-        
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .black
         addSubview(collectionView)
         
         NSLayoutConstraint.activate([
             
             contentView.heightAnchor.constraint(equalToConstant: 120),
-//            contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
             
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: topAnchor),
@@ -233,10 +202,9 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
 class CatagoryCollectionCell: UICollectionViewCell {
     
     static let reuseIdentifier: String = "catagoryCell"
-    var catagory: String = ""
+    private var catagory: String = ""
     var navigationController: UINavigationController!
-    
-    var tapRecognizer: UITapGestureRecognizer!
+    private var tapRecognizer: UITapGestureRecognizer!
     
     func configure(catagory: LibItem){
         
@@ -245,9 +213,10 @@ class CatagoryCollectionCell: UICollectionViewCell {
         addSubview(backgroundImage)
         backgroundImage.image = UIImage(named: catagory.imageURL!)
         backgroundImage.isUserInteractionEnabled = true
+        
         addSubview(sectionLabel)
         sectionLabel.text = catagory.title
-        backgroundColor = .orange
+        
         layer.cornerRadius = 5
         
         tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentCatagoryView))
