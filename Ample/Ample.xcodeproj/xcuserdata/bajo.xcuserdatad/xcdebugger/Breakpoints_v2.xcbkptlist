@@ -140,8 +140,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2621"
-            endingLineNumber = "2621"
+            startingLineNumber = "2771"
+            endingLineNumber = "2771"
             landmarkName = "configureWithChart(with:index:withChart:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -165,146 +165,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4615E059-3CD6-4B05-A892-D4563441EDEC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ample/View/Cells.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "12"
-            endingLineNumber = "12"
-            landmarkName = "FeaturedHeader"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1E7B2A90-B77A-435D-A42B-B055D7208E1E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ample/View/Cells.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "FeaturedHeader"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3F8F553C-8C32-4893-A991-54ED353FB758"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ample/View/Cells.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "15"
-            endingLineNumber = "15"
-            landmarkName = "FeaturedHeader"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - 57580f9fe6be6370"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.tapGesture.getter : Ample.CustomGestureRecognizer"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "94">
-               </Location>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - d371e081c317247c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.tapGesture.setter : Ample.CustomGestureRecognizer"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "132">
-               </Location>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - e23e79ce0763435c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.tapGesture.modify : Ample.CustomGestureRecognizer"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "27">
-               </Location>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - 9fb0775483231665"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.tapGesture.modify : Ample.CustomGestureRecognizer with unmangled suffix &quot;.resume.0&quot;"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "15">
-               </Location>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - 5a263b8fe5d3db1a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.init(frame: __C.CGRect) -&gt; Ample.FeaturedHeader"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "206">
-               </Location>
-               <Location
-                  uuid = "3F8F553C-8C32-4893-A991-54ED353FB758 - 73d2f9d43051b0fe"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ample.FeaturedHeader.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;Ample.FeaturedHeader&gt;"
-                  moduleName = "Ample"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/HDD%201TB/Ample/code/musicApp/Ample/Ample/View/Cells.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "138">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "D636BFF7-BA14-4FCC-8531-BCCE63297DAB"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -312,8 +172,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
+            startingLineNumber = "368"
+            endingLineNumber = "368"
             landmarkName = "title"
             landmarkType = "24">
          </BreakpointContent>
@@ -328,8 +188,8 @@
             filePath = "Ample/View/VideoPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "221"
-            endingLineNumber = "221"
+            startingLineNumber = "242"
+            endingLineNumber = "242"
             landmarkName = "didSelectVideo(sender:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -344,8 +204,8 @@
             filePath = "Ample/View/VideoPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "didSelectVideo(sender:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -353,16 +213,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "15D47EFC-394A-4EE2-916C-DAB19EFA1129"
+            uuid = "6DAFD2C0-FA28-4A11-A9C3-9E96AD72AF06"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "13"
-            endingLineNumber = "13"
-            landmarkName = "FeaturedHeader"
+            startingLineNumber = "397"
+            endingLineNumber = "397"
+            landmarkName = "ArtistSection"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>

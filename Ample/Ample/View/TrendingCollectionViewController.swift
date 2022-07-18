@@ -54,12 +54,11 @@ class TrendingCollectionViewController: UIViewController {
     }
     
     func setupView(){
-        
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.frame = view.frame
-        tableView.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
+        tableView.register(LargeTrackComoponent.self, forCellReuseIdentifier: LargeTrackComoponent.reuseIdentifier)
         tableView.backgroundColor = .black
         tableView.separatorColor = .clear
         view.addSubview(tableView)
@@ -70,17 +69,13 @@ class TrendingCollectionViewController: UIViewController {
 extension TrendingCollectionViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
+        let cell = tableView.dequeueReusableCell(withIdentifier: LargeTrackComoponent.reuseIdentifier, for: indexPath) as! LargeTrackComoponent
         let item = data[indexPath.row]
         
         cell.configureWithChart(with: item, index: indexPath.row, withChart: true)
         cell.backgroundColor = .clear
         return cell
         
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 65
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

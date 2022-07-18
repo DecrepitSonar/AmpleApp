@@ -30,8 +30,10 @@ class NetworkManager {
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
     
     static func Get<T: Decodable>(url: String, completion: @escaping (T?, NetworkError) -> ()){
+        
+        print(url)
         let url = URL(string: "\(baseURL)/\(url)")
-        print(url!)
+//        print(url!)
         URLSession.shared.dataTask(with: url!){ data, response, error in
             
             if error != nil {
@@ -314,7 +316,7 @@ class NetworkManager {
 //                    print(response)
                     return
                 }
-//                print( httpresponse)
+                print( httpresponse)
                 guard let mimeType = httpresponse.mimeType, mimeType == "image/jpeg" else {
                     completion(.failure(.ServerError))
                     print("mime err")

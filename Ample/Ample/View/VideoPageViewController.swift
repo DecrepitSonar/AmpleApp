@@ -12,7 +12,7 @@ class VideoPageViewController: UIViewController {
     var tableview: UITableView!
     var section: [LibObject]!
     let user = UserDefaults.standard.object(forKey: "user")
-    var header: FeaturedVideoHeader!
+    var header = FeaturedVideoHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,9 +50,8 @@ class VideoPageViewController: UIViewController {
         tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier )
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
-        header = FeaturedVideoHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
-        header.configure(with: section[0].videos![0], navigationController: self.navigationController!)
-        tableview.tableHeaderView = header
+        
+//        tableview.tableHeaderView = header
         view.addSubview(tableview)
         
     }
@@ -70,8 +69,17 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        if( section == 0){
+            header.configure(with: self.section[section].videos![section], navigationController: self.navigationController!)
+            return header
+        }
+        
+        let header = TableviewSectionHeader()
+        if( section == 1 ){
+            header.button.isHidden = true
+        }
         if( section > 0 ){
-            let header = TableviewSectionHeader()
             header.tagline.text = self.section[section].tagline
             
             return header
@@ -80,6 +88,12 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
         return nil
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if( section == 0 ){
+            return 210
+        }
+        return 20
+    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -97,7 +111,7 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
-    
+        
             cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
             return cell
         }
@@ -171,6 +185,13 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate.setTrack(video: data.videos![indexPath.row])
+        
+        if indexPath.row > 0 && indexPath.row < data.videos!.count - 1{
+            collectionview.setContentOffset(CGPoint(x: 210 * indexPath.row , y: 0), animated: true)
+        }
+        else if (indexPath.row == 0 ){
+            collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        }
     }
    
     func collectionView(_ collectionView: UICollectionView,
@@ -262,7 +283,8 @@ class MiniVideoCollection: UICollectionViewCell{
         let btn = UIButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.tintColor = .white
-        btn.setImage(UIImage(systemName: "speaker.wave.3"), for: .normal)
+        let image = UIImage.SymbolConfiguration(pointSize: 30)
+        btn.setImage(UIImage(systemName: "pause.fill", withConfiguration: image), for: .normal)
         btn.layer.zPosition = 5
         return btn
     }()

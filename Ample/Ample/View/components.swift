@@ -145,8 +145,8 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
             container.trailingAnchor.constraint(equalTo: trailingAnchor),
             container.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            img.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10),
-            img.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10),
+            img.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            img.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             img.centerYAnchor.constraint(equalTo: container.centerYAnchor),
             
             playBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
@@ -234,7 +234,7 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         view.image = UIImage(named: "6lack")
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         view.clipsToBounds = true
         
         return view
@@ -332,13 +332,13 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
                                         green: 227 / 255,
                                         blue: 77 / 255,
                                         alpha: 0.5)
-        
-        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255,
-                                              green: 22 / 255,
-                                              blue: 22 / 255,
-                                              alpha: 1)
-    
-        tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
+//
+//        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255,
+//                                              green: 22 / 255,
+//                                              blue: 22 / 255,
+//                                              alpha: 1)
+//
+//        tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
         self.viewControllers = [music, videos, library]
     

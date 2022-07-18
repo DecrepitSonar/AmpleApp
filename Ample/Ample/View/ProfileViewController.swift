@@ -53,7 +53,7 @@ class ProfileViewController: UIViewController {
      
     func initTable(){
       
-        tableview = UITableView()
+        tableview = UITableView(frame: .zero, style: .plain)
         tableview.frame = view.frame
         tableview.delegate = self
         tableview.dataSource = self
@@ -62,10 +62,8 @@ class ProfileViewController: UIViewController {
 
         tableview.separatorColor = UIColor.clear
         tableview.bounces = false
-        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
-        tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
-        tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
-        tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
+//        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 0)
+        tableview.register(ProfileContentView.self, forCellReuseIdentifier: ProfileContentView.reuseIdentifier)
         tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableview.backgroundColor = .black
         initHeader()
@@ -87,9 +85,6 @@ class ProfileViewController: UIViewController {
                                subscribers: data.subscribers
         )
         
-        let subscribers = NumberFormatter.localizedString(from: NSNumber(value: data.subscribers), number: NumberFormatter.Style.decimal)
-        
-        header.subscribersLabel.text = " \(data.type) • Subscribers: \(subscribers)"
         header.setupHeader(artist: artist)
         
     }
@@ -97,32 +92,87 @@ class ProfileViewController: UIViewController {
     @objc func didTapBackButton(_sender: UIBarButtonItem){
         navigationController?.popViewController(animated: true)
     }
+    
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let sectionHeaderView = ProfileOptionsView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 120))
+        sectionHeaderView.configure(artistId: artistId!)
+        
+        let subscribers = NumberFormatter.localizedString(from: NSNumber(value: data.subscribers), number: NumberFormatter.Style.decimal)
+              
+        sectionHeaderView.subscribersLabel.text = " \(data.type) • Subscribers: \(subscribers)"
+        
+        return sectionHeaderView
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableview.dequeueReusableCell(withIdentifier: ProfileContentView.reuseIdentifier) as! ProfileContentView
+        cell.initTableView(section: data.items, navigationController: self.navigationController!)
+        return cell
+    }
+    
+}
+
+class ProfileContentView: UITableViewCell {
+    
+    static let reuseIdentifier: String = "contentview"
+    var data: [LibObject]!
+    var tableview: UITableView!
+    var navigationController: UINavigationController!
+    
+    func initTableView(section: [LibObject], navigationController: UINavigationController){
+        
+        data = section
+        self.navigationController = navigationController
+        
+        tableview = UITableView(frame: contentView.frame, style: .grouped)
+        tableview.delegate = self
+        tableview.dataSource = self
+        tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
+        tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
+        tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
+        tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableview.frame = frame
+        
+        addSubview(tableview)
+   
+        NSLayoutConstraint.activate([
+            contentView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height)
+        ])
+    }
+
+}
+
+extension ProfileContentView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 1 {
-            return data.items[section].items!.count
+            return data[section].items!.count
         } else {return 1}
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return data.items.count
+        return data.count
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = TableSectionHeader()
-        header.label.text = data.items[section].tagline
+        header.label.text = data[section].tagline
         return header
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let type = data.items[indexPath.section].type
+        let type = data[indexPath.section].type
         
         switch (type) {
         case "Tracks":
             
-            let item = data.items[indexPath.section].items![indexPath.row]
+            let item = data[indexPath.section].items![indexPath.row]
             
             let track = Track(id: item.id,
                               type: item.type,
@@ -144,7 +194,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case "Videos":
         
             
-            let indexedItem = data.items[indexPath.section].items!
+            let indexedItem = data[indexPath.section].items!
             
             var videos: [VideoItemModel] = []
             
@@ -169,13 +219,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier, for: indexPath) as! AlbumFlowSection
-            cell.configure(data: data.items[indexPath.section].items!, navigationController: self.navigationController!)
+            cell.configure(data: data[indexPath.section].items!, navigationController: self.navigationController!)
             return cell
             
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = data.items[indexPath.section].items![indexPath.row]
+        let item = data[indexPath.section].items![indexPath.row]
         
         let track = Track(id: item.id,
                           type: item.type,

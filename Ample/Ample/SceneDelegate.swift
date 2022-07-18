@@ -27,13 +27,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.makeKeyAndVisible()
             return
         }
-        
-//        window?.rootViewController = UINavigationController(rootViewController: ProfileViewController())
-//        window?.makeKeyAndVisible()
-        
-//        window?.rootViewController = UINavigationController(rootViewController: VideoPageViewController()
                                                             
         window?.rootViewController = customTab()
+//        window?.rootViewController = TrendingCollectionViewController()
         window?.makeKeyAndVisible()
      
     }

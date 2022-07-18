@@ -59,14 +59,21 @@ class HomeViewController: UIViewController {
         view.addSubview(tableview)
         
     }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+    }
 }
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = TableviewSectionHeader()
+        if( section == 1 ){
+            header.button.isHidden = true
+        }
         if( section > 0 ){
-            let header = TableviewSectionHeader()
             header.tagline.text = self.data[section].tagline
             return header
         }
@@ -123,7 +130,6 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         collectionview.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
-        
         addSubview(collectionview)
         
         NSLayoutConstraint.activate([
@@ -172,6 +178,8 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .black
+        collectionView.showsHorizontalScrollIndicator = false
+        
         addSubview(collectionView)
         
         NSLayoutConstraint.activate([
