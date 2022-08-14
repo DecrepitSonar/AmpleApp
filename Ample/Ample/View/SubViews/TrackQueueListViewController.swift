@@ -11,7 +11,7 @@ import CoreAudio
 class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var effect = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
 
-    var queue: [Track]?
+    var queue = AudioManager.shared.audioQueue
     
     var tableview: UITableView!
     override func viewDidLoad() {
@@ -49,17 +49,14 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         DispatchQueue.main.async{
             self.tableview.reloadData()
         }
-        print("updating queue view")
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         switch section{
-        case 0:
-            return 1
         
-        case 1:
-            return audioQueue.count
+        case 0:
+            return AudioManager.shared.audioQueue.count
             
         default:
             return AudioManager.shared.previousTracks.count
@@ -71,14 +68,11 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section{
         case 0:
-            return "Now playing"
-            
-        case 1:
             return "Up Next"
             
         default:
@@ -86,20 +80,27 @@ class TrackQueueListViewController: UIViewController, UITableViewDelegate, UITab
         }
 
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        switch( indexPath.section ){
+        case 0:
+            AudioManager.shared.previousTracks.insert(AudioManager.shared.currentQueue!, at: 0)
+            AudioManager.shared.initPlayer(track: AudioManager.shared.audioQueue[indexPath.row], tracks: nil)
+        default:
+            AudioManager.shared.previousTracks.insert(AudioManager.shared.currentQueue!, at: 0)
+            AudioManager.shared.initPlayer(track: AudioManager.shared.previousTracks[indexPath.row], tracks: nil)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         switch indexPath.section{
             
-        case 0 :
+        case 0:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
-            cell!.configure(track: AudioManager.shared.getCurrentTrack())
-            return cell!
-            
-        case 1:
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: "track", for: indexPath) as? TrackStrip
-            cell!.configure(track: queue![indexPath.row])
+            cell!.configure(track: AudioManager.shared.audioQueue[indexPath.row])
             return cell!
             
         default:

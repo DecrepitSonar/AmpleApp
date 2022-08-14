@@ -76,7 +76,7 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         NavVc!.title = "Featured"
         NavVc!.pushViewController(view, animated: true)
         
-    }
+    } 
     
     let tagline: UILabel = {
         let label = UILabel()
@@ -130,61 +130,156 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     
     
 }
-class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
-   
-    private var player: AVPlayer!
+class FeaturedVideoHeader: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
+
+    var player: AVPlayer!
+    private var selectedVideo: Int = 0
     private var playerLayer: AVPlayerLayer!
     private var videoObject: VideoItemModel!
     private var playerItem: AVPlayerItem!
     private var asset: AVAsset!
     private var gesture: CustomGestureRecognizer!
-    var NVC: UINavigationController!
-    
+    private var NVC: UINavigationController!
+    private var data: [VideoItemModel]!
+    private var collectionview: UICollectionView!
+    private var isMuted: Bool = true
     private var playerItemContext = 0
+    private var timeObserverToken: Any?
     
     let requiredAssetKeys = [
         "playable",
         "hasProtectedContent"
     ]
     
-    func configure(with: VideoItemModel, navigationController: UINavigationController) {
-        print( "video \(with) ")
-        setTrack(video: with)
-//
-        backgroundColor = .black
-        videoObject = with
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addSubview(container)
+        player = AVPlayer()
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer.frame = CGRect(x: 0, y: 0, width: bounds.width, height: 200)
+        playerLayer.videoGravity = .resizeAspectFill
+        container.layer.addSublayer(playerLayer)
+    
+        let labelStack = UIStackView(arrangedSubviews: [artistName, title])
+        labelStack.axis = .vertical
+        labelStack.distribution = .fillProportionally
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
+              
+        videoOverlay.addSubview(labelStack)
+        videoOverlay.addSubview(muteBtn)
+        videoOverlay.addSubview(expandVideoButton)
+        videoOverlay.layer.zPosition = 3
+        
+        container.addSubview(videoOverlay)
+        progressView.progress = 0
+        progressView.layer.zPosition = 5
+        container.addSubview(progressView)
+        
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: 200),
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.topAnchor.constraint(equalTo: topAnchor),
+            
+            videoOverlay.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            videoOverlay.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            videoOverlay.topAnchor.constraint(equalTo: container.topAnchor),
+            videoOverlay.bottomAnchor.constraint(equalTo: container.bottomAnchor),
 
-        title.text = with.title
-        artistName.text = with.artist
+            labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            labelStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
+
+            muteBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            muteBtn.topAnchor.constraint(equalTo: container.topAnchor, constant: 20),
+            
+            expandVideoButton.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
+            expandVideoButton.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            
+            progressView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 5),
+            progressView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            progressView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            progressView.heightAnchor.constraint(equalToConstant: 1),
+        ])
+
         
-        NVC = navigationController
-        
-        gesture = CustomGestureRecognizer(target: self, action: #selector(didTapVideo(sender:)))
-        
-        gesture.video = with
-        
-        container.addGestureRecognizer(gesture)
-        
+        configureCollectionView()
         
     }
+    required init?(coder: NSCoder) {
+        fatalError("no storyboard")
+    }
     
+    func initialize(data: [VideoItemModel], navigationController: UINavigationController){
+//
+        self.data = data
+
+        title.text = data[selectedVideo].title
+        artistName.text = data[selectedVideo].artist
+
+        NVC = navigationController
+
+        gesture = CustomGestureRecognizer(target: self, action: #selector(toggleOverlay))
+
+        gesture.video = data[selectedVideo]
+        container.addGestureRecognizer(gesture)
+        
+        setTrack()
+    }
+    
+    override func layoutSubviews() {
+        
+        NotificationCenter.default.post(name: NSNotification.Name("videoSelected"), object: nil, userInfo: ["video" : data[self.selectedVideo]])
+        print("setting")
+        videoObject = data[selectedVideo]
+    }
+    
+    func configureCollectionView(){
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 200, height: 100)
+        
+        collectionview = UICollectionView(frame: bounds, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.translatesAutoresizingMaskIntoConstraints = false
+        collectionview.register(MiniVideoCollection.self, forCellWithReuseIdentifier: MiniVideoCollection.reuseIdentifier)
+        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionview.showsHorizontalScrollIndicator = false
+    
+        addSubview(collectionview)
+
+        NSLayoutConstraint.activate([
+            collectionview.heightAnchor.constraint(equalToConstant: 100),
+
+            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionview.topAnchor.constraint(equalTo: container.bottomAnchor, constant: 10),
+            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+        
+    }
+    func removePeriodicTimeObserver(){
+        if let token = timeObserverToken {
+            player.removeTimeObserver(token)
+            print( "removed time observer")
+            timeObserverToken = nil
+        }
+    }
     func addPeriodicTimeObserver(){
         
         let time = CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_MSEC))
         
-        player.addPeriodicTimeObserver(forInterval: time, queue: DispatchQueue.main) { time in
-//            print(  Float(self.player.currentTime().value / 60 ))
-//            print( CMTimeGetSeconds(self.player.currentTime()))
-//            self.progressView.setProgress(Float(time.value)/, animated: true)
+        timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: DispatchQueue.main) { time in
             
-//            print( time )
-//
-//            print("current value", Float(CMTimeGetSeconds(self.player.currentTime())))
-            self.progressView.setValue(Float(CMTimeGetSeconds(self.player.currentTime())), animated: true)
+            print(Float(CMTimeGetSeconds(self.player.currentTime())  / CMTimeGetSeconds(self.playerItem.duration )))
+            
+            self.progressView.setProgress(Float(CMTimeGetSeconds(self.player.currentTime())  / CMTimeGetSeconds(self.playerItem.duration )), animated: true)
+        
         }
         
     }
-    
     func addBoundaryTimeObserver(){
         let totalTrackTime = NSValue(time: CMTime(value: playerItem.duration.value, timescale: CMTimeScale(NSEC_PER_SEC)))
         let time = [totalTrackTime]
@@ -194,16 +289,16 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
         }
         
     }
-
-    func setTrack(video: VideoItemModel) {
+    func setTrack() {
         
-        NotificationCenter.default.post(name: NSNotification.Name("videoSelected"), object: nil, userInfo: ["video" : video])
+        removePeriodicTimeObserver()
+        
+        NotificationCenter.default.post(name: NSNotification.Name("videoSelected"), object: nil, userInfo: ["video" : data[self.selectedVideo]])
         print("setting")
         
-        videoImage.setUpImage(url: video.posterURL!, interactable: true)
+        progressView.setProgress(0.0, animated: true)
         
-        let videoURL = URL(string: video.videoURL)
-        videoObject = video
+        let videoURL = URL(string: data[selectedVideo].videoURL)
         
         playerItem = AVPlayerItem(url: videoURL!)
         
@@ -213,7 +308,6 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
                                context: &playerItemContext)
         
         player.replaceCurrentItem(with: playerItem)
-        
         
         
     }
@@ -244,22 +338,19 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
             switch status {
             case .readyToPlay:
                 print("Ready to play")
-                
-                configureVideoContainer()
-                player.volume = 0
-                
+                player.isMuted = isMuted
                 player.play()
                 
-                title.text = videoObject.title
-                artistName.text = videoObject.artist
-                
-                self.progressView.maximumValue = Float(CMTimeGetSeconds(self.playerItem.duration))
+                title.text = data[selectedVideo].title
+                artistName.text = data[selectedVideo].artist
                 
                 addPeriodicTimeObserver()
                 
             case .failed:
                 // Player item failed. See error.
                 print("Failed to play video ")
+                
+                print(player.error)
             case .unknown:
                 // Player item is not yet ready.
                 print("Player encountered an unknown error ")
@@ -267,47 +358,15 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
         }
     }
     
-    func configureVideoContainer(){
-        
-        playerLayer = AVPlayerLayer(player: player)
-        playerLayer.frame = bounds
-        playerLayer.videoGravity = .resizeAspectFill
-        
-        progressView.tintColor = videoImage.image!.averageColor
-        progressView.backgroundColor = .none
-        
-        videoImage.removeFromSuperview()
-        layer.addSublayer(playerLayer)
-        addSubview(container)
-        
-        let labelStack = UIStackView(arrangedSubviews: [artistName, title])
-        labelStack.axis = .vertical
-        labelStack.distribution = .fillProportionally
-        labelStack.translatesAutoresizingMaskIntoConstraints = false
-              
-        container.addSubview(labelStack)
-        container.addSubview(muteBtn)
-        container.layer.zPosition = 3
-        container.addSubview(progressView)
-        
-        NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            labelStack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            labelStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
-
-            muteBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
-            muteBtn.topAnchor.constraint(equalTo: container.topAnchor, constant: 20),
-            
-            progressView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -5),
-            progressView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            progressView.leadingAnchor.constraint(equalTo: container.leadingAnchor)
-        ])
+    @objc func toggleOverlay(){
+        if videoOverlay.isHidden {
+            videoOverlay.isHidden = false
+        }
+        else{
+            videoOverlay.isHidden = true
+        }
     }
-    @objc func didTapVideo(sender: CustomGestureRecognizer){
+    @objc func expandVideo(){
         
         let videoView = VideoViewController()
         videoView.selectedVideo = videoObject.id
@@ -317,31 +376,21 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
         player.rate = 0
         NVC.present( videoView, animated: true)
     }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        player = AVPlayer()
-        
-        addSubview(videoImage)
-        videoImage.frame = frame
-        
-    }
-        
-    required init?(coder: NSCoder) {
-        fatalError("no storyboard")
-    }
-    
     @objc func toggleMute(sender: UIButton){
         print("mute btn pressed")
-        if(player.volume < 1){
-            player.volume = 1
+        
+        
+        if(player.isMuted){
+            player.isMuted = false
+            isMuted = false
             DispatchQueue.main.async {
                 self.muteBtn.setImage(UIImage(systemName: "speaker.wave.2.circle.fill"), for: .normal)
                 self.muteBtn.setNeedsDisplay()
             }
         }else{
-            player.volume = 0
+            player.isMuted = true
+            isMuted = true
+            
             DispatchQueue.main.async {
                 self.muteBtn.setImage(UIImage(systemName: "speaker.slash.circle.fill"), for: .normal)
                 self.muteBtn.setNeedsDisplay()
@@ -350,6 +399,11 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
     }
     
     let container: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    let videoOverlay: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -376,20 +430,58 @@ class FeaturedVideoHeader: UIView, VideoHeaderPlaybackDelegate{
         label.textColor = .label
         return label
     }()
-    let progressView: UISlider = {
-        let view = UISlider()
-        view.setThumbImage(UIImage(), for: .normal)
-        view.isContinuous
+    let progressView: UIProgressView = {
+        let view = UIProgressView()
+        view.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    let videoImage: UIImageView = {
-        let image = UIImageView()
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.contentMode = .scaleAspectFill
-        return image
+    let expandVideoButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "viewfinder"), for: .normal)
+        btn.tintColor = .white
+        btn.addTarget(self, action: #selector(expandVideo), for: .touchUpInside)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
     }()
     
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: MiniVideoCollection.reuseIdentifier, for: indexPath) as! MiniVideoCollection
+        cell.configureView(data: data![indexPath.row])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        
+        return data!.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        videoObject = data[indexPath.row]
+        self.selectedVideo = indexPath.row
+        
+        setTrack()
+        
+        if indexPath.row > 0 && indexPath.row < data!.count - 1{
+            collectionview.setContentOffset(CGPoint(x: 210 * indexPath.row , y: 0), animated: true)
+        }
+        
+        else if (indexPath.row == 0 ){
+            collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        }
+        
+    }
+   
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
 }
 class ArtistSection: UICollectionViewCell,  Cell{
     
@@ -1505,6 +1597,10 @@ class DetailHeader: UICollectionViewCell{
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureSetTracks(data: [Track] ){
+        self.tracks = data
+    }
+    
     func savedBtnTapped(){
 
         
@@ -2460,10 +2556,11 @@ class AlbumCover: UICollectionViewCell {
         
         artist.textColor = .secondaryLabel
         artist.translatesAutoresizingMaskIntoConstraints = false
-        artist.setFont(with: 10)
+        artist.setFont(with: 12)
         
         title.textColor = .label
-        title.setBoldFont(with: 12)
+        title.setBoldFont(with: 15)
+        title.numberOfLines = 1
         title.translatesAutoresizingMaskIntoConstraints = false
         
         let stackview = UIStackView(arrangedSubviews: [title, artist])
@@ -2477,8 +2574,8 @@ class AlbumCover: UICollectionViewCell {
         addSubview(stackview)
         
         NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: 125),
-            image.widthAnchor.constraint(equalToConstant: 125),
+            image.heightAnchor.constraint(equalToConstant: 150),
+            image.widthAnchor.constraint(equalToConstant: 160),
             image.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -15),
             
             stackview.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
@@ -2528,6 +2625,111 @@ class AlbumCover: UICollectionViewCell {
         }
         
     }
+}
+class TrackCover: UICollectionViewCell {
+     
+    static let reuseIdentifier: String = "trackCover"
+    
+    var vc: UINavigationController!
+    var tapgesture: CustomGestureRecognizer!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        let stackview = UIStackView(arrangedSubviews: [title, artist])
+        stackview.translatesAutoresizingMaskIntoConstraints = false
+        stackview.axis = .vertical
+        stackview.distribution = .fill
+        stackview.alignment = .leading
+        stackview.spacing = 0
+        
+        addSubview(image)
+        addSubview(stackview)
+//        addSubview(playBtn)
+        
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: 110),
+            image.widthAnchor.constraint(equalToConstant: 120),
+            image.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -15),
+            
+//            playBtn.centerXAnchor.constraint(equalTo: image.centerXAnchor),
+//            playBtn.centerYAnchor.constraint(equalTo: image.centerYAnchor),
+            
+            stackview.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 10),
+            stackview.widthAnchor.constraint(equalToConstant: 125)
+        ])
+
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configure(item: LibItem, navigationController: UINavigationController){
+        image.setUpImage(url: item.imageURL!, interactable: true)
+        title.text = item.title
+        artist.text = item.name
+        
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        
+        
+        let track = Track(id: item.id,
+                          type: item.type!,
+                          trackNum: nil,
+                          title: item.title!,
+                          artistId: item.artistId!,
+                          name: item.name!,
+                          imageURL: item.imageURL!,
+                          albumId: item.albumId!,
+                          audioURL: item.audioURL,
+                          playCount: nil,
+                          videoId: item.videoURL)
+        
+        tapgesture.track = track
+        
+        image.addGestureRecognizer(tapgesture)
+        vc = navigationController
+    }
+    
+    @objc func didTap(_sender: CustomGestureRecognizer) {
+
+        AudioManager.shared.initPlayer(track: _sender.track, tracks: nil)
+        
+    }
+    
+    let image: UIImageView = {
+        let img = UIImageView()
+        img.clipsToBounds = true
+        img.layer.cornerRadius = 5
+        img.contentMode = .scaleAspectFill
+        img.translatesAutoresizingMaskIntoConstraints = false
+        return img
+    }()
+    
+    
+    let artist: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setFont(with: 10)
+        return label
+    }()
+    let title: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setBoldFont(with: 12)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let playBtn: UIButton = {
+        let btnConfig = UIImage.SymbolConfiguration(pointSize: 50)
+        let btn = UIButton()
+        btn.tintColor = .white
+        btn.setImage(UIImage(systemName: "play.circle", withConfiguration: btnConfig ), for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
 }
 
 class CollectionCell: UICollectionViewCell, Cell{
@@ -3278,7 +3480,7 @@ class ArtistFlowSectionContainer: UITableViewCell, UICollectionViewDelegate, UIC
 }
 class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    static var reuseIdentifier: String = "AlbumFlow"
+    static var reuseIdentifier: String = "Album"
     
     var data = [LibItem]()
     var vc: UINavigationController!
@@ -3293,7 +3495,7 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        layout.itemSize = CGSize(width: 130, height: 200)
+        layout.itemSize = CGSize(width: 165, height: 200)
         
         collectionview = UICollectionView(frame: contentView.bounds, collectionViewLayout: layout)
         collectionview.dataSource = self
@@ -3307,7 +3509,72 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
         addSubview(collectionview)
         
         NSLayoutConstraint.activate([
-            contentView.heightAnchor.constraint(equalToConstant:  180),
+            contentView.heightAnchor.constraint(equalToConstant:  200),
+            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionview.topAnchor.constraint(equalTo: topAnchor),
+            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+//        collectionview.backgroundColor = .red
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: AlbumCover.reuseIdentifier, for: indexPath) as! AlbumCover
+        cell.configure(item: data[indexPath.row], navigationController: vc)
+
+        return cell
+
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        
+        return data.count
+    }
+   
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20
+    }
+
+}
+class TrackFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    static var reuseIdentifier: String = "Track"
+    
+    var data = [LibItem]()
+    var vc: UINavigationController!
+    var type: String = ""
+    
+    var collectionview: UICollectionView! = nil
+
+    func configure(data: [LibItem], navigationController: UINavigationController){
+        
+        self.data = data
+        vc =  navigationController
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        layout.itemSize = CGSize(width: 120, height: 150)
+        
+        collectionview = UICollectionView(frame: contentView.bounds, collectionViewLayout: layout)
+        collectionview.dataSource = self
+        collectionview.delegate = self
+        collectionview.translatesAutoresizingMaskIntoConstraints = false
+        collectionview.register(TrackCover.self, forCellWithReuseIdentifier: TrackCover.reuseIdentifier)
+        collectionview.backgroundColor = .black
+        collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionview.showsHorizontalScrollIndicator = false
+    
+        addSubview(collectionview)
+        
+        NSLayoutConstraint.activate([
+            contentView.heightAnchor.constraint(equalToConstant:  170),
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
             collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -3320,10 +3587,11 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: AlbumCover.reuseIdentifier, for: indexPath) as! AlbumCover
+        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: TrackCover.reuseIdentifier, for: indexPath) as! TrackCover
         cell.configure(item: data[indexPath.row], navigationController: vc)
 
         return cell
+
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -3351,7 +3619,6 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
 
     func configure(data: [VideoItemModel], navigationController: UINavigationController){
         
-        
         self.data = data
         vc =  navigationController
         
@@ -3372,7 +3639,7 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
         addSubview(collectionview)
         
         NSLayoutConstraint.activate([
-            contentView.heightAnchor.constraint(equalToConstant: 170),
+            contentView.heightAnchor.constraint(equalToConstant: 190),
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
             collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),

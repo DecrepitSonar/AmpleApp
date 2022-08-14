@@ -126,7 +126,7 @@ class AlbumViewController: UIViewController {
             tracks.append(track)
         }
         
-        header.tracks
+        header.configureSetTracks(data: tracks)
 //        header.checkIfAlbumIsSaved()
 
         tableView = UITableView(frame: .zero, style: .grouped)

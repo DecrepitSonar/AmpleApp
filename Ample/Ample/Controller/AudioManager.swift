@@ -24,6 +24,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
     
     static let shared = AudioManager()
    
+    var audioQueue = [Track]()
     var previousTracks = [Track]()
     var currentQueue: Track?
     var player: AVAudioPlayer!
@@ -47,16 +48,19 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
     // initialize player with track queue or track
     func initPlayer( track: Track?, tracks: [Track]?){
         
-        
-        
         print( tracks )
         print("init player")
+        
         guard tracks != nil else {
             print(audioQueue.count )
             
             currentQueue = track
             
             print("current track: ", currentQueue)
+            
+            if audioQueue.isEmpty {
+                getTrackForQueue()
+            }
             
             playerController(option: .play)
 
@@ -65,7 +69,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
 
         audioQueue = []
         audioQueue = tracks!
-//        currentQueue = audioQueue.removeFirst()
+        currentQueue = audioQueue.removeFirst()
         print("current Track: ", currentQueue)
         
         playerController(option: .play)
@@ -85,17 +89,15 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                     self.player = try AVAudioPlayer(data: data)
                     self.player.delegate = self
                     
-                    self.previousTracks.insert(self.currentQueue!, at: 0)
-                    
                     print("playing retrieved track")
                     self.player.prepareToPlay()
                     self.player.play()
                     
-                    if audioQueue.isEmpty{
+//                    if self.audioQueue.isEmpty{
                         self.currentQueue = track
-                    }else{
-                        self.currentQueue = audioQueue.removeFirst()
-                    }
+//                    }else{
+//                        self.currentQueue = self.audioQueue.removeFirst()
+//                    }
     
                     NotificationCenter.default.post(name: Notification.Name("update"), object: nil, userInfo: nil)
                     NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
@@ -114,6 +116,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                 print( err)
             }
         }
+    
         
         // Check if track is saved by user
 //        let user = UserDefaults.standard.object(forKey: "userdata")
@@ -131,6 +134,21 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
 //        }
         
     }
+    func getTrackForQueue() {
+        NetworkManager.Get(url: "track?isRandom=true") { ( track: Track?, error: NetworkError) in
+            switch( error){
+            case .success:
+                self.audioQueue.append(track!)
+                
+            case .notfound:
+                print("url not found")
+                
+            case .servererr:
+                print( "internal server error")
+            }
+        }
+    }
+    
     func playerController(option: PlayerControls){
         
         switch(option){
@@ -142,8 +160,12 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
                 return
             }
             
+            guard audioQueue.isEmpty else {
+                getTrackForQueue()
+                return
+            }
+            
             print(audioQueue)
-//            getTrack(track: audioQueue.first!)
             
         case .pause:
             print("Track paused")
@@ -156,31 +178,29 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
             
         case .next:
-            
-            
 
-            if audioQueue.isEmpty {
+            guard !audioQueue.isEmpty else {
+                return
+            }
+             
+            if( currentQueue != nil){
+                self.previousTracks.insert(self.currentQueue!, at: 0)
                 
-                print("retrieving track for queue")
-                NetworkManager.Get(url: "track?isRandom=true") { ( data: Track?, error: NetworkError) in
-                    switch( error){
-                    case .success:
-
-                        self.getTrack(track: data!)
-                    
-                    case .notfound:
-                        print("url not found")
-                        
-                    case .servererr:
-                        print( "internal server error")
-                    }
+                currentQueue = audioQueue.removeFirst()
+                
+                if( audioQueue.isEmpty) {
+                    getTrackForQueue()
                 }
+                
             }
-            else{
-                getTrack(track: currentQueue!)
-            }
+            
+            getTrack(track: currentQueue!)
            
         case .previous:
+            
+            guard currentQueue != nil else {
+                return
+            }
             
             if player.currentTime > 0 {
                 player.currentTime = 0.0
@@ -201,6 +221,7 @@ class AudioManager: NSObject, AVAudioPlayerDelegate {
         return audioQueue
     }
     func getCurrentTrack() -> Track{
+        
         guard currentQueue != nil else{
             print( "queue is empty")
             return Track(id: "", title: "Title", artistId: "", name: "Artist", imageURL: "", albumId: "", audioURL: "")

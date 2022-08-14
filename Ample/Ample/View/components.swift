@@ -112,20 +112,34 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
     var timer = Timer()
     var delegate: PlayerDelegate?
     
+    let blurrEffect = UIBlurEffect(style: .dark)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(togglePlayBtn), name: NSNotification.Name("isPlaying"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateMiniPlayer), name: NSNotification.Name("update"), object: nil)
+        let visualEffect = UIVisualEffectView(effect: blurrEffect)
+        visualEffect.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(visualEffect)
+        
+//        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(togglePlayBtn),
+                                               name: NSNotification.Name("isPlaying"),
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateMiniPlayer),
+                                               name: NSNotification.Name("update"),
+                                               object: nil)
         
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openPlayer)))
-        layer.cornerRadius = 5
+//        layer.cornerRadius = 5
         translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)
         
-        container.addSubview(img)
-        
-        trackLabel.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        addSubview(img)
         
         let trackInfoStack = UIStackView(arrangedSubviews: [trackLabel, artistLabel])
         trackInfoStack.axis = .vertical
@@ -134,29 +148,32 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         addSubview(trackInfoStack)
         
         addSubview(playBtn)
+        addSubview(progressView)
 
         NSLayoutConstraint.activate([
             
-            widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 20),
-            heightAnchor.constraint(equalToConstant: 50),
+            widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            heightAnchor.constraint(equalToConstant: 70),
             
-            container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
+            visualEffect.leadingAnchor.constraint(equalTo: leadingAnchor),
+            visualEffect.topAnchor.constraint(equalTo: topAnchor),
+            visualEffect.trailingAnchor.constraint(equalTo: trailingAnchor),
+            visualEffect.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            img.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            img.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            img.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            trackLabel.widthAnchor.constraint(equalToConstant: 120),
             
-            playBtn.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
-            playBtn.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            img.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            img.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            img.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            playBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            playBtn.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             trackInfoStack.leadingAnchor.constraint(equalTo: img.trailingAnchor, constant: 20),
             trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
         
-        self.isHidden = true
+//        self.isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -176,6 +193,8 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
                     self.artistLabel.text = self.audioManager.currentQueue!.name
                     self.trackLabel.text = self.audioManager.currentQueue!.title
                     self.backgroundColor = self.img.image?.averageColor
+                    
+                    self.superview
                 }
                 
             case .failure(let err):
@@ -223,26 +242,31 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
         let view = UIView()
         view.backgroundColor =  UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
-        view.layer.cornerRadius = 5
+//        view.layer.borderWidth = 1
+//        view.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.1).cgColor
+//        view.layer.cornerRadius = 5
+        return view
+    }()
+    let progressView: UIProgressView = {
+        let view = UIProgressView()
         return view
     }()
     let img: UIImageView = {
         
         let view = UIImageView()
-        view.image = UIImage(named: "6lack")
+        view.image = UIImage(named: "default track artwork")
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 30).isActive = true
         view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         view.clipsToBounds = true
+        view.layer.cornerRadius = 5
         
         return view
         
     }()
     let artistLabel: UILabel = {
         let label = UILabel()
-        label.text = "6lack"
+        label.text = ""
         label.textColor = .secondaryLabel
         label.setFont(with: 10)
         return label
@@ -250,7 +274,7 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
     }()
     let trackLabel: UILabel = {
         let label = UILabel()
-        label.text = "Nonchallant"
+        label.text = "No Track selected"
         label.textColor = .label
         label.setFont(with: 12)
         return label
@@ -280,11 +304,13 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
     }()
     
 }
-class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
-    
-    let animate = CABasicAnimation()
+class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
 
+    
     let miniPlayer = MiniPlayer()
+    
+    var miniPlayerHeight: CGFloat = 70
+    var miniPlayerBottomConstraint: NSLayoutConstraint?
     
     override func viewDidLoad() {
         
@@ -294,12 +320,18 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
         modalPresentationStyle = .fullScreen
         
         view.addSubview(miniPlayer)
-        
-        miniPlayer.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -10).isActive = true
-        miniPlayer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
+    
+        miniPlayer.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -70).isActive = true
     }
     
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+     
     func openPlayer() {
         
         let player = UINavigationController(rootViewController: PlayerViewController())
@@ -308,6 +340,10 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate{
         print("presenting player")
         player.modalPresentationStyle = .overFullScreen
         self.selectedViewController?.present(player, animated: true)
+        
+        let openingAnimation = UIViewPropertyAnimator(duration: 0.7, curve: .easeOut) {
+            
+        }
     
     }
     

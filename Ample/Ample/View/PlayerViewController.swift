@@ -24,9 +24,76 @@ class PlayerViewController: UIViewController {
     let pauseBtnImg = UIImage(systemName: "pause.circle.fill")!
         .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 50))
     
-    override open var shouldAutorotate: Bool {
-          return false
-      }
+    // Cover Art
+    var coverArtHeight: CGFloat = 340
+    var coverArtWidth: CGFloat = 340
+    var coverArtYAnchor: CGFloat = -150
+    var coverArtXAnchor: CGFloat = 0
+    
+    var coverArtHeightConstraint: NSLayoutConstraint?
+    var coverArtWidthConstraint: NSLayoutConstraint?
+    var coverArtYAxisContraint: NSLayoutConstraint?
+    var coverArtXAxistConstraint: NSLayoutConstraint?
+    
+    // Track Label
+    var buttonStack: UIStackView!
+    var labelStackLeadingAnchor: CGFloat = 20
+    var labelStackWidth: CGFloat = 250
+    var labelStackHeight: CGFloat = 100
+    var labelStackYAxisAnchor: CGFloat = 100
+    var labelStackXAxisAnchor: CGFloat = 0
+    
+    var labelStackYAxisConstraint: NSLayoutConstraint?
+    var labelStackXAxisConstraint: NSLayoutConstraint?
+    var labelStackWidthConstraint: NSLayoutConstraint?
+    var labelStackHeightConstraint: NSLayoutConstraint?
+    
+    // Control Buttons
+    var labelStack: UIStackView!
+    var buttonStackLeadingAnchor: CGFloat = 20
+    var buttonStackWidth: CGFloat = 250
+    var buttonStackHeight: CGFloat = 100
+    var buttonTopAnchor: CGFloat = 50
+    var buttonXAxisAnchor: CGFloat = 0
+    
+    var buttonTopConstraint: NSLayoutConstraint?
+    var buttonXAxisConstraint: NSLayoutConstraint?
+    var buttonStackWidthConstraint: NSLayoutConstraint?
+    var buttonStackHeightConstraint: NSLayoutConstraint?
+    
+    // Slider
+    var sliderStack: UIStackView!
+    var sliderStackTopAnchor: CGFloat = 50
+    var sliderStackWidth: CGFloat = 250
+    var sliderStackHeight: CGFloat = 100
+    var sliderStackXAxisAnchor: CGFloat = 0
+    
+    var sliderStackTopConstraint: NSLayoutConstraint?
+    var sliderStackXAxisConstraint: NSLayoutConstraint?
+    var sliderStackWidthConstraint: NSLayoutConstraint?
+    var sliderStackHeightConstraint: NSLayoutConstraint?
+    
+    // Queue container
+    let queueView = TrackQueueListViewController()
+    
+    var queueHeightAnchor: CGFloat = 0
+    var queueHeightConstraint: NSLayoutConstraint?
+    var queueIsOpen: Bool = false
+    
+
+//    let track = Track(id: "49f25741ff0db65a7c4290aa73f34b4d4a3644c6",
+//                      type: nil,
+//                      trackNum: nil,
+//                      title: "Solo",
+//                      artistId: "6c1d77a1851c78aa2894f8b7be3f7af4",
+//                      name: "Frank Ocean",
+//                      imageURL: "457391c9c82bfdcbb4947278c0401e41",
+//                      albumId: "457391c9c82bfdcbb4947278c0401e41",
+//                      audioURL: "49f25741ff0db65a7c4290aa73f34b4d4a3644c6",
+//                      playCount: 2312,
+//                      videoId: nil)
+    
+    override open var shouldAutorotate: Bool { return false }
     
     override func loadView() {
         super.loadView()
@@ -42,8 +109,6 @@ class PlayerViewController: UIViewController {
         formatter.unitsStyle = .positional
         formatter.allowedUnits = [ .minute, .second ]
         formatter.zeroFormattingBehavior = [ .dropTrailing ]
-        
-        title = audioManager.currentQueue!.title
         
         let closeBtn = UIBarButtonItem(image: UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 15)), style: .plain, target: self, action: #selector(closePlayer))
         closeBtn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
@@ -85,95 +150,217 @@ class PlayerViewController: UIViewController {
                                       repeats: true)
         
         view.addSubview(image)
+        image.layer.zPosition = 5
         
-        if audioManager.currentQueue?.videoId == nil{
-            videoAvailabilityBtn.setImage(UIImage(systemName: "display.trianglebadge.exclamationmark"), for: .normal)
-        }
+        trackTitle.text = "Track Title"
+        artist.text = "Artist"
         
-        let optionStack = UIStackView(arrangedSubviews: [queue, videoAvailabilityBtn])
-        optionStack.axis = .horizontal
-        optionStack.alignment = .leading
-        optionStack.spacing = 20
-        optionStack.distribution = .equalSpacing
-        
-        let labelStack = UIStackView(arrangedSubviews: [trackTitle, artist])
+        labelStack = UIStackView(arrangedSubviews: [trackTitle, artist])
         labelStack.axis = .vertical
         labelStack.distribution = .equalCentering
         labelStack.spacing = 5
+        labelStack.alignment = .center
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
         
-        let labelContainerStack = UIStackView(arrangedSubviews: [labelStack, likeBtn])
-        labelContainerStack.distribution = .equalSpacing
-        labelContainerStack.axis = .horizontal
-        
-        
-        let buttonStack = UIStackView(arrangedSubviews: [shuffleBtn, prevBtn, playBtn, forwardBtn, repeatBtn])
+        buttonStack = UIStackView(arrangedSubviews: [prevBtn, playBtn, forwardBtn])
         buttonStack.axis = .horizontal
-        buttonStack.distribution = .fillProportionally
+        buttonStack.distribution = .equalSpacing
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(labelStack)
+        view.addSubview(buttonStack)
         
         let timerStack = UIStackView(arrangedSubviews: [ totalTimeLapsed, totalTrackTime ])
         timerStack.axis = .horizontal
         timerStack.spacing = 5
         timerStack.distribution = .equalSpacing
-        
-        let sliderStack = UIStackView(arrangedSubviews: [slider, timerStack ])
+
+        sliderStack = UIStackView(arrangedSubviews: [slider, timerStack ])
         sliderStack.axis = .vertical
-        sliderStack.spacing = 5
+        sliderStack.spacing = 8
         sliderStack.distribution = .equalSpacing
-        
-        let stackControls = UIStackView(arrangedSubviews: [labelContainerStack, sliderStack, buttonStack, optionStack ])
-        stackControls.axis = .vertical
-        stackControls.spacing = 25
-        stackControls.distribution = .equalSpacing
-        stackControls.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(stackControls)
+        sliderStack.translatesAutoresizingMaskIntoConstraints = false
 
+        view.addSubview(sliderStack)
+        view.addSubview(likeBtn)
+        view.addSubview(queue)
+        view.addSubview(QueueContainer)
+        
+        addChild(queueView)
+        
+        QueueContainer.addSubview( queueView.view)
+        queueView.view.frame = QueueContainer.bounds
+        
         NSLayoutConstraint.activate([
+            
 
-            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            image.heightAnchor.constraint(equalToConstant: 340),
-            image.widthAnchor.constraint(equalToConstant: 340),
+            buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-//            trackTitle.widthAnchor.constraint(equalToConstant: 340),
+            likeBtn.trailingAnchor.constraint(equalTo: sliderStack.trailingAnchor),
+            likeBtn.topAnchor.constraint(equalTo: sliderStack.bottomAnchor, constant: 20),
             
-            slider.widthAnchor.constraint(equalToConstant:  340),
-            slider.heightAnchor.constraint(equalToConstant: 10),
+            queue.leadingAnchor.constraint(equalTo: sliderStack.leadingAnchor),
+            queue.topAnchor.constraint(equalTo: sliderStack.bottomAnchor, constant: 20),
             
-            stackControls.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stackControls.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            
-            image.bottomAnchor.constraint(equalTo: stackControls.topAnchor, constant: -75),
-            
+            QueueContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60)
         ])
         
+        
+        setupConstraints()
+        
+    }
+    
+    func setupConstraints() {
+        
+        // Cover Art
+        coverArtHeightConstraint = image.heightAnchor.constraint(equalToConstant: coverArtHeight)
+        coverArtHeightConstraint?.isActive = true
+        
+        coverArtYAxisContraint = image.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: coverArtYAnchor)
+        coverArtYAxisContraint?.isActive = true
+        
+        coverArtXAxistConstraint = image.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        coverArtXAxistConstraint?.isActive = true
+        
+        coverArtWidthConstraint = image.widthAnchor.constraint(equalToConstant: coverArtWidth)
+        coverArtWidthConstraint?.isActive = true
+        
+        // Track Label
+        labelStackYAxisConstraint = labelStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: labelStackYAxisAnchor)
+        labelStackYAxisConstraint?.isActive = true
+        
+        labelStackXAxisConstraint = labelStack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        labelStackXAxisConstraint?.isActive = true
+        
+        labelStackWidthConstraint = labelStack.widthAnchor.constraint(equalToConstant: labelStackWidth)
+        labelStackWidthConstraint?.isActive = true
+        
+        // Button Controls
+        buttonTopConstraint = buttonStack.topAnchor.constraint(equalTo: labelStack.bottomAnchor, constant: buttonTopAnchor)
+        buttonTopConstraint?.isActive = true
+
+        buttonXAxisConstraint = buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        buttonXAxisConstraint?.isActive = true
+
+        buttonStackWidthConstraint = buttonStack.widthAnchor.constraint(equalToConstant: buttonStackWidth)
+        buttonStackWidthConstraint?.isActive = true
+        
+        // Progress bar
+        sliderStackTopConstraint = sliderStack.topAnchor.constraint(equalTo: buttonStack.bottomAnchor, constant: sliderStackTopAnchor)
+        sliderStackTopConstraint?.isActive = true
+        
+        sliderStackXAxisConstraint = sliderStack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        sliderStackXAxisConstraint?.isActive = true
+        
+        sliderStackWidthConstraint = sliderStack.widthAnchor.constraint(equalToConstant: 340)
+        sliderStackWidthConstraint?.isActive = true
+        
+        // Queue
+        queueHeightConstraint = QueueContainer.heightAnchor.constraint(equalToConstant: queueHeightAnchor)
+        queueHeightConstraint?.isActive = true
+        QueueContainer.widthAnchor.constraint(equalToConstant: view.bounds.width).isActive = true
+        
+        
+    }
+    
+    func animateQueueOpen(){
+        
+        let animation = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
+            self.coverArtHeightConstraint?.constant = 100
+            self.coverArtWidthConstraint?.constant = 100
+            self.coverArtYAxisContraint?.constant = -250
+            self.coverArtXAxistConstraint?.constant = -120
+
+            self.labelStackYAxisConstraint?.constant = -250
+            self.labelStackXAxisConstraint?.constant = 80
+            self.buttonTopConstraint?.constant = 90
+            self.buttonStackWidthConstraint?.constant = 200
+            self.labelStack.alignment = .leading
+            
+            self.sliderStackTopConstraint?.constant = -90
+            self.view.layoutIfNeeded()
+        }
+        
+        animation.startAnimation()
+        
+        let animateQueueContainer = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
+            self.queueHeightConstraint?.constant = 425
+            self.view.layoutIfNeeded()
+        }
+        
+        animateQueueContainer.startAnimation()
+        
+        
+        let  animateButtons = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
+            
+        }
+        animateButtons.startAnimation()
+    }
+    
+    func animateQueueClose(){
+        
+        let animation = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
+            self.coverArtHeightConstraint?.constant = 340
+            self.coverArtWidthConstraint?.constant = 340
+            self.coverArtYAxisContraint?.constant = -150
+            self.coverArtXAxistConstraint?.constant = 0
+
+            self.labelStackYAxisConstraint?.constant = 100
+            self.labelStackXAxisConstraint?.constant = 0
+            self.labelStack.alignment = .center
+    
+            self.buttonTopConstraint?.constant = 50
+            self.buttonStackWidthConstraint?.constant = 250
+            
+            self.sliderStackTopConstraint?.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
+        animation.startAnimation()
+        
+        let animateQueueContainer = UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
+            self.queueHeightConstraint?.constant = 0
+            self.view.layoutIfNeeded()
+        }
+        
+        animateQueueContainer.startAnimation()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
     }
     override func viewWillLayoutSubviews() {
         
         var attributes = [NSAttributedString.Key.font: UIFont(name: "Helvetica", size: 15)!]
         navigationController?.navigationBar.titleTextAttributes = attributes
-        title = audioManager.currentQueue!.title
+        
+        if(audioManager.currentQueue != nil){
+            
+            image.setUpImage(url: audioManager.currentQueue!.imageURL, interactable: false)
+            
+            artist.text = audioManager.currentQueue!.name
+            
+            trackTitle.text = audioManager.currentQueue!.title
+            
+            guard audioManager.player != nil else {
+                return
+            }
+        //        slider.setThumbImage(sliderThumbImage, for: .normal)
+            slider.maximumValue = Float(audioManager.player.duration)
+            slider.value = Float(audioManager.player.currentTime)
+            
+            totalTrackTime.text = formatter.string(from: audioManager.player.currentTime - audioManager.player.duration)
+            totalTimeLapsed.text = formatter.string(from: audioManager.player.currentTime)
+            
+            
+            if( audioManager.player != nil){
+                audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
+            }
+            view.backgroundColor = image.image?.averageColor
+        }
         
         effect.frame = view.bounds
-        
-        image.setUpImage(url:  audioManager.currentQueue!.imageURL, interactable: false)
-        
-        artist.text = audioManager.currentQueue!.name
-        
-        trackTitle.text = audioManager.currentQueue!.title
-        
-//        slider.setThumbImage(sliderThumbImage, for: .normal)
-        slider.maximumValue = Float(audioManager.player.duration)
-        slider.value = Float(audioManager.player.currentTime)
-        
-        totalTrackTime.text = formatter.string(from: audioManager.player.currentTime - audioManager.player.duration)
-        totalTimeLapsed.text = formatter.string(from: audioManager.player.currentTime)
-        
-        
-        if( audioManager.player != nil){
-            audioManager.player.isPlaying ? playBtn.setImage(pauseBtnImg, for: .normal) : playBtn.setImage(playbtnImg, for: .normal)
-        }
-        view.backgroundColor = image.image?.averageColor
 
     }
     
@@ -203,6 +390,10 @@ class PlayerViewController: UIViewController {
         }
     }
     @objc func togglePlayState(){
+    
+        guard audioManager.player != nil else {
+            return
+        }
         
         if(audioManager.player.isPlaying && audioManager.player != nil){
             audioManager.playerController(option: .pause)
@@ -240,23 +431,50 @@ class PlayerViewController: UIViewController {
         }
     }
     @objc func updateTrackTiming(){
-        
-        DispatchQueue.main.async {
-            
-            self.totalTimeLapsed.text = self.formatter.string(from: self.audioManager.player.currentTime )
-            
-            self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.currentTime - self.audioManager.player.duration)
+        guard self.audioManager.player != nil else {
+            return
+        }
+        if( audioManager.currentQueue != nil){
+            DispatchQueue.main.async {
+
+                self.totalTimeLapsed.text = self.formatter.string(from: self.audioManager.player.currentTime )
+                self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.currentTime - self.audioManager.player.duration)
+            }
         }
         
     }
-    @objc func openQueue(){
+    @objc func toggleQueue(){
         
-        let view = TrackQueueListViewController()
-        view.queue = audioManager.getAudioQueue()
+        var queueImag: UIImage!
+        var playBtnImage: UIImage!
         
-        print("queue")
-        present(view, animated: true)
-                
+//        let view = TrackQueueListViewController()
+//        view.queue = audioManager.getAudioQueue()
+//
+//        print("queue")
+//        present(view, animated: true)
+        
+        if( queueIsOpen){
+            animateQueueClose()
+            queueImag = UIImage(systemName: "list.number", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+            queueIsOpen = false
+            
+            playBtnImage = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 40))
+                               
+        }else{
+            animateQueueOpen()
+            queueImag = UIImage(systemName: "xmark", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 20))
+            queueIsOpen = true
+            
+            playBtnImage = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration.init(pointSize: 15))
+        }
+        
+        DispatchQueue.main.async {
+            self.queue.setImage(queueImag, for: .normal)
+            self.playBtn.setImage(playBtnImage, for: .normal)
+            
+            self.queue.layoutIfNeeded()
+        }
     }
     @objc func openOptionView(){
         let vc =  OptionsViewController()
@@ -282,16 +500,21 @@ class PlayerViewController: UIViewController {
         img.translatesAutoresizingMaskIntoConstraints = false
         img.layer.cornerRadius = 5
         img.clipsToBounds = true
+        img.layer.masksToBounds = true
+        img.image = UIImage(named: "default track artwork")
         return img
     }()
     let totalTrackTime: UILabel = {
         let label = UILabel()
-        label.setFont(with: 12)
+        label.setFont(with: 15)
+        label.text = "0:00"
+        
         return label
     }()
     let totalTimeLapsed: UILabel = {
         let label = UILabel()
-        label.setFont(with: 12)
+        label.setFont(with: 15)
+        label.text = "0:00"
         return label
     }()
     let likeBtn: UIButton = {
@@ -308,6 +531,7 @@ class PlayerViewController: UIViewController {
         }
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         btn.addTarget(self, action: #selector(saveTrack), for: .touchUpInside)
+        btn.translatesAutoresizingMaskIntoConstraints = false
         
         return btn
     }()
@@ -323,12 +547,15 @@ class PlayerViewController: UIViewController {
     let artist: UILabel = {
         let label = UILabel()
         label.textColor = .secondaryLabel
-        label.setFont(with: 12)
+        label.setFont(with: 15)
+        
         return label
     }()
     let trackTitle: UILabel = {
         let label = UILabel()
         label.textColor = .label
+        label.text = "No track Selected"
+        label.setFont(with: 20)
         return label
     }()
     let slider: UISlider = {
@@ -341,28 +568,36 @@ class PlayerViewController: UIViewController {
     }()
     let forwardBtn: UIButton = {
         
-        let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+        let forwardbtnImg = UIImage(systemName: "forward.fill")!.applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30))
         
         
         let btn = UIButton()
         btn.setImage(forwardbtnImg, for: .normal)
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.tintColor = .label
+//        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         btn.addTarget(self, action: #selector(playnext), for: .touchUpInside)
         return btn
     }()
     let playBtn: UIButton = {
+        
+        let btnConfig = UIImage(systemName: "play.fill")!
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30))
+        
         let btn = UIButton()
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+//        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
+        btn.tintColor = .label
         btn.addTarget(self, action: #selector(togglePlayState), for: .touchUpInside)
+        btn.setImage(btnConfig, for: .normal)
         return btn
     }()
     let prevBtn: UIButton = {
         let prevbtnImg = UIImage(systemName: "backward.fill")!
-            .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 25))
+            .applyingSymbolConfiguration(UIImage.SymbolConfiguration.init(pointSize: 30))
         
         let btn = UIButton()
         btn.setImage(prevbtnImg, for: .normal)
-        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+//        btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
+        btn.tintColor = .label
         btn.addTarget(self, action: #selector(prev), for: .touchUpInside)
         return btn
     }()
@@ -392,7 +627,8 @@ class PlayerViewController: UIViewController {
         btn.setImage(queueImag, for: .normal)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
-        btn.addTarget(self, action: #selector(openQueue), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(toggleQueue), for: .touchUpInside)
+        btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
     let sliderThumbImage: UIView = {
@@ -408,6 +644,12 @@ class PlayerViewController: UIViewController {
         btn.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.5)
         btn.addTarget(self, action: #selector(playAvailableVideo), for: .touchUpInside)
         return btn
+    }()
+    
+    let QueueContainer: UIView = {
+        let _view = UIView()
+        _view.translatesAutoresizingMaskIntoConstraints = false
+        return _view
     }()
     
     @objc func playAvailableVideo(){

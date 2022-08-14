@@ -23,7 +23,7 @@ class TrendingCollectionViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationController!.navigationBar.prefersLargeTitles = true
+//        navigationController!.navigationBar.prefersLargeTitles = true
         title = "Ample Top 100"
     }
     override func viewDidLoad() {

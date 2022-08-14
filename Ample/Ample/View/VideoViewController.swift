@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import AVKit
 import CoreData
 
 @objc protocol VideoPlayerViewDelegate {
@@ -26,35 +27,8 @@ class VideoPlayerManager {
     }
 }
 
-//extension VideoViewController: UITableViewDelegate, UITableViewDataSource {
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 300
-//    }
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return videos.count
-//    }
-//
-//    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-//        playSelectedVideo(item: videos[indexPath.row])
-//        print("Selected")
-//        print(videos[indexPath.row])
-//    }
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//
-//        let cell = tableview.dequeueReusableCell(withIdentifier: LargeVideoCell.reuseIdentifier) as! LargeVideoCell
-//
-//        cell.configure(with: videos[indexPath.row])
-//        cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-//        return cell
-//    }
-//
-//
-//}
-
 class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerViewDelegate {
+    
     func closePlayer(sender: UIButton) {
         self.dismiss(animated: true)
     }
@@ -68,15 +42,28 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
     var videoURL: URL!
     var playerItem: AVPlayerItem!
     var delegate: VideoPlayerViewDelegate!
-//    var playerDelegate: VideoPlayerDelegate!
     var audioPlayer = AudioManager.shared
     
+    private var currentVideo: VideoItemModel!
+    private var playerItemContext = 0
+    private var playerViewController: AVPlayerViewController!
+    private var timeObserverToken: Any?
+    
     var tableview: UITableView!
+    
+    //Video
+    var videoHeight: CGFloat = 200
+    var videoWidth: CGFloat = 200
+    
+    var videoFrame = CGRect(x: 0, y: 260, width: UIScreen.main.bounds.width, height: 300)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         overrideUserInterfaceStyle = .dark
         view.backgroundColor = .black
+        
+        let value = UIInterfaceOrientation.landscapeLeft.rawValue
+         UIDevice.current.setValue(value, forKey: "orientation")
         
         NetworkManager.Get(url:"videos?id=\(selectedVideo!)" ) { (data: VideoItemModel?, error: NetworkError) in
                switch(error) {
@@ -94,31 +81,43 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
                }
            }
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        removeTimeObserver()
+    }
+//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+//        return .landscape
+//    }
     override var shouldAutorotate: Bool {
         return false
     }
-
-    //What screen orientations are supported
-//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-//        return .allButUpsideDown
-//    }
+    
+    func removeTimeObserver(){
+        if let token = timeObserverToken {
+            player.removeTimeObserver(token)
+            timeObserverToken = nil
+        }
+    }
     func setupPlayer(video: VideoItemModel){
         
+        currentVideo = video
+        
         videoURL = URL(string: String(video.videoURL))
+        
         let asset = AVAsset(url: videoURL)
         playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
         playerLayer = AVPlayerLayer(player: player)
-        
+        playerLayer.frame = videoFrame
+        playerLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(playerLayer)
-        playerLayer.frame = view.bounds
-        playerLayer.contentsCenter = CGRect(x: view.bounds.midX, y: view.bounds.midX, width: 100, height: 100)
+        
+        playerItem.addObserver(self,
+                               forKeyPath: #keyPath(AVPlayerItem.status),
+                               options: [.old, .new],
+                               context: &playerItemContext)
 
-        player.play()
-//        player.volume = 0
-//
         view.addSubview(controlContainer)
-//        controlContainer.frame = view.bounds
+
         controlContainer.translatesAutoresizingMaskIntoConstraints = false
         controlContainer.layer.zPosition = 1
 
@@ -137,50 +136,51 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         }
         
         if audioPlayer.currentQueue != nil {
-            
             audioPlayer.player.pause()
             NotificationCenter.default.post(name: NSNotification.Name("isPlaying"), object: nil)
         }
-
-        controlContainer.isHidden = true
+        
         controlContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideControls)))
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showControls)))
 
-        let artistStack = UIStackView(arrangedSubviews: [artistImage, artistNameLabel])
-        artistStack.axis = .horizontal
-        artistStack.spacing = 10
-        artistStack.alignment = .center
-        artistImage.setUpImage(url: video.artistImageURL!, interactable: true)
+        let videoDetailStack = UIStackView(arrangedSubviews: [artistNameLabel, videoTitleLabel])
+        videoDetailStack.axis = .vertical
+        videoDetailStack.spacing = 2
+        videoDetailStack.alignment = .leading
         
-        let progressStack = UIStackView(arrangedSubviews: [progressBar, totalRemainingTimeLabel] )
+        videoTitleLabel.text = video.title
+        artistNameLabel.text = video.artist
+        
+        videoTimeDuration.text = "0:00 / 3:00"
+        
+        let timeLabelStack = UIStackView(arrangedSubviews: [videoTimeDuration ])
+        timeLabelStack.axis = .horizontal
+        timeLabelStack.distribution = .fillProportionally
+        timeLabelStack.spacing = 5
+        timeLabelStack.alignment = .center
+        timeLabelStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let progressStack = UIStackView(arrangedSubviews: [progressBar, fullScreenBtn] )
         progressStack.axis = .horizontal
-        progressStack.spacing = 10
+        progressStack.spacing = 2
         
+        let progressContainer = UIStackView(arrangedSubviews: [timeLabelStack, progressStack])
+        progressContainer.axis = .vertical
+        progressContainer.distribution = .fillProportionally
+        progressContainer.spacing = 5
+        progressContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        let trackInfoContainer = UIStackView(arrangedSubviews: [artistStack,videoTitleLabel, progressStack])
-        trackInfoContainer.axis = .horizontal
+        let trackInfoContainer = UIStackView(arrangedSubviews: [videoDetailStack , progressContainer])
+        trackInfoContainer.axis = .vertical
         trackInfoContainer.distribution = .fillProportionally
         trackInfoContainer.alignment = .leading
         trackInfoContainer.translatesAutoresizingMaskIntoConstraints = false
         trackInfoContainer.axis = .vertical
         trackInfoContainer.spacing = 10
         
-        videoTitleLabel.text = video.title
-        artistNameLabel.text = video.artist
-        viewCounter.text = String(video.views)
-        
-        let buttonStack = UIStackView(arrangedSubviews: [likeButton, viewsCounterBtn,viewCounter, shareButton ,fullScreenBtn])
-        buttonStack.axis = .vertical
-        buttonStack.distribution = .fillProportionally
-        buttonStack.spacing = 5
-        buttonStack.alignment = .center
-        buttonStack.translatesAutoresizingMaskIntoConstraints = false
-        
         controlContainer.addSubview(trackInfoContainer)
-        controlContainer.addSubview(buttonStack)
         controlContainer.addSubview(closeBtn)
         controlContainer.addSubview(optionsButton)
-        
         
         NSLayoutConstraint.activate([
 
@@ -201,21 +201,113 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
             
             trackInfoContainer.bottomAnchor.constraint(equalTo: controlContainer.bottomAnchor, constant: -50),
             trackInfoContainer.leadingAnchor.constraint(equalTo: controlContainer.leadingAnchor, constant: 20),
-            trackInfoContainer.trailingAnchor.constraint(equalTo: buttonStack.leadingAnchor, constant: -20),
-            trackInfoContainer.heightAnchor.constraint(equalToConstant: 90),
+            trackInfoContainer.trailingAnchor.constraint(equalTo: controlContainer.leadingAnchor, constant: -20),
             
-            progressBar.heightAnchor.constraint(equalToConstant: 10),
-            progressBar.widthAnchor.constraint(equalToConstant: 270),
-            
-            buttonStack.leadingAnchor.constraint(equalTo: trackInfoContainer.trailingAnchor),
-            buttonStack.bottomAnchor.constraint(equalTo: controlContainer.bottomAnchor, constant: -30),
-            buttonStack.trailingAnchor.constraint(equalTo: controlContainer.trailingAnchor),
-            buttonStack.heightAnchor.constraint(equalToConstant: 200),
-            buttonStack.widthAnchor.constraint(equalToConstant: 50)
+            progressBar.heightAnchor.constraint(equalToConstant: 5),
+            progressBar.trailingAnchor.constraint(equalTo: controlContainer.trailingAnchor, constant: -20),
+            progressBar.leadingAnchor.constraint(equalTo: controlContainer.leadingAnchor, constant: 20)
         ])
-    
+        
+        
     }
     
+    func rotateVideo(){
+        
+        let rotationAnimation = CABasicAnimation()
+        rotationAnimation.keyPath = "transform.rotation.z"
+        rotationAnimation.fromValue = 0
+        rotationAnimation.toValue = CGFloat.pi / 2
+        rotationAnimation.duration = 1
+        
+        playerLayer.add(rotationAnimation, forKey: "basic.")
+        playerLayer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 0)
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        animate()
+    }
+    
+    func animate(){
+        
+        let videAnimator = UIViewPropertyAnimator(duration: 0.5, curve: .easeOut) {
+            self.videoFrame  = CGRect(x: 0, y: 0, width: 200, height: 400)
+            self.view.layoutIfNeeded()
+        }
+        
+        videAnimator.startAnimation()
+    }
+    
+    func addPeriodicTimeObserver(){
+        
+        let time = CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_MSEC))
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .positional
+        formatter.allowedUnits = [ .second ]
+        formatter.zeroFormattingBehavior = [ .dropTrailing ]
+        
+       timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: DispatchQueue.main) { time in
+
+           print( Int(time.value / Int64(time.timescale)))
+           
+//           print( "Seconds: ", formatter.string(from: DateComponens( self.player.currentTime().seconds)
+//           print("Minutes: ", self.player.currentTime().seconds / 60)
+           
+//           self.totalTrackTime.text = self.formatter.string(from: self.audioManager.player.currentTime - self.audioManager.player.duration)
+           
+           if self.player.timeControlStatus != .paused {
+               self.playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+               self.playBtn.setNeedsDisplay()
+           }
+           
+           self.progressBar.setProgress(Float(CMTimeGetSeconds(self.player.currentTime()) / CMTimeGetSeconds(self.playerItem.duration )), animated: true)
+            
+        }
+        
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?,
+                               of object: Any?,
+                               change: [NSKeyValueChangeKey : Any]?,
+                               context: UnsafeMutableRawPointer?) {
+
+        // Only handle observations for the playerItemContext
+        guard context == &playerItemContext else {
+            super.observeValue(forKeyPath: keyPath,
+                               of: object,
+                               change: change,
+                               context: context)
+            return
+        }
+
+        if keyPath == #keyPath(AVPlayerItem.status) {
+            let status: AVPlayerItem.Status
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            case .readyToPlay:
+                print("Ready to play")
+            
+                player.play()
+                
+                addPeriodicTimeObserver()
+                
+            case .failed:
+                // Player item failed. See error.
+                print("Failed to play video ")
+                
+                print(player.error)
+            case .unknown:
+                // Player item is not yet ready.
+                print("Player encountered an unknown error ")
+            }
+        }
+    }
     override func viewWillLayoutSubviews() {
     }
     
@@ -251,8 +343,9 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         return view
     }()
     let VideoContainer: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 300))
-        view.backgroundColor = .black
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .red
         return view
     }()
     let playBtn: UIButton = {
@@ -266,13 +359,13 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
     }()
     let nextBtn: UIButton = {
         let btn = UIButton()
-        btn.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
+        btn.setImage(UIImage(systemName: "goforward.10"), for: .normal)
         btn.tintColor = .label
         return btn
     }()
     let prevBtn: UIButton = {
         let btn = UIButton()
-        btn.setImage(UIImage(systemName: "backward.end.fill"), for: .normal)
+        btn.setImage(UIImage(systemName: "goforward.10"), for: .normal)
         btn.tintColor = .label
         return btn
     }()
@@ -284,24 +377,14 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         btn.tintColor = .label
         return btn
     }()
-    let progressBar: UISlider = {
-        let slider = UISlider()
-//        slider.setValue(1, animated: true)
-        slider.isContinuous = true
-        slider.setThumbImage(UIImage(), for: .normal)
+    let progressBar: UIProgressView = {
+        let slider = UIProgressView()
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.layer.zPosition = 5
+        slider.tintColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 1)
         return slider
     }()
-    let artistImage: UIImageView = {
-        let image = UIImageView()
-        image.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        image.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        image.layer.cornerRadius = 15
-        image.contentMode = .scaleAspectFill
-        image.clipsToBounds = true
-        return image
-    }()
+
     let artistNameLabel: UILabel = {
         let label = UILabel()
         label.setFont(with:  15)
@@ -312,18 +395,14 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         let label = UILabel()
         label.setFont(with:  20)
         label.textColor = .label
+        label.numberOfLines = 2
         return label
     }()
-    let viewCounter: UILabel = {
+    let videoTimeDuration: UILabel = {
         let label = UILabel()
-        label.setFont(with:  10)
-        label.textColor = .secondaryLabel
-        return label
-    }()
-    let totalRemainingTimeLabel: UILabel = {
-        let label = UILabel()
-        label.setFont(with: 10)
-        label.text = "2:23"
+        label.setFont(with:  15)
+        label.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        label.textColor = .label
         return label
     }()
     

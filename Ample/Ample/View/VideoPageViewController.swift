@@ -11,8 +11,9 @@ class VideoPageViewController: UIViewController {
 
     var tableview: UITableView!
     var section: [LibObject]!
+    var headerData: LibObject!
     let user = UserDefaults.standard.object(forKey: "user")
-    var header = FeaturedVideoHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
+    var header: FeaturedVideoHeader!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +25,7 @@ class VideoPageViewController: UIViewController {
             switch(error){
             case .success:
                 self.section = data!
+                self.headerData = self.section.remove(at: 0)
                 
                 DispatchQueue.main.async {
                     self.initCollectionView()
@@ -38,6 +40,15 @@ class VideoPageViewController: UIViewController {
         }
         
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        header.removePeriodicTimeObserver()
+    }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    override var shouldAutorotate: Bool {
+        return false
+    }
     
     func initCollectionView(){
         
@@ -47,15 +58,17 @@ class VideoPageViewController: UIViewController {
         tableview.frame = view.frame
         tableview.separatorColor = .clear
         tableview.backgroundColor = .black
-        tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
+//        tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier )
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
         
-//        tableview.tableHeaderView = header
+        header = FeaturedVideoHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 310))
+        header.initialize(data: headerData.videos!, navigationController: self.navigationController!)
+        tableview.tableHeaderView = header
+        
         view.addSubview(tableview)
         
     }
-
 }
 
 extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
@@ -63,61 +76,35 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return section.count
     }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        if( section == 0){
-            header.configure(with: self.section[section].videos![section], navigationController: self.navigationController!)
-            return header
-        }
-        
-        let header = TableviewSectionHeader()
-        if( section == 1 ){
-            header.button.isHidden = true
-        }
-        if( section > 0 ){
-            header.tagline.text = self.section[section].tagline
-            
-            return header
-        }
-        
-        return nil
-    }
-    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if( section == 0 ){
-            return 210
-        }
-        return 20
+        return 40
     }
-
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//
+        let header = TableviewSectionHeader()
+    
+            header.tagline.text = self.section[section].tagline
+            return header
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        switch( self.section[indexPath.section].type){
-        case "featured":
-            let cell = tableview.dequeueReusableCell(withIdentifier: LargeVideoHeaderCell.reuseIdentifier, for: indexPath) as! LargeVideoHeaderCell
-            cell.delegate = header.self
-            cell.initialize(data: section[indexPath.section], navigationController: self.navigationController!)
-            return cell
+            switch( self.section[indexPath.section].type){
+            case "Genres":
+                let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
+                cell.configureView(data: section[indexPath.section].items!)
+                cell.navigationController = self.navigationController
+                return cell
+            default:
+                let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
             
-        case "Genres":
-            let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
-            cell.configureView(data: section[indexPath.section].items!)
-            cell.navigationController = self.navigationController
-            return cell
-        default:
-            let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
-        
-            cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
-            return cell
-        }
-        
+                cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
+                return cell
+            }
+       
     }
-    
     
 }
 
@@ -184,14 +171,17 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         delegate.setTrack(video: data.videos![indexPath.row])
         
         if indexPath.row > 0 && indexPath.row < data.videos!.count - 1{
             collectionview.setContentOffset(CGPoint(x: 210 * indexPath.row , y: 0), animated: true)
         }
+        
         else if (indexPath.row == 0 ){
             collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
         }
+        
     }
    
     func collectionView(_ collectionView: UICollectionView,

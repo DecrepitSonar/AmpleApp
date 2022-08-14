@@ -12,14 +12,24 @@ class HomeViewController: UIViewController {
     private var tableview: UITableView!
     private var data: [LibObject]!
     private let user  = UserDefaults.standard.value(forKey: "user")!
+    private let header = LargeSliderCollection(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 220))
+    private var headerData: LibObject!
+    
+    private var emptyView = EmptyContentViewController()
+    private var errorView = ErrorViewController()
     
     override func loadView() {
         super.loadView()
         
         title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
-       
         
+    }
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,17 +37,33 @@ class HomeViewController: UIViewController {
             switch(error){
             case .success:
                 print("success",data!)
-                self.data = data!
                 
-                DispatchQueue.main.async {
-                    self.configureTableview()
+                self.data = data!
+                self.headerData = self.data.removeFirst()
+                
+                if data!.isEmpty {
+                    DispatchQueue.main.async {
+                        self.addChild(self.emptyView)
+                        self.view.addSubview(self.emptyView.view)
+                        self.emptyView.label.text = "Looks like theres nothing in here yet"
+                    }
                 }
+                else{
+                    DispatchQueue.main.async {
+                        self.configureTableview()
+                    }
+                }
+               
 
             case .notfound:
                 print("not found")
                 
             case .servererr:
-                print("Internal Server /err")
+                DispatchQueue.main.async {
+                    self.addChild(self.errorView)
+                    self.view.addSubview(self.errorView.view)
+                    self.errorView.label.text = "Oops. Ran into an error. Check your network"
+                }
             }
         }
         
@@ -46,15 +72,21 @@ class HomeViewController: UIViewController {
     
     private func configureTableview(){
         
+        
         tableview = UITableView(frame: .zero, style: .grouped)
         tableview.delegate = self
         tableview.dataSource = self
-        tableview.register(LargeSliderCollection.self, forCellReuseIdentifier: LargeSliderCollection.reuseIdentifier)
+        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+//        tableview.register(LargeSliderCollection.self, forCellReuseIdentifier: LargeSliderCollection.reuseIdentifier)
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
+        tableview.register(TrackFlowSection.self, forCellReuseIdentifier: TrackFlowSection.reuseIdentifier)
         tableview.frame = view.frame
         tableview.separatorColor = .clear
         tableview.backgroundColor = .black
+        
+        tableview.tableHeaderView = header
+        header.initCell(data: headerData.items!)
         
         view.addSubview(tableview)
         
@@ -64,38 +96,38 @@ class HomeViewController: UIViewController {
         
     }
 }
+
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = TableviewSectionHeader()
-        if( section == 1 ){
-            header.button.isHidden = true
-        }
-        if( section > 0 ){
-            header.tagline.text = self.data[section].tagline
-            return header
-        }
         
-        return nil
+        let header = TableviewSectionHeader()
+        header.tagline.text = self.data[section].tagline
+        
+        return header
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return data.count
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         switch( indexPath.section){
         case 0:
-            let cell = tableview.dequeueReusableCell(withIdentifier: LargeSliderCollection.reuseIdentifier) as! LargeSliderCollection
-            cell.initCell(data: data[indexPath.section].items!)
-            cell.navigationController = self.navigationController
-            return cell
-        case 1:
             let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
             cell.configureView(data: data[indexPath.section].items!)
             cell.navigationController = self.navigationController
             return cell
+            
+        case 1:
+            let cell = tableview.dequeueReusableCell(withIdentifier: TrackFlowSection.reuseIdentifier) as! TrackFlowSection
+            cell.configure(data: data[indexPath.section].items!, navigationController: self.navigationController!)
+            return cell
+            
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier) as! AlbumFlowSection
             cell.configure(data: data[indexPath.section].items!, navigationController: self.navigationController!)
@@ -104,13 +136,22 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+class LargeSliderCollection: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
     
     static var reuseIdentifier: String = "large slider"
     var collectionview: UICollectionView!
     var data: [LibItem] = []
     var navigationController: UINavigationController?
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
     func initCell(data: [LibItem]){
         
         self.data = data
@@ -122,7 +163,7 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
-        collectionview = UICollectionView(frame: contentView.frame, collectionViewLayout: layout)
+        collectionview = UICollectionView(frame: frame, collectionViewLayout: layout)
         collectionview.dataSource = self
         collectionview.delegate = self
         collectionview.isPagingEnabled = true 
@@ -134,7 +175,7 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         
         NSLayoutConstraint.activate([
             
-            contentView.heightAnchor.constraint(equalToConstant: 200),
+//            heightAnchor.constraint(equalToConstant: 200),
             
             collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionview.topAnchor.constraint(equalTo: topAnchor),
@@ -143,7 +184,6 @@ class LargeSliderCollection: UITableViewCell, UICollectionViewDelegate, UICollec
         ])
         
     }
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.count
     }
@@ -169,7 +209,7 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        layout.itemSize = CGSize(width: 200, height: 100)
+        layout.itemSize = CGSize(width: 200, height: 80)
         
         collectionView = UICollectionView(frame: contentView.frame, collectionViewLayout:  layout)
         collectionView.delegate = self
@@ -184,7 +224,7 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
         
         NSLayoutConstraint.activate([
             
-            contentView.heightAnchor.constraint(equalToConstant: 120),
+            contentView.heightAnchor.constraint(equalToConstant: 100),
             
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: topAnchor),
@@ -193,7 +233,6 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
         ])
         
     }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return sections.count
     }
@@ -224,16 +263,15 @@ class CatagoryCollectionCell: UICollectionViewCell {
         
         addSubview(sectionLabel)
         sectionLabel.text = catagory.title
-        
+
         layer.cornerRadius = 5
-        
         tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentCatagoryView))
         addGestureRecognizer(tapRecognizer)
         
         NSLayoutConstraint.activate([
             
+            sectionLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             sectionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            sectionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
 
             backgroundImage.leadingAnchor.constraint(equalTo: leadingAnchor),
             backgroundImage.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -241,6 +279,7 @@ class CatagoryCollectionCell: UICollectionViewCell {
             backgroundImage.topAnchor.constraint(equalTo: topAnchor)
             
         ])
+        
     }
     
     let sectionLabel: UILabel = {
@@ -260,18 +299,25 @@ class CatagoryCollectionCell: UICollectionViewCell {
     }()
     
     @objc func presentCatagoryView(){
+        
+        var _view: UIViewController!
+        
         switch( catagory){
         case "Trending":
-            let _view = TrendingCollectionViewController()
-            navigationController.pushViewController(_view, animated: true )
+            _view = TrendingCollectionViewController()
             
         case "Videos":
-            let _view = VideoPageViewController()
-            navigationController.pushViewController(_view, animated: true )
+            _view = VideoPageViewController()
+        
+        case "Trending Videos":
+            _view = TrendingVideoViewController()
             
         default:
             return
         }
+        
+        navigationController.pushViewController(_view, animated: true )
+        
     }
     
 }

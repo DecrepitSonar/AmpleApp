@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22092E8C2894CA43001947D9 /* TrendingVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092E8B2894CA41001947D9 /* TrendingVideoViewController.swift */; };
 		22143A6B286D1AB500D166E3 /* VideoPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22143A6A286D1AB400D166E3 /* VideoPageViewController.swift */; };
 		22330F26285BC506001F94C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F25285BC506001F94C5 /* AppDelegate.swift */; };
 		22330F28285BC506001F94C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F27285BC506001F94C5 /* SceneDelegate.swift */; };
@@ -47,7 +48,6 @@
 		22330FAD285BC66C001F94C5 /* TrackOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F7C285BC66B001F94C5 /* TrackOptionsViewController.swift */; };
 		22330FAF285BC66C001F94C5 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F7E285BC66B001F94C5 /* CollectionViewController.swift */; };
 		22330FB0285BC66C001F94C5 /* OverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F7F285BC66B001F94C5 /* OverViewController.swift */; };
-		22330FB1285BC66C001F94C5 /* VideoLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F80285BC66B001F94C5 /* VideoLibraryViewController.swift */; };
 		22330FB2285BC66C001F94C5 /* TrackCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F81285BC66B001F94C5 /* TrackCollectionViewController.swift */; };
 		22330FB3285BC66C001F94C5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F82285BC66B001F94C5 /* LoginViewController.swift */; };
 		22330FB4285BC66C001F94C5 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F83285BC66B001F94C5 /* VideoViewController.swift */; };
@@ -59,6 +59,8 @@
 		22330FBA285BC66C001F94C5 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F8A285BC66C001F94C5 /* UtilityFunctions.swift */; };
 		22330FBB285BC66C001F94C5 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F8B285BC66C001F94C5 /* extensions.swift */; };
 		22330FBD285BC66C001F94C5 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F8D285BC66C001F94C5 /* Protocols.swift */; };
+		2234CF00289F71A900FFEF25 /* EmptyContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2234CEFF289F71A800FFEF25 /* EmptyContentViewController.swift */; };
+		2234CF02289F734600FFEF25 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2234CF01289F734600FFEF25 /* ErrorViewController.swift */; };
 		22790B5B28779B880092BBA2 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22790B5A28779B840092BBA2 /* HomeViewController.swift */; };
 		227D483D2878EADC00FCF2DE /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227D483C2878EADB00FCF2DE /* testViewController.swift */; };
 		22A49BB72874A9D600176FA5 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A49BB62874A9D600176FA5 /* ProfileController.swift */; };
@@ -95,6 +97,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		22092E8B2894CA41001947D9 /* TrendingVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendingVideoViewController.swift; sourceTree = "<group>"; };
 		22143A6A286D1AB400D166E3 /* VideoPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPageViewController.swift; sourceTree = "<group>"; };
 		22330F22285BC505001F94C5 /* Ample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22330F25285BC506001F94C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -139,7 +142,6 @@
 		22330F7C285BC66B001F94C5 /* TrackOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackOptionsViewController.swift; sourceTree = "<group>"; };
 		22330F7E285BC66B001F94C5 /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
 		22330F7F285BC66B001F94C5 /* OverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverViewController.swift; sourceTree = "<group>"; };
-		22330F80285BC66B001F94C5 /* VideoLibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoLibraryViewController.swift; sourceTree = "<group>"; };
 		22330F81285BC66B001F94C5 /* TrackCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackCollectionViewController.swift; sourceTree = "<group>"; };
 		22330F82285BC66B001F94C5 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		22330F83285BC66B001F94C5 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
@@ -151,6 +153,8 @@
 		22330F8A285BC66C001F94C5 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
 		22330F8B285BC66C001F94C5 /* extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		22330F8D285BC66C001F94C5 /* Protocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		2234CEFF289F71A800FFEF25 /* EmptyContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyContentViewController.swift; sourceTree = "<group>"; };
+		2234CF01289F734600FFEF25 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		223900DD286156270009E493 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		223900E0286156270009E493 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		223900E2286156270009E493 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,16 +213,16 @@
 		22330F24285BC505001F94C5 /* Ample */ = {
 			isa = PBXGroup;
 			children = (
+				22330F2E285BC506001F94C5 /* Ample.xcdatamodeld */,
+				22330F25285BC506001F94C5 /* AppDelegate.swift */,
+				22330F31285BC515001F94C5 /* Assets.xcassets */,
 				22330F58285BC66B001F94C5 /* Controller */,
+				22330F36285BC515001F94C5 /* Info.plist */,
+				22330F33285BC515001F94C5 /* LaunchScreen.storyboard */,
 				22330F5C285BC66B001F94C5 /* Model */,
+				22330F27285BC506001F94C5 /* SceneDelegate.swift */,
 				22330F89285BC66C001F94C5 /* Utility */,
 				22330F5F285BC66B001F94C5 /* View */,
-				22330F25285BC506001F94C5 /* AppDelegate.swift */,
-				22330F27285BC506001F94C5 /* SceneDelegate.swift */,
-				22330F31285BC515001F94C5 /* Assets.xcassets */,
-				22330F33285BC515001F94C5 /* LaunchScreen.storyboard */,
-				22330F36285BC515001F94C5 /* Info.plist */,
-				22330F2E285BC506001F94C5 /* Ample.xcdatamodeld */,
 			);
 			path = Ample;
 			sourceTree = "<group>";
@@ -261,27 +265,29 @@
 		22330F5F285BC66B001F94C5 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				22330F68285BC66B001F94C5 /* AlbumViewController.swift */,
 				22330F60285BC66B001F94C5 /* Cells.swift */,
-				22330F61285BC66B001F94C5 /* SearchViewController.swift */,
+				22330F85285BC66B001F94C5 /* components.swift */,
+				22790B5A28779B840092BBA2 /* HomeViewController.swift */,
+				2234CF01289F734600FFEF25 /* ErrorViewController.swift */,
+				2234CEFF289F71A800FFEF25 /* EmptyContentViewController.swift */,
 				22330F62285BC66B001F94C5 /* Library.swift */,
 				22330F64285BC66B001F94C5 /* LibraryViewController.swift */,
-				22790B5A28779B840092BBA2 /* HomeViewController.swift */,
-				22330F65285BC66B001F94C5 /* MusicViewController.swift */,
-				22143A6A286D1AB400D166E3 /* VideoPageViewController.swift */,
-				22330F66285BC66B001F94C5 /* MainViewController.swift */,
-				22330F67285BC66B001F94C5 /* PlayerViewController.swift */,
-				22330F68285BC66B001F94C5 /* AlbumViewController.swift */,
-				22330F69285BC66B001F94C5 /* SubViews */,
-				22330F80285BC66B001F94C5 /* VideoLibraryViewController.swift */,
-				22330F81285BC66B001F94C5 /* TrackCollectionViewController.swift */,
-				22330F82285BC66B001F94C5 /* LoginViewController.swift */,
-				22330F83285BC66B001F94C5 /* VideoViewController.swift */,
-				22330F84285BC66B001F94C5 /* ProfileViewController.swift */,
-				22A49BB62874A9D600176FA5 /* ProfileController.swift */,
-				22330F85285BC66B001F94C5 /* components.swift */,
 				22330F86285BC66B001F94C5 /* LoadingViewController.swift */,
+				22330F82285BC66B001F94C5 /* LoginViewController.swift */,
+				22330F66285BC66B001F94C5 /* MainViewController.swift */,
+				22330F65285BC66B001F94C5 /* MusicViewController.swift */,
+				22330F67285BC66B001F94C5 /* PlayerViewController.swift */,
+				22A49BB62874A9D600176FA5 /* ProfileController.swift */,
+				22330F84285BC66B001F94C5 /* ProfileViewController.swift */,
+				22330F61285BC66B001F94C5 /* SearchViewController.swift */,
+				22330F69285BC66B001F94C5 /* SubViews */,
+				22330F81285BC66B001F94C5 /* TrackCollectionViewController.swift */,
 				22330F87285BC66B001F94C5 /* TrackViewController.swift */,
 				22330F88285BC66B001F94C5 /* TrendingCollectionViewController.swift */,
+				22143A6A286D1AB400D166E3 /* VideoPageViewController.swift */,
+				22330F83285BC66B001F94C5 /* VideoViewController.swift */,
+				22092E8B2894CA41001947D9 /* TrendingVideoViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -289,19 +295,19 @@
 		22330F69285BC66B001F94C5 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				22330F6A285BC66B001F94C5 /* Settings */,
-				22330F73285BC66B001F94C5 /* TrackQueueListViewController.swift */,
-				22330F74285BC66B001F94C5 /* SearchResultViewController.swift */,
-				22330F75285BC66B001F94C5 /* TrackHistoryViewController.swift */,
-				22330F76285BC66B001F94C5 /* PlaylistViewController.swift */,
-				22330F77285BC66B001F94C5 /* ArtistProfileVc.swift */,
-				22330F78285BC66B001F94C5 /* PlaylistsViewController.swift */,
-				22330F79285BC66B001F94C5 /* OptionsViewController.swift */,
 				22330F7A285BC66B001F94C5 /* ArtistFollowViewController.swift */,
-				22330F7B285BC66B001F94C5 /* ReleasesVc.swift */,
-				22330F7C285BC66B001F94C5 /* TrackOptionsViewController.swift */,
+				22330F77285BC66B001F94C5 /* ArtistProfileVc.swift */,
 				22330F7E285BC66B001F94C5 /* CollectionViewController.swift */,
+				22330F79285BC66B001F94C5 /* OptionsViewController.swift */,
 				22330F7F285BC66B001F94C5 /* OverViewController.swift */,
+				22330F78285BC66B001F94C5 /* PlaylistsViewController.swift */,
+				22330F76285BC66B001F94C5 /* PlaylistViewController.swift */,
+				22330F7B285BC66B001F94C5 /* ReleasesVc.swift */,
+				22330F74285BC66B001F94C5 /* SearchResultViewController.swift */,
+				22330F6A285BC66B001F94C5 /* Settings */,
+				22330F75285BC66B001F94C5 /* TrackHistoryViewController.swift */,
+				22330F7C285BC66B001F94C5 /* TrackOptionsViewController.swift */,
+				22330F73285BC66B001F94C5 /* TrackQueueListViewController.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -310,12 +316,12 @@
 			isa = PBXGroup;
 			children = (
 				22330F6B285BC66B001F94C5 /* aboutVc.swift */,
-				22330F6C285BC66B001F94C5 /* NotificationSettingsVc.swift */,
-				22330F6D285BC66B001F94C5 /* SecuritySettingsVc.swift */,
 				22330F6E285BC66B001F94C5 /* AccountSettingsVc.swift */,
+				22330F6C285BC66B001F94C5 /* NotificationSettingsVc.swift */,
 				22330F6F285BC66B001F94C5 /* PrivacySettingsVc.swift */,
-				22330F71285BC66B001F94C5 /* WalletSettingsVc.swift */,
+				22330F6D285BC66B001F94C5 /* SecuritySettingsVc.swift */,
 				22330F72285BC66B001F94C5 /* SettingsViewController.swift */,
+				22330F71285BC66B001F94C5 /* WalletSettingsVc.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -477,9 +483,10 @@
 				22330FAA285BC66C001F94C5 /* OptionsViewController.swift in Sources */,
 				22330F94285BC66C001F94C5 /* SearchViewController.swift in Sources */,
 				22330F9A285BC66C001F94C5 /* PlayerViewController.swift in Sources */,
-				22330FB1285BC66C001F94C5 /* VideoLibraryViewController.swift in Sources */,
+				2234CF02289F734600FFEF25 /* ErrorViewController.swift in Sources */,
 				22330FAC285BC66C001F94C5 /* ReleasesVc.swift in Sources */,
 				227D483D2878EADC00FCF2DE /* testViewController.swift in Sources */,
+				22092E8C2894CA43001947D9 /* TrendingVideoViewController.swift in Sources */,
 				22330FB4285BC66C001F94C5 /* VideoViewController.swift in Sources */,
 				22330F90285BC66C001F94C5 /* AudioManager.swift in Sources */,
 				22330FA7285BC66C001F94C5 /* PlaylistViewController.swift in Sources */,
@@ -502,6 +509,7 @@
 				22330F9E285BC66C001F94C5 /* SecuritySettingsVc.swift in Sources */,
 				22330F9F285BC66C001F94C5 /* AccountSettingsVc.swift in Sources */,
 				22330FA4285BC66C001F94C5 /* TrackQueueListViewController.swift in Sources */,
+				2234CF00289F71A900FFEF25 /* EmptyContentViewController.swift in Sources */,
 				22330F8E285BC66C001F94C5 /* CoreDataManager.swift in Sources */,
 				22330FBA285BC66C001F94C5 /* UtilityFunctions.swift in Sources */,
 				22143A6B286D1AB500D166E3 /* VideoPageViewController.swift in Sources */,

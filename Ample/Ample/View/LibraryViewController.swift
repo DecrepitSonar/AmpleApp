@@ -139,7 +139,7 @@ extension LibraryViewController: UITableViewDelegate, UITableViewDataSource {
             default:
             
                 let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier, for: indexPath) as! AlbumFlowSection
-                cell.configure(data: section[indexPath.section].items!, navigationController: self.navigationController!)
+            cell.configure(data: section[indexPath.section].items!, navigationController: self.navigationController!)
                 return cell
         }
     }

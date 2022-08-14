@@ -7,12 +7,12 @@
 
 import UIKit
 import CoreData
+import AVKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         window?.overrideUserInterfaceStyle = .dark
-        
+//
         guard let user = UserDefaults.standard.object(forKey: "user") else {
             window?.rootViewController = LoginViewController()
             window?.makeKeyAndVisible()
@@ -29,7 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
                                                             
         window?.rootViewController = customTab()
-//        window?.rootViewController = TrendingCollectionViewController()
+//        window?.rootViewController = TrendingVideoViewController()
+//        window?.rootViewController = UINavigationController(rootViewController: VideoViewController())
         window?.makeKeyAndVisible()
      
     }
