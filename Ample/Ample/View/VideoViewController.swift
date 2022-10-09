@@ -65,21 +65,22 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         let value = UIInterfaceOrientation.landscapeLeft.rawValue
          UIDevice.current.setValue(value, forKey: "orientation")
         
-        NetworkManager.Get(url:"videos?id=\(selectedVideo!)" ) { (data: VideoItemModel?, error: NetworkError) in
-               switch(error) {
-               case .notfound:
-                   print( "resource not found with provided url")
-                   
-               case .servererr:
-                   print( "internal server error")
-
-               case .success:
-                   print( data! )
-                   DispatchQueue.main.async {
-                       self.setupPlayer(video: data!)
-                   }
-               }
-           }
+        setupPlayer(video: nil)
+//        NetworkManager.Get(url:"videos?id=\(selectedVideo!)" ) { (data: VideoItemModel?, error: NetworkError) in
+//               switch(error) {
+//               case .notfound:
+//                   print( "resource not found with provided url")
+//
+//               case .servererr:
+//                   print( "internal server error")
+//
+//               case .success:
+//                   print( data! )
+//                   DispatchQueue.main.async {
+//                       self.setupPlayer(video: data!)
+//                   }
+//               }
+//           }
     }
     override func viewWillDisappear(_ animated: Bool) {
         removeTimeObserver()
@@ -97,11 +98,11 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
             timeObserverToken = nil
         }
     }
-    func setupPlayer(video: VideoItemModel){
+    func setupPlayer(video: VideoItemModel?){
         
-        currentVideo = video
+//        currentVideo = video
         
-        videoURL = URL(string: String(video.videoURL))
+        videoURL = URL(string: String("http://localhost:8000/"))
         
         let asset = AVAsset(url: videoURL)
         playerItem = AVPlayerItem(asset: asset)
@@ -148,8 +149,8 @@ class VideoViewController: UIViewController, UIScrollViewDelegate, VideoPlayerVi
         videoDetailStack.spacing = 2
         videoDetailStack.alignment = .leading
         
-        videoTitleLabel.text = video.title
-        artistNameLabel.text = video.artist
+//        videoTitleLabel.text = video.title
+//        artistNameLabel.text = video.artist
         
         videoTimeDuration.text = "0:00 / 3:00"
         

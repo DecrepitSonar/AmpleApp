@@ -76,7 +76,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             let profile = ProfileViewController()
             
             print("Artist")
-            profile.artistId = data[indexPath.row].id
+            profile.id = data[indexPath.row].id
             print(data[indexPath.row])
             
             updateSearchHistory(item: data[indexPath.row])

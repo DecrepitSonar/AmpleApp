@@ -60,7 +60,7 @@ class Library: UIViewController {
     func initDataSource(){
         
         collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
-        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        collectionView.backgroundColor = .black
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.showsVerticalScrollIndicator = false
         
@@ -74,7 +74,7 @@ class Library: UIViewController {
                                 withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
         collectionView.register(ArtistSection.self, forCellWithReuseIdentifier: ArtistSection.reuseIdentifier)
-        collectionView.register(TrendingSection.self, forCellWithReuseIdentifier: TrendingSection.reuseIdentifier)
+        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         collectionView.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
         
@@ -98,21 +98,23 @@ class Library: UIViewController {
                                                    ArtistSection.self,
                                                    with: item,
                                                    indexPath: IndexPath)
-//            case "Video History":
-//
-//                return LayoutManager.configureVideoCell(collectionView: collectionView,
-//                                                        navigationController: self.navigationController,
-//                                                        SmallVideoPoster.self, with: item as VideoItemModel,
-//                                                        indexPath: IndexPath)
-            
                 
-            case "Saved Tracks":
+            case "Videos":
 
-                return LayoutManager.configureCell(collectionView: self.collectionView,
+                return LayoutManager.configureCell(collectionView: collectionView,
                                                    navigationController: self.navigationController,
-                                                   TrendingSection.self,
+                                                   SmallVideoPoster.self,
                                                    with: item,
                                                    indexPath: IndexPath)
+                
+            case "History":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   SmallImageSlider.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            
             default:
 
                 return LayoutManager.configureCell(collectionView: self.collectionView,
@@ -143,8 +145,8 @@ class Library: UIViewController {
             case "Artists":
                 sectionHeader.vc = ArtistFollowViewController()
                 
-            case "Playlist":
-                sectionHeader.vc = PlaylistsViewController()
+//            case "Track History":
+//                sectionHeader.vc = SmallImageSlider()
                 
             case "Saved Albums":
                 sectionHeader.vc = CollectionViewController()
@@ -194,18 +196,16 @@ class Library: UIViewController {
                 
                 case "Artists":
                     return LayoutManager.createAviSliderSection(using: section)
-                    
-                case "Video History":
-                return LayoutManager.createWideLayout(using: section)
+            
+                case "Videos":
+                    return LayoutManager.createWideVideoLayout(using: section)
+            
                 
-                case "Track History":
-                    return LayoutManager.createTrendingSection(using: section)
-                    
-                case "Saved Tracks":
-                    return LayoutManager.createTrendingSection(using: section)
-                    
+                case "History":
+                    return LayoutManager.smallSliderSection(using: section)
+                
                 default:
-                    return LayoutManager.createMediumImageSliderSection(using: self.section[sectionIndex])
+                    return LayoutManager.createMediumImageSliderSection(using: section)
             }
         }
 

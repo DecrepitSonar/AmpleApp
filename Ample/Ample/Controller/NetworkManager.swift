@@ -23,8 +23,9 @@ enum AuthenticationStatus: Error{
 
 class NetworkManager {
     
-    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
-//    static let baseURL = "http://localhost:8000/api/v1"
+//    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
+//        static let baseURL = "http://159.89.118.206/api/v1"
+    static let baseURL = "http://localhost:8000/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
 
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -33,12 +34,11 @@ class NetworkManager {
         
         print(url)
         let url = URL(string: "\(baseURL)/\(url)")
-//        print(url!)
+
         URLSession.shared.dataTask(with: url!){ data, response, error in
             
             if error != nil {
                     completion(nil, .servererr)
-//                    print("Error", error)
             }
             
             guard let httpresponse = response as? HTTPURLResponse else {
@@ -50,7 +50,6 @@ class NetworkManager {
             switch(httpresponse.statusCode){
         
                 case 404:
-//                    print(httpresponse)/
                     completion(nil, .notfound)
                 
                 break;
@@ -60,6 +59,9 @@ class NetworkManager {
                 
                 completion(nil, .servererr)
                 
+                case 503:
+                    print(httpresponse.allHeaderFields)
+                    completion(nil, .servererr)
                 
                 break;
                 default:
@@ -77,6 +79,7 @@ class NetworkManager {
                     do {
                         let dataResponse = try decoder.decode(T.self, from: data!)
                         completion(dataResponse, .success)
+                        
                     }
                     catch{
                         print(error)

@@ -88,7 +88,7 @@ extension ArtistFollowViewController:  UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let profile = ProfileViewController()
-        profile.artistId = data[indexPath.row].id
+        profile.id = data[indexPath.row].id
         
         navigationController?.pushViewController(profile, animated: true)
     }

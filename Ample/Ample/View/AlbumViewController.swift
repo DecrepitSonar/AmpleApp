@@ -92,7 +92,23 @@ class AlbumViewController: UIViewController {
         }
     }
     
+    var animator: UIViewPropertyAnimator!
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.y
+        
+        print( offset / (self.tableView.frame.height / 2) )
+//        animator.fractionComplete = offset / (self.tableView.frame.height / 16) 
+        
+        
+    }
+    
     func setup(){
+        
+//        animator = UIViewPropertyAnimator(duration: 0.5, curve: .easeInOut, animations: {
+//            self.header.setValue(100, forKey: "height")
+//            self.tableView.tableHeaderView?.frame = CGRect(x: 20, y: 20, width: 1000, height: 100)
+//        })
     
         header = DetailHeader(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 550))
         header.artist.text = data?.name
@@ -103,6 +119,7 @@ class AlbumViewController: UIViewController {
         header.vc = navigationController
         header.artistId = data!.artistId!
         header.type = data!.type
+        
         
         let trackItems = data?.items![0].items
         var tracks: [Track] = []
@@ -138,14 +155,21 @@ class AlbumViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.bounds = view.bounds
         tableView.bounces = false
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         tableView.separatorColor = .clear
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
         tableView.frame = view.bounds
 //        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
+        
         self.tableView.tableHeaderView = header
+        let image = UIImageView()
+        image.setUpImage(url: data!.imageURL, interactable: false)
+        
         view.addSubview(tableView)
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
     }
 }
 
@@ -283,6 +307,7 @@ extension AlbumViewController: UITableViewDelegate, UITableViewDataSource {
             
             cell.configure(data: albums, navigationController: self.navigationController!)
         
+            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
             return cell
         }
     }

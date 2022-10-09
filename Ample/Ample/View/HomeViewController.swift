@@ -7,39 +7,28 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
-
-    private var tableview: UITableView!
-    private var data: [LibObject]!
-    private let user  = UserDefaults.standard.value(forKey: "user")!
-    private let header = LargeSliderCollection(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 220))
-    private var headerData: LibObject!
+class HomeViewController: UIViewController{
+    
+    private var section: [LibObject]!
+    private var collectionView: UICollectionView!
+    private var datasource: UICollectionViewDiffableDataSource<LibObject, LibItem>!
     
     private var emptyView = EmptyContentViewController()
     private var errorView = ErrorViewController()
+    private let user = UserDefaults.standard.value(forKey: "user")!
     
-    override func loadView() {
-        super.loadView()
-        
-        title = "Home"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
-    }
-    override var shouldAutorotate: Bool {
-        return false
-    }
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Home"
+        navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
         NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
             case .success:
                 print("success",data!)
                 
-                self.data = data!
-                self.headerData = self.data.removeFirst()
+                self.section = data!
                 
                 if data!.isEmpty {
                     DispatchQueue.main.async {
@@ -50,7 +39,7 @@ class HomeViewController: UIViewController {
                 }
                 else{
                     DispatchQueue.main.async {
-                        self.configureTableview()
+                        self.loadCollectionView()
                     }
                 }
                
@@ -67,72 +56,199 @@ class HomeViewController: UIViewController {
             }
         }
         
-        // Do any additional setup after loading the view.
-    }
-    
-    private func configureTableview(){
-        
-        
-        tableview = UITableView(frame: .zero, style: .grouped)
-        tableview.delegate = self
-        tableview.dataSource = self
-        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
-//        tableview.register(LargeSliderCollection.self, forCellReuseIdentifier: LargeSliderCollection.reuseIdentifier)
-        tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
-        tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
-        tableview.register(TrackFlowSection.self, forCellReuseIdentifier: TrackFlowSection.reuseIdentifier)
-        tableview.frame = view.frame
-        tableview.separatorColor = .clear
-        tableview.backgroundColor = .black
-        
-        tableview.tableHeaderView = header
-        header.initCell(data: headerData.items!)
-        
-        view.addSubview(tableview)
-        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    func loadCollectionView(){
+        
+        collectionView = UICollectionView.init(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
+        collectionView.backgroundColor = .black
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.showsVerticalScrollIndicator = false
+        
+        view.addSubview(collectionView)
+        
+        collectionView.register(SectionHeader.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeader.reuseIdentifier)
+        collectionView.register(SectionHeaderWithButton.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
+        
+        collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
+        collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
+        collectionView.register(LargePlaylistCover.self, forCellWithReuseIdentifier: LargePlaylistCover.reuseIdentifier)
+        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
+        collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
+        
+        createDataSource()
+        reloadData()
+        
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+        
         
     }
-}
+    
+    func createDataSource(){
+        
+        
+        datasource = UICollectionViewDiffableDataSource<LibObject, LibItem>(collectionView: collectionView) { collectionView, IndexPath, item in
+            
+            switch self.section[IndexPath.section].type {
+                
+            case "Featured":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   FeaturedHeader.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            case "Browse":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   CatagoryCollectionCell.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
+            case "History":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   SmallImageSlider.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
+            case "Playlists":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   LargePlaylistCover.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            
+                
+            case "Mix":
+                
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   PlayList.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+                
+            default:
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let header = TableviewSectionHeader()
-        header.tagline.text = self.data[section].tagline
-        
-        return header
-    }
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return data.count
-    }
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 40
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        switch( indexPath.section){
-        case 0:
-            let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
-            cell.configureView(data: data[indexPath.section].items!)
-            cell.navigationController = self.navigationController
-            return cell
-            
-        case 1:
-            let cell = tableview.dequeueReusableCell(withIdentifier: TrackFlowSection.reuseIdentifier) as! TrackFlowSection
-            cell.configure(data: data[indexPath.section].items!, navigationController: self.navigationController!)
-            return cell
-            
-        default:
-            let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier) as! AlbumFlowSection
-            cell.configure(data: data[indexPath.section].items!, navigationController: self.navigationController!)
-            return cell
+                return LayoutManager.configureCell(collectionView: self.collectionView,
+                                                   navigationController: self.navigationController,
+                                                   MediumImageSlider.self,
+                                                   with: item,
+                                                   indexPath: IndexPath)
+            }
         }
+        
+        datasource?.supplementaryViewProvider = { [weak self] collectionView, kind, IndexPath in
+            
+            var sectionHeader: UICollectionReusableView!
+            
+            guard let firstSection = self?.datasource?.itemIdentifier(for: IndexPath) else {
+                print( "returned nil for first item", self?.section[IndexPath.section])
+                return nil}
+            
+            guard let section = self?.datasource?.snapshot().sectionIdentifier(containingItem: firstSection) else { return nil}
+            
+            if section.tagline!.isEmpty{
+                print("!!!!!!!!!!! section returned nil")
+                return nil}
+            
+            switch( section.type){
+            case "History":
+                
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier, for: IndexPath) as? SectionHeaderWithButton else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+
+                header.tagline.text = section.tagline
+                header.title.text = section.type
+                header.navigationController = self!.navigationController
+                header.vc = TrackHistoryViewController()
+                
+                sectionHeader = header
+                
+            default:
+                
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseIdentifier, for: IndexPath) as? SectionHeader else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+                
+                header.tagline.text = section.tagline
+                header.title.text = section.type
+                
+                sectionHeader = header
+                
+            }
+            
+            return sectionHeader
+        }
+    
+    }
+    
+    func reloadData(){
+        
+        var snapshot = NSDiffableDataSourceSnapshot<LibObject, LibItem>()
+        snapshot.appendSections(section)
+        
+        for section in section {
+            snapshot.appendItems(section.items!, toSection: section)
+        }
+        
+        datasource?.apply(snapshot)
+    }
+    
+    func createCompositionalLayout() -> UICollectionViewLayout {
+
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+
+            let section = self.section[sectionIndex]
+
+            switch(section.type){
+                
+                case "Featured":
+                    return LayoutManager.createFeaturedHeader(using: section)
+                    
+                case "Browse":
+                    return LayoutManager.createWideLayout(using: section)
+                
+                case "History":
+                    return LayoutManager.smallSliderSection(using: section)
+                
+                case "Playlists":
+                    return LayoutManager.createLargePlaylistSectonLayout(using: section)
+                
+//                case "Track History":
+//                    return LayoutManager.createTrendingSection(using: section)
+                    
+//                case "Saved Tracks":
+//                    return LayoutManager.createTrendingSection(using: section)
+                    
+                default:
+                    return LayoutManager.createMediumImageSliderSection(using: self.section[sectionIndex])
+            }
+        }
+
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.interSectionSpacing = 20
+        layout.configuration = config
+        
+        return layout
     }
 }
 
@@ -239,30 +355,39 @@ class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
      
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryCollectionCell.reuseIdentifier , for: indexPath) as! CatagoryCollectionCell
-        cell.configure(catagory: sections[indexPath.row])
+//        cell.configure(catagory: sections[indexPath.row])
         cell.navigationController = navigationController
         return cell
         
     }
     
 }
-class CatagoryCollectionCell: UICollectionViewCell {
+class CatagoryCollectionCell: UICollectionViewCell, Cell {
     
     static let reuseIdentifier: String = "catagoryCell"
     private var catagory: String = ""
     var navigationController: UINavigationController!
     private var tapRecognizer: UITapGestureRecognizer!
     
-    func configure(catagory: LibItem){
+    let sectionLabel: UILabel = {
+       let view = UILabel()
+        view.setBoldFont(with: 17)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        self.catagory = item.title!
         
-        self.catagory = catagory.title!
+        navigationController = rootVc
         
+        backgroundColor = .red
         addSubview(backgroundImage)
-        backgroundImage.image = UIImage(named: catagory.imageURL!)
+        backgroundImage.image = UIImage(named: item.imageURL!)
         backgroundImage.isUserInteractionEnabled = true
         
         addSubview(sectionLabel)
-        sectionLabel.text = catagory.title
+        sectionLabel.text = item.title
 
         layer.cornerRadius = 5
         tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentCatagoryView))
@@ -279,15 +404,11 @@ class CatagoryCollectionCell: UICollectionViewCell {
             backgroundImage.topAnchor.constraint(equalTo: topAnchor)
             
         ])
-        
     }
     
-    let sectionLabel: UILabel = {
-       let view = UILabel()
-        view.setBoldFont(with: 17)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
     
     let backgroundImage: UIImageView = {
         let image = UIImageView()
@@ -307,7 +428,7 @@ class CatagoryCollectionCell: UICollectionViewCell {
             _view = TrendingCollectionViewController()
             
         case "Videos":
-            _view = VideoPageViewController()
+            _view = VideosViewController()
         
         case "Trending Videos":
             _view = TrendingVideoViewController()

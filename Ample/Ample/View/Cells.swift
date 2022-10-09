@@ -14,41 +14,42 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     static var reuseIdentifier: String = "Featured Header"
     var tapGesture = CustomGestureRecognizer()
     var NavVc: UINavigationController?
+    let blurrEffect = UIBlurEffect(style: .light)
+    var contentType: String!
+    var vc: UIViewController!
     
     override init(frame: CGRect){
         super.init(frame: frame)
         
-        let stackview = UIStackView(arrangedSubviews: [ image])
+        
+        let visualEffect = UIVisualEffectView(effect: blurrEffect)
+        visualEffect.translatesAutoresizingMaskIntoConstraints = false
+        
+        let seperator = UIView(frame: .zero)
+        seperator.translatesAutoresizingMaskIntoConstraints = false
+        seperator.backgroundColor = .tertiaryLabel
+        
+        let labelStack = UIStackView(arrangedSubviews: [type, title, tagline])
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
+        labelStack.axis = .vertical
+        labelStack.spacing = 2
+        
+        let stackview = UIStackView(arrangedSubviews: [ seperator,labelStack, image ])
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .vertical
         stackview.spacing = 10
         
         tapGesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
         
-        contentView.addSubview(image )
-        container.addGestureRecognizer(tapGesture)
-        contentView.addSubview(container)
-
-        container.addSubview(featuredTrackImage)
-        container.addSubview(artistName)
-        container.addSubview(title)
+        contentView.addSubview(stackview )
+        addSubview(itemContainer)
 
         NSLayoutConstraint.activate([
-            image.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            image.widthAnchor.constraint(equalToConstant: contentView.bounds.width),
             image.heightAnchor.constraint(equalToConstant: 200),
-
-            container.topAnchor.constraint(equalTo: image.topAnchor),
-            container.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            container.heightAnchor.constraint(equalToConstant: 200),
-
-            featuredTrackImage.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            featuredTrackImage.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
-
-            artistName.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
-            artistName.bottomAnchor.constraint(equalTo: title.topAnchor),
-
-            title.leadingAnchor.constraint(equalTo: featuredTrackImage.trailingAnchor, constant: 10),
-            title.bottomAnchor.constraint(equalTo: featuredTrackImage.bottomAnchor)
+            
+            seperator.widthAnchor.constraint(equalToConstant: contentView.bounds.width),
+            seperator.heightAnchor.constraint(equalToConstant: 0.5)
 
         ])
     }
@@ -62,33 +63,60 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         self.NavVc = rootVc
         image.setUpImage(url: catalog.posterImage!, interactable: true)
         featuredTrackImage.setUpImage(url: catalog.imageURL!, interactable: true)
-        tapGesture.id = catalog.id
+        
+        image.addGestureRecognizer(tapGesture)
 
+        contentType = catalog.type!
+        type.text = catalog.type
         title.text = catalog.title
-        artistName.text = catalog.artist
+        tagline.text = catalog.tagline
+        tapGesture.id = catalog.id
     }
     
     func didTap(_sender: CustomGestureRecognizer) {
-        let view = AlbumViewController()
-        view.albumId = _sender.id!
         
-        print("presenting...")
-        NavVc!.title = "Featured"
-        NavVc!.pushViewController(view, animated: true)
+        print( contentType)
+        
+        let selectedItemId = _sender.id
+        
+        switch( contentType! ){
+        case "Channel":
+            let view = channelPageViewController()
+            view.channelId = selectedItemId
+            vc = view
+        
+        case "Artist":
+            let view = ProfileViewController()
+            view.id = selectedItemId!
+            vc = view
+        
+        case "Single":
+            let view = TrackViewController()
+            view.trackId = selectedItemId!
+            vc = view
+            
+            default:
+                return
+        }
+//        print("presenting...")
+//        NavVc!.title = "Featured"
+        NavVc!.pushViewController(vc, animated: true)
         
     } 
-    
-    let tagline: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        return label
-    }()
+//
+//    let tagline: UILabel = {
+//        let label = UILabel()
+//        label.textColor = .label
+//        label.setFont(with: 20)
+//        return label
+//    }()
     let image: UIImageView = {
         
         let image = UIImageView()
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFill
         image.isUserInteractionEnabled = true
+        image.layer.cornerRadius = 5
         
         return image
     }()
@@ -100,34 +128,95 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         return view
     }()
     
-    let title: UILabel = {
+    let type: UILabel = {
         let label = UILabel()
-        label.textColor = .label
-        label.setFont(with: 17)
+        label.textColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        label.setFont(with: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    let tagline: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.setFont(with: 17)
+//        label.text = "Checkout this new thign that just dropped"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
     let artistName: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .secondaryLabel
         label.setFont(with: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    let title: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.setFont(with: 20)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
     let featuredTrackImage: UIImageView = {
         let view = UIImageView()
 //        view.backgroundColor = .red
-        view.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 75).isActive = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.clipsToBounds = true
         view.contentMode = .scaleAspectFill
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = 2
         return view
     }()
+    let itemContainer: UIView = {
+        let _view = UIView()
+        _view.translatesAutoresizingMaskIntoConstraints = false
+        return _view
+    }()
     
+    
+}
+class LargePlaylistCover: UICollectionViewCell, Cell{
+    static var reuseIdentifier: String = "PlaylistCover"
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+//        backgroundColor = .red
+        addSubview(image)
+        
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: bounds.height),
+            image.widthAnchor.constraint(equalToConstant: bounds.width)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("no storyboard ")
+    }
+    
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        image.setUpImage(url: item.imageURL!, interactable: true)
+        print(item.imageURL)
+    
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
+    
+    let image: UIImageView = {
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 10
+        return image
+        
+    }()
     
 }
 class FeaturedVideoHeader: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -535,7 +624,7 @@ class ArtistSection: UICollectionViewCell,  Cell{
     
     func didTap(_sender: CustomGestureRecognizer) {
         let view = ProfileViewController()
-        view.artistId = _sender.id
+        view.id = _sender.id
         
         NavVc?.pushViewController(view, animated: true)
         
@@ -656,18 +745,25 @@ class MediumImageSlider: UICollectionViewCell, Cell{
         
         artist.textColor = .secondaryLabel
         artist.translatesAutoresizingMaskIntoConstraints = false
-        artist.setFont(with: 12)
+        artist.setFont(with: 14)
         
         title.textColor = .label
-        title.setFont(with: 15)
+        title.setFont(with: 14)
         title.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackview = UIStackView(arrangedSubviews: [image, title, artist])
+        let labelStack = UIStackView(arrangedSubviews: [title, artist])
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
+        labelStack.axis = .vertical
+        labelStack.distribution = .fill
+        labelStack.alignment = .top
+        labelStack.spacing = 0
+        
+        let stackview = UIStackView(arrangedSubviews: [image, labelStack])
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .vertical
         stackview.distribution = .fill
         stackview.alignment = .leading
-//        stackview.spacing = 0
+        stackview.spacing = 5
         
         addSubview(stackview)
         NSLayoutConstraint.activate([
@@ -677,12 +773,196 @@ class MediumImageSlider: UICollectionViewCell, Cell{
             stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            image.heightAnchor.constraint(equalToConstant: 125),
-            image.widthAnchor.constraint(equalToConstant: 125),
+            image.heightAnchor.constraint(equalToConstant: 165),
+            image.widthAnchor.constraint(equalToConstant: 175),
+
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        
+        vc = rootVc!
+        type = catalog.type
+        
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        tapgesture!.id = catalog.id
+        
+        addGestureRecognizer(tapgesture!)
+        
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
+        title.text = catalog.title
+        artist.text = catalog.name
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+
+        print(_sender.id!)
+        
+        
+        switch( type){
+        case "Playlist":
+            let view = PlaylistViewController()
+            view.id = _sender.id!
+            vc?.pushViewController(view, animated: true)
+        
+        case "Track":
+            let view = TrackViewController()
+            view.trackId = _sender.id!
+            vc?.pushViewController(view, animated: true)
             
-//            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 0),
+        default:
+            let view = AlbumViewController()
+            view.albumId = _sender.id!
+            vc?.pushViewController(view, animated: true)
             
-//            artist.topAnchor.constraint(equalTo: title.bottomAnchor, constant: -10),
+        }
+        
+    }
+}
+class PlayList: UICollectionViewCell, Cell{
+    
+    static let reuseIdentifier: String = "playlistCell"
+    
+    var vc: UINavigationController?
+    var tapgesture: CustomGestureRecognizer?
+    var type: String?
+    
+    let image = UIImageView()
+    let title = UILabel()
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 5
+        image.contentMode = .scaleAspectFill
+        image.translatesAutoresizingMaskIntoConstraints = false
+        isUserInteractionEnabled = true
+        
+        title.textColor = .label
+        title.setFont(with: 15)
+        title.translatesAutoresizingMaskIntoConstraints = false
+
+        let stackview = UIStackView(arrangedSubviews: [image, title])
+        stackview.translatesAutoresizingMaskIntoConstraints = false
+        stackview.axis = .vertical
+        stackview.distribution = .fill
+        stackview.alignment = .leading
+        stackview.spacing = 5
+        
+        addSubview(stackview)
+        NSLayoutConstraint.activate([
+            
+            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackview.topAnchor.constraint(equalTo: topAnchor),
+            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            image.heightAnchor.constraint(equalToConstant: 165),
+            image.widthAnchor.constraint(equalToConstant: 175),
+
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
+    
+    func configure(with catalog: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        
+        vc = rootVc!
+        type = catalog.type
+        
+        tapgesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
+        tapgesture!.id = catalog.id
+        
+        addGestureRecognizer(tapgesture!)
+        
+        image.setUpImage(url: catalog.imageURL!, interactable: true)
+        title.text = catalog.title
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+
+        
+        switch( type){
+        case "Playlist":
+            let view = PlaylistViewController()
+            view.id = _sender.id!
+            vc?.pushViewController(view, animated: true)
+        
+        case "Track":
+            let view = TrackViewController()
+            view.trackId = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        default:
+            let view = AlbumViewController()
+            view.albumId = _sender.id!
+            vc?.pushViewController(view, animated: true)
+            
+        }
+        
+    }
+}
+class SmallImageSlider: UICollectionViewCell, Cell{
+    
+    static let reuseIdentifier: String = "smallSlider"
+    
+    var vc: UINavigationController?
+    var tapgesture: CustomGestureRecognizer?
+    var type: String?
+    
+    let image = UIImageView()
+    let artist = UILabel()
+    let title = UILabel()
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 5
+        image.contentMode = .scaleAspectFill
+        image.translatesAutoresizingMaskIntoConstraints = false
+        isUserInteractionEnabled = true
+        
+        artist.textColor = .secondaryLabel
+        artist.translatesAutoresizingMaskIntoConstraints = false
+        artist.setFont(with: 15)
+        
+        title.textColor = .label
+        title.setFont(with: 15)
+        title.translatesAutoresizingMaskIntoConstraints = false
+        
+        let labelStack = UIStackView(arrangedSubviews: [title, artist])
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
+        labelStack.axis = .vertical
+        labelStack.distribution = .fill
+        labelStack.alignment = .top
+        labelStack.spacing = 0
+        
+        let stackview = UIStackView(arrangedSubviews: [image, labelStack])
+        stackview.translatesAutoresizingMaskIntoConstraints = false
+        stackview.axis = .vertical
+        stackview.distribution = .fill
+        stackview.alignment = .leading
+        stackview.spacing = 5
+        
+        addSubview(stackview)
+        NSLayoutConstraint.activate([
+            
+            stackview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackview.topAnchor.constraint(equalTo: topAnchor),
+            stackview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackview.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            image.heightAnchor.constraint(equalToConstant: 120),
+            image.widthAnchor.constraint(equalToConstant: 130),
+
         ])
     }
     
@@ -851,7 +1131,7 @@ class LargeArtistAvi: UICollectionViewCell, Cell {
         artistLabel.text = item.name
         
         gesture = CustomGestureRecognizer(target: self, action: #selector(didTap(_sender:)))
-        gesture.id = item.id
+        gesture.id = item.albumId
         
         self.vc = rootVc
         container.addGestureRecognizer(gesture)
@@ -859,7 +1139,7 @@ class LargeArtistAvi: UICollectionViewCell, Cell {
     
     func didTap(_sender: CustomGestureRecognizer) {
         let profile = ProfileViewController()
-        profile.artistId = _sender.id
+        profile.id = _sender.id
         print("pressed")
         vc.pushViewController(profile, animated: true)
     }
@@ -935,10 +1215,101 @@ class LargeArtistAvi: UICollectionViewCell, Cell {
         return btn
     }()
 }
-
-class SmallVideoPoster: UICollectionViewCell, VideoCell {
+class SmallVideoPoster: UICollectionViewCell, Cell {
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        artistLabel.text = item.artist
+        title.text = item.title
+//        viewCountLabel.text = "Views: \(String(item))"
+        posterImage.setUpImage(url: item.imageURL!, interactable: false)
+        
+        self.video = item
+        self.navigation = rootVc
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
     
     static var reuseIdentifier: String = "smallVideoPoster"
+    
+    var navigation: UINavigationController!
+    var video: LibItem!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addSubview(posterImage)
+        let contentStack = UIStackView(arrangedSubviews: [title, artistLabel])
+        contentStack.axis = .vertical
+        contentStack.distribution = .fillProportionally
+        contentStack.spacing = 5
+//        contentStack.alignment = .leading
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(contentStack)
+        
+        NSLayoutConstraint.activate([
+            posterImage.heightAnchor.constraint(equalToConstant: 100),
+            posterImage.widthAnchor.constraint(equalToConstant: 200),
+            posterImage.topAnchor.constraint(equalTo: topAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentStack.topAnchor.constraint(equalTo: posterImage.bottomAnchor, constant: 10)
+        ])
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(displayVideoView)))
+        
+    }
+
+    @objc func displayVideoView(){
+        
+        let videoView = VideoViewController()
+        videoView.selectedVideo = video.id
+        videoView.modalPresentationStyle = .overFullScreen
+        videoView.modalTransitionStyle = .coverVertical
+        
+        navigation.present(videoView, animated: true)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("no storboard provided")
+    }
+    
+    func configure(with: VideoItemModel, navigationController: UINavigationController) {
+    
+      
+    }
+    
+    let posterImage: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    let title: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 15)
+        label.numberOfLines = 1
+        label.textColor = .label
+        return label
+    }()
+    let artistLabel: UILabel = {
+        let label = UILabel()
+        label.setBoldFont(with:  12 )
+        label.textColor = .secondaryLabel
+        return label
+    }()
+    let viewCountLabel: UILabel = {
+        let label = UILabel()
+        label.setFont(with: 10)
+        label.textColor = .secondaryLabel
+        return label
+    }()
+}
+class SmallVideoPosterCell: UICollectionViewCell, Cell {
+    
+    static var reuseIdentifier: String = "smallVideoPostercell"
     
     var navigation: UINavigationController!
     var video: VideoItemModel!
@@ -947,7 +1318,7 @@ class SmallVideoPoster: UICollectionViewCell, VideoCell {
         super.init(frame: frame)
         
         addSubview(posterImage)
-        let contentStack = UIStackView(arrangedSubviews: [artistLabel, title, viewCountLabel])
+        let contentStack = UIStackView(arrangedSubviews: [title, artistLabel])
         contentStack.axis = .vertical
         contentStack.distribution = .fillProportionally
         contentStack.spacing = 5
@@ -958,17 +1329,16 @@ class SmallVideoPoster: UICollectionViewCell, VideoCell {
         NSLayoutConstraint.activate([
             posterImage.heightAnchor.constraint(equalToConstant: 100),
             posterImage.widthAnchor.constraint(equalToConstant: 200),
-//            posterImage.topAnchor.constraint(equalTo: topAnchor),
+            posterImage.topAnchor.constraint(equalTo: topAnchor),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentStack.topAnchor.constraint(equalTo: posterImage.bottomAnchor, constant: 10)
-            
         ])
         
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(displayVideoView)))
         
     }
-    
+
     @objc func displayVideoView(){
         
         let videoView = VideoViewController()
@@ -992,6 +1362,22 @@ class SmallVideoPoster: UICollectionViewCell, VideoCell {
         
         self.video = with
         self.navigation = navigationController
+    }
+    
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        let video = VideoItemModel(id: item.id,
+                                   videoURL: item.videoURL!,
+                                   posterURL: item.posterURL,
+                                   title: item.title!,
+                                   artist: item.artist!,
+                                   artistImageURL: nil,
+                                   albumId: nil, views: 0)
+        
+        self.configure(with: video, navigationController: rootVc!)
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
     }
     
     let posterImage: UIImageView = {
@@ -1041,7 +1427,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         let labelStack = UIStackView(arrangedSubviews: [trackTitleLabel, artistNameLabel])
         labelStack.axis = .vertical
         
-        let horizontalStack = UIStackView(arrangedSubviews: [labelStack, optionsBtn])
+        let horizontalStack = UIStackView(arrangedSubviews: [trackImage, labelStack, optionsBtn])
         horizontalStack.axis = .horizontal
         horizontalStack.alignment = .center
         horizontalStack.translatesAutoresizingMaskIntoConstraints = false
@@ -1052,9 +1438,9 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
         
         NSLayoutConstraint.activate([
             
-//            trackImage.heightAnchor.constraint(equalToConstant: 50),
-//            trackImage.widthAnchor.constraint(equalToConstant: 50),
-//            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
+            trackImage.heightAnchor.constraint(equalToConstant: 50),
+            trackImage.widthAnchor.constraint(equalToConstant: 50),
+            trackImage.leadingAnchor.constraint(equalTo: optionsBtn.trailingAnchor, constant: 7),
             
             optionsBtn.widthAnchor.constraint(equalToConstant: 30 ),
             optionsBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
@@ -1139,8 +1525,7 @@ class TrackDetailStrip: UICollectionViewCell, Cell{
     }()
     
     
-} // depricated
-
+}
 class TrackCell: UITableViewCell{
     static var reuseIdentifier: String = "track"
     
@@ -1668,7 +2053,7 @@ class DetailHeader: UICollectionViewCell{
     
     @objc func didTap(_sender: CustomGestureRecognizer) {
         let view = ProfileViewController()
-        view.artistId = artistId
+        view.id = artistId
         vc?.pushViewController(view, animated: true)
     }
     @objc func playButtonTapped(){
@@ -1868,7 +2253,7 @@ class SectionHeader: UICollectionReusableView, GestureAction {
         seperator.backgroundColor = .tertiaryLabel
         
         tagline.textColor = .label
-        tagline.font = UIFont.boldSystemFont(ofSize: 17)
+        tagline.font = UIFont.boldSystemFont(ofSize: 20)
         
         let stackView = UIStackView(arrangedSubviews: [tagline])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -1915,7 +2300,7 @@ class SectionHeaderWithButton: UICollectionReusableView, GestureAction {
         seperator.backgroundColor = .tertiaryLabel
         
         tagline.textColor = .label
-        tagline.font = UIFont.boldSystemFont(ofSize: 17)
+        tagline.font = UIFont.boldSystemFont(ofSize: 20)
         
         let hstack = UIStackView(arrangedSubviews: [tagline, button ])
         hstack.distribution = .equalSpacing
@@ -1953,7 +2338,10 @@ class SectionHeaderWithButton: UICollectionReusableView, GestureAction {
         let btn = UIButton()
         btn.setTitle("See More", for: .normal)
         btn.titleLabel?.setFont(with: 10)
-        btn.tintColor = .secondaryLabel
+//        btn.tintColor = .secondaryLabel
+        btn.tintColor = .purple
+//        rgb(142, 5, 194)
+//        btn.setTitleColor(UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1), for: .normal)
         btn.addTarget(self, action: #selector(didTap(_sender:)), for: .touchUpInside)
         return btn
     }()
@@ -2151,7 +2539,6 @@ class ProfileHeader: UICollectionViewCell, Cell {
         return label
     }()
 } // Depricated
-
 class ProfileHead: UIView{
   
     static var reuseIdentifier: String =  "profile Header"
@@ -2165,19 +2552,30 @@ class ProfileHead: UIView{
     var stack = UIStackView()
     
     var animator: UIViewPropertyAnimator!
+    var profileStats:  ProfileOptionsView!
     
     override init(frame: CGRect){
         super.init( frame: frame)
         
         addSubview(image)
+        backgroundColor = .black
+        
+        profileStats = ProfileOptionsView()
+        profileStats.layer.zPosition = 5
+        profileStats.translatesAutoresizingMaskIntoConstraints = false
         
         infoBtn.layer.zPosition = 5
+        addSubview(profileStats)
         
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: topAnchor),
-            image.leadingAnchor.constraint(equalTo: leadingAnchor),
-            image.trailingAnchor.constraint(equalTo: trailingAnchor),
-            image.bottomAnchor.constraint(equalTo: bottomAnchor),
+            image.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            image.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            image.heightAnchor.constraint(equalToConstant: 400),
+            
+            profileStats.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
+            profileStats.leadingAnchor.constraint(equalTo: leadingAnchor),
+            profileStats.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
         
     }
@@ -2190,9 +2588,16 @@ class ProfileHead: UIView{
         
         self.artist = artist
         setupGradient()
+        let subscribers = NumberFormatter.localizedString(from: NSNumber(value: artist.subscribers), number: NumberFormatter.Style.decimal)
+
+        profileStats.subscribersLabel.text = " \(artist.type) • Subscribers: \(subscribers)"
+        profileStats.configure(artistId: artist.id)
     }
     
     func setupGradient(){
+        
+        let blurr = UIBlurEffect(style: .dark)
+        let visualEffect = UIVisualEffectView(effect: blurr)
         
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
@@ -2203,13 +2608,18 @@ class ProfileHead: UIView{
         container.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         
         addSubview(container)
+        visualEffect.frame = container.frame
+        visualEffect.clipsToBounds = true
+        
         container.layer.addSublayer(gradientLayer)
+//        container.addSubview(visualEffect)
+        container.mask = visualEffect
         
         container.addSubview(name)
         
         NSLayoutConstraint.activate([
-            name.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            name.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10)
+            name.leadingAnchor.constraint(equalTo: image.leadingAnchor, constant: 20),
+            name.bottomAnchor.constraint(equalTo: image.bottomAnchor, constant: -10)
         ])
     }
     
@@ -2224,6 +2634,8 @@ class ProfileHead: UIView{
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFill
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 20
         return image
         
     }()
@@ -2478,11 +2890,11 @@ class ProfileOptionsView: UIView {
         let btn = UIButton()
         btn.setTitle("Follow", for:  .normal)
         btn.titleLabel!.setFont(with: 12)
-        btn.setTitleColor(UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.6), for: .normal)
+        btn.setTitleColor(UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1), for: .normal)
         btn.widthAnchor.constraint(equalToConstant: 100).isActive = true
         btn.layer.borderWidth = 1
         btn.layer.cornerRadius = 5
-        btn.layer.borderColor = UIColor.init(displayP3Red: 255 / 255, green: 227 / 255, blue: 77 / 255, alpha: 0.6).cgColor
+        btn.layer.borderColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1).cgColor
         btn.addTarget(self, action: #selector(didTapFollowBtn), for: .touchUpInside)
         
         return btn
@@ -2491,7 +2903,7 @@ class ProfileOptionsView: UIView {
     let optionsBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        btn.tintColor = .gray
+        btn.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         return btn
     }()
     let subscribersLabel: UILabel = {
@@ -2731,7 +3143,6 @@ class TrackCover: UICollectionViewCell {
         return btn
     }()
 }
-
 class CollectionCell: UICollectionViewCell, Cell{
     
     static var reuseIdentifier: String = "Top Tracks"
@@ -2824,7 +3235,6 @@ class CollectionCell: UICollectionViewCell, Cell{
         AudioManager.shared.initPlayer(track: track, tracks: nil)
     }
 }
-
 class TrackStrip: UITableViewCell, TableCell{
     
     static var reuseIdentifier: String = "track"
@@ -2939,9 +3349,9 @@ class TrackWithPlayCount: UITableViewCell {
         image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         image.translatesAutoresizingMaskIntoConstraints = false
         
-        title.setFont(with: 12)
+        title.setFont(with: 15)
         
-        artist.setFont(with: 10)
+        artist.setFont(with: 12)
         artist.textColor = .secondaryLabel
         
         listenCount.setFont(with: 10)
@@ -2974,17 +3384,24 @@ class TrackWithPlayCount: UITableViewCell {
         
         let innterStackview = UIStackView(arrangedSubviews: [title, artist])
         innterStackview.axis = .vertical
+        innterStackview.spacing = 5
         innterStackview.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(image)
         addSubview(innterStackview)
         addSubview(listenCount)
         
+        let seperator = UIView(frame: .zero)
+        seperator.translatesAutoresizingMaskIntoConstraints = false
+        seperator.backgroundColor = .tertiaryLabel
+        
+        addSubview(seperator)
+        
         switch(withChart){
         case false:
             
             NSLayoutConstraint.activate([
-                contentView.heightAnchor.constraint(equalToConstant: 55),
+                contentView.heightAnchor.constraint(equalToConstant: 75),
                 image.heightAnchor.constraint(equalToConstant: 100),
                 image.widthAnchor.constraint(equalToConstant: 50),
                 image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
@@ -2993,6 +3410,11 @@ class TrackWithPlayCount: UITableViewCell {
                 innterStackview.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
                 innterStackview.centerYAnchor.constraint(equalTo: centerYAnchor),
                 
+                seperator.leadingAnchor.constraint(equalTo: innterStackview.leadingAnchor),
+                seperator.trailingAnchor.constraint(equalTo: trailingAnchor),
+                seperator.topAnchor.constraint(equalTo: innterStackview.bottomAnchor, constant: 10),
+                seperator.heightAnchor.constraint(equalToConstant: 0.5),
+    
                 listenCount.leadingAnchor.constraint(equalTo: trailingAnchor, constant: -70),
                 listenCount.centerYAnchor.constraint(equalTo: centerYAnchor),
             ])
@@ -3426,7 +3848,6 @@ class AlbumCell: UICollectionViewCell {
         fatalError("")
     }
 }
-
 class ArtistFlowSectionContainer: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
     static var reuseIdentifier: String = "artistFlowViewContainer"
@@ -3629,6 +4050,7 @@ class videoCollectionFlowCell: UITableViewCell, UICollectionViewDelegate, UIColl
 
         collectionview = UICollectionView(frame: contentView.frame, collectionViewLayout: layout)
         collectionview.dataSource = self
+        collectionview.backgroundColor = .clear
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)

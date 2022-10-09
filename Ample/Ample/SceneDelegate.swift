@@ -29,8 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
                                                             
         window?.rootViewController = customTab()
-//        window?.rootViewController = TrendingVideoViewController()
-//        window?.rootViewController = UINavigationController(rootViewController: VideoViewController())
+//        window?.rootViewController = UINavigationController(rootViewController: AlbumViewController())
         window?.makeKeyAndVisible()
      
     }

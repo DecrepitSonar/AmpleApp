@@ -173,7 +173,7 @@ class MiniPlayer: UIView, AVAudioPlayerDelegate {
             trackInfoStack.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
         
-//        self.isHidden = true
+        self.isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -322,6 +322,7 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
         view.addSubview(miniPlayer)
     
         miniPlayer.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -70).isActive = true
+
     }
     
     override var shouldAutorotate: Bool {
@@ -353,21 +354,21 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
         music.tabBarItem = UITabBarItem(title: "Music",
                                          image: UIImage(systemName: "hifispeaker.2"),
                                          tag: 0)
+        music.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         
-        let videos = UINavigationController(rootViewController: SearchViewController())
-        videos.tabBarItem = UITabBarItem(title: "Videos",
+        let search = UINavigationController(rootViewController: SearchViewController())
+        search.tabBarItem = UITabBarItem(title: "Videos",
                                          image: UIImage(systemName: "magnifyingglass"),
-                                         tag: 0)
+                                         tag: 1)
+        search.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
 
-        let library = UINavigationController(rootViewController: LibraryViewController())
+        let library = UINavigationController(rootViewController: Library())
         library.tabBarItem = UITabBarItem(title: "Library",
                                           image: UIImage(systemName: "books.vertical"),
                                           tag: 2)
+        library.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         
-        tabBar.tintColor = UIColor.init(displayP3Red: 255 / 255,
-                                        green: 227 / 255,
-                                        blue: 77 / 255,
-                                        alpha: 0.5)
+        tabBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
 //
 //        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255,
 //                                              green: 22 / 255,
@@ -376,7 +377,7 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
 //
 //        tabBar.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
 
-        self.viewControllers = [music, videos, library]
+        self.viewControllers = [music, search, library]
     
     }
 

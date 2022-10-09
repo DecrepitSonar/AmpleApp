@@ -1,97 +1,95 @@
-////
-////  TrackHistoryViewController.swift
-////  spotlight
-////
-////  Created by Robert Aubow on 6/27/21.
-////
 //
-//import UIKit
+//  TrackHistoryViewController.swift
+//  spotlight
 //
-//class HeaderLabel: UILabel {
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("")
-//    }
-//    
-//    func configure(label: String){
-//        self.text = label
-//    }
-//}
-//class TrackHistoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
-//    
-//    var tracks = [Song]() {
-//        didSet{
-//            tableview.reloadData()
-//        }
-//    }
-//    
-//    var tableview  = UITableView()
-//    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        navigationController?.navigationBar.prefersLargeTitles = true
-////        navigationController?.navigationBar.barTintColor = .white
-//        title = "Recently played"
-//        
-//        tableview.delegate = self
-//        tableview.dataSource = self
+//  Created by Robert Aubow on 6/27/21.
 //
-//        view.addSubview(tableview)
-//
-////        tableview.register(TrackStripCell.self, forCellReuseIdentifier: "trackcell")
-//        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-////        tableview.tableHeaderView = sectionHeader
-//        // Do any additional setup after loading the view.
-//        getTrackHistory()
+
+import UIKit
+
+class TrackHistoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
+    
+    var tracks = [Track](){
+        didSet{
+            DispatchQueue.main.async {
+                self.tableview.reloadData()
+            }
+        }
+    }
+    
+    var tableview: UITableView!
+    var user = UserDefaults.standard.value(forKey: "user")!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barStyle = .black
+        title = "History"
+        
+        NetworkManager.Get(url: "history/user/\(user)/?type=track", completion: { (data: [Track]!, err: NetworkError) in
+            switch(err){
+                case .notfound:
+                    print( "404 not found")
+                
+                case .servererr:
+                    print( "Internal server error")
+                    
+                case .success:
+                    self.tracks = data!
+                self.setupTableView()
+                
+            }
+        })
+    
+    }
+
+    override func viewDidLayoutSubviews() {
+        
+        tableview = UITableView(frame: .zero, style: .grouped)
+        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        tableview.delegate = self
+        tableview.dataSource = self
+        
+        tableview.frame = view.bounds
+        
+        tableview.register(TrackStrip.self, forCellReuseIdentifier: "trackcell")
+        
+        view.addSubview(tableview)
+        
+    }
+    
+    func setupTableView(){
+        
+    }
+    let sectionHeader: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+        view.backgroundColor = .red
+        return view
+    }()
+}
+
+//TrackTablvi
+extension TrackHistoryViewController{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tracks.count
+    }
+
+//    func numberOfSections(in tableView: UITableView) -> Int {
+//        return 1
 //    }
-//
-//    override func viewDidLayoutSubviews() {
-//        tableview.frame = view.bounds
-//    }
-//    
-//    func getTrackHistory(){
-//        NetworkManager.getTrackHistory { (result) in
-//            switch(result){
-//            case .success(let tracks):
-//                self.tracks = tracks
-//            case .failure(let err):
-//                print(err)
-//            }
-//        }
-//    }
-//    
-//    let sectionHeader: UIView = {
-//        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-//        view.backgroundColor = .red
-//        return view
-//    }()
-//}
-//
-//
-//
-////TrackTablvi
-//extension TrackHistoryViewController{
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return tracks.count
-//    }
-//
-////    func numberOfSections(in tableView: UITableView) -> Int {
-////        return 1
-////    }
-//    
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 75
-//    }
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-//        cell.textLabel?.text = tracks[indexPath.row].artist
-//
-////        let cell = tableview.dequeueReusableCell(withIdentifier: "trackcell", for: indexPath) as! TrackStripCell
-////        cell.configure(with: tracks[indexPath.row].Artists ?? "", trackname: tracks[indexPath.row].Title ?? "", img: tracks[indexPath.row].Image ?? "")
-//
-//        return cell
-//    }
-//}
+//        cell.textLabel?.text = tracks[indexPath.row].name
+
+        let cell = tableview.dequeueReusableCell(withIdentifier: "trackcell", for: indexPath) as! TrackStrip
+        cell.configure(track: tracks[indexPath.row])
+//        cell.configure(with: tracks[indexPath.row].Artists ?? "", trackname: tracks[indexPath.row].Title ?? "", img: tracks[indexPath.row].Image ?? "")
+
+        return cell
+    }
+}

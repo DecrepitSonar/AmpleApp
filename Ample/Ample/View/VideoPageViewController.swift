@@ -18,7 +18,7 @@ class VideoPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         navigationController?.hidesBarsOnSwipe = true
         title = "Videos"
         NetworkManager.Get(url: "videos?user=\("4f975b33-4c28-4af8-8fda-bc1a58e13e56")") { (data: [LibObject]?, error: NetworkError) in
@@ -53,11 +53,12 @@ class VideoPageViewController: UIViewController {
     func initCollectionView(){
         
         tableview = UITableView(frame: .zero, style: .grouped)
+        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         tableview.delegate = self
         tableview.dataSource = self
         tableview.frame = view.frame
         tableview.separatorColor = .clear
-        tableview.backgroundColor = .black
+        tableview.backgroundColor = .clear
 //        tableview.register(LargeVideoHeaderCell.self, forCellReuseIdentifier: LargeVideoHeaderCell.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier )
         tableview.register(ContentNavigatonSection.self, forCellReuseIdentifier: ContentNavigatonSection.reuseIdentifier)
@@ -91,18 +92,19 @@ extension VideoPageViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-            switch( self.section[indexPath.section].type){
-            case "Genres":
-                let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
-                cell.configureView(data: section[indexPath.section].items!)
-                cell.navigationController = self.navigationController
-                return cell
-            default:
-                let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
-            
-                cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
-                return cell
-            }
+//            switch( self.section[indexPath.section].type){
+//            case "Genres":
+//                let cell = tableview.dequeueReusableCell(withIdentifier: ContentNavigatonSection.reuseIdentifier) as! ContentNavigatonSection
+//                cell.configureView(data: section[indexPath.section].items!)
+//                cell.navigationController = self.navigationController
+//                return cell
+//            default:
+        let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
+    
+        cell.configure(data: section[indexPath.section].videos!, navigationController: self.navigationController!)
+        cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        return cell
+//            }
        
     }
     
@@ -192,7 +194,18 @@ class LargeVideoHeaderCell: UITableViewCell, UICollectionViewDelegate, UICollect
     
 }
 
-class MiniVideoCollection: UICollectionViewCell{
+class MiniVideoCollection: UICollectionViewCell, Cell{
+    func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
+        
+        let video = VideoItemModel(id: item.id, videoURL: item.videoURL!, posterURL: item.imageURL, title: item.title!, artist: item.artist!, artistImageURL: "", albumId: item.albumId, views: 1234)
+        
+        configureView(data: video)
+    }
+    
+    func didTap(_sender: CustomGestureRecognizer) {
+        
+    }
+    
     
     static let reuseIdentifier: String = "MiniVidScroll"
     var currentSelectedVideoId: VideoItemModel!
