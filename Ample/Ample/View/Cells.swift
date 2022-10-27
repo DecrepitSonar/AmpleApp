@@ -21,7 +21,6 @@ class FeaturedHeader: UICollectionViewCell, Cell{
     override init(frame: CGRect){
         super.init(frame: frame)
         
-        
         let visualEffect = UIVisualEffectView(effect: blurrEffect)
         visualEffect.translatesAutoresizingMaskIntoConstraints = false
         
@@ -90,6 +89,11 @@ class FeaturedHeader: UICollectionViewCell, Cell{
             view.id = selectedItemId!
             vc = view
         
+        case "Music":
+            let view = AlbumViewController()
+            view.albumId = selectedItemId!
+            vc = view
+            
         case "Single":
             let view = TrackViewController()
             view.trackId = selectedItemId!
@@ -2558,7 +2562,8 @@ class ProfileHead: UIView{
         super.init( frame: frame)
         
         addSubview(image)
-        backgroundColor = .black
+        
+        backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         
         profileStats = ProfileOptionsView()
         profileStats.layer.zPosition = 5
@@ -2608,12 +2613,12 @@ class ProfileHead: UIView{
         container.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         
         addSubview(container)
-        visualEffect.frame = container.frame
+        visualEffect.frame = image.frame
         visualEffect.clipsToBounds = true
         
-        container.layer.addSublayer(gradientLayer)
+        image.layer.addSublayer(gradientLayer)
 //        container.addSubview(visualEffect)
-        container.mask = visualEffect
+//        image.mask = visualEffect
         
         container.addSubview(name)
         
@@ -3393,7 +3398,7 @@ class TrackWithPlayCount: UITableViewCell {
         
         let seperator = UIView(frame: .zero)
         seperator.translatesAutoresizingMaskIntoConstraints = false
-        seperator.backgroundColor = .tertiaryLabel
+//        seperator.backgroundColor = .tertiaryLabel
         
         addSubview(seperator)
         
@@ -3923,7 +3928,7 @@ class AlbumFlowSection: UITableViewCell, UICollectionViewDelegate, UICollectionV
         collectionview.delegate = self
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         collectionview.register(AlbumCover.self, forCellWithReuseIdentifier: AlbumCover.reuseIdentifier)
-        collectionview.backgroundColor = .black
+        collectionview.backgroundColor = .clear
         collectionview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionview.showsHorizontalScrollIndicator = false
     

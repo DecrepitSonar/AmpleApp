@@ -53,16 +53,16 @@ class TrackViewController: UIViewController {
     override func loadView(){
         super.loadView()
         
-        addChild(loadingView)
-        loadingView.didMove(toParent: self)
-        view.addSubview(loadingView.view)
+//        addChild(loadingView)
+//        loadingView.didMove(toParent: self)
+//        view.addSubview(loadingView.view)
         
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+//        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 //        navigationItem.backBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left.circle.fill"), style: .plain, target: self, action: nil)
         
         NetworkManager.Get(url: "track?trackId=\(trackId)") { (data: TrackDeailHeader?, error: NetworkError) in
@@ -75,7 +75,8 @@ class TrackViewController: UIViewController {
                 self.data = data!
                 
                 DispatchQueue.main.async {
-                    self.loadingView.removeFromParent()
+//                    self.loadingView.removeFromParent()
+//                    self.loadingView.didMove(toParent: self)
                     self.setup()
                 }
                 

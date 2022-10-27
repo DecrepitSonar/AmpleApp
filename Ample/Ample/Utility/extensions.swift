@@ -84,3 +84,15 @@ extension Date {
         return date
     }
 }
+
+enum ThemeColors {
+    case Primary
+    case Secondary
+    case Tertiary
+}
+
+extension UIColor {
+    var color: UIColor? {
+            return UIColor.init(red: 146 / 255, green: 39 / 255, blue: 143 / 255, alpha: 1)
+    }
+}

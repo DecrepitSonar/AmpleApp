@@ -124,8 +124,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3383"
-            endingLineNumber = "3383"
+            startingLineNumber = "3388"
+            endingLineNumber = "3388"
             landmarkName = "configureWithChart(with:index:withChart:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -140,8 +140,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "511"
-            endingLineNumber = "511"
+            startingLineNumber = "515"
+            endingLineNumber = "515"
             landmarkName = "title"
             landmarkType = "24">
          </BreakpointContent>
@@ -188,8 +188,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "578"
-            endingLineNumber = "578"
+            startingLineNumber = "582"
+            endingLineNumber = "582"
             landmarkName = "ArtistSection"
             landmarkType = "3">
          </BreakpointContent>
@@ -204,8 +204,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "372"
-            endingLineNumber = "372"
+            startingLineNumber = "376"
+            endingLineNumber = "376"
             landmarkName = "addBoundaryTimeObserver()"
             landmarkType = "7">
          </BreakpointContent>
@@ -236,8 +236,8 @@
             filePath = "Ample/View/HomeViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "160"
+            endingLineNumber = "160"
             landmarkName = "createDataSource()"
             landmarkType = "7">
          </BreakpointContent>
@@ -252,8 +252,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
             landmarkName = "FeaturedVideoHeader"
             landmarkType = "3">
          </BreakpointContent>
@@ -268,8 +268,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
             landmarkName = "LargePlaylistCover"
             landmarkType = "3">
          </BreakpointContent>
@@ -284,8 +284,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "913"
-            endingLineNumber = "913"
+            startingLineNumber = "917"
+            endingLineNumber = "917"
             landmarkName = "SmallImageSlider"
             landmarkType = "3">
          </BreakpointContent>
@@ -300,8 +300,8 @@
             filePath = "Ample/View/Cells.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2544"
-            endingLineNumber = "2544"
+            startingLineNumber = "2548"
+            endingLineNumber = "2548"
             landmarkName = "ProfileHead"
             landmarkType = "3">
          </BreakpointContent>

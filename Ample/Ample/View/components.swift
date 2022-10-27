@@ -349,6 +349,8 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        let themeColor = UIColor()
 
         let music = UINavigationController(rootViewController: HomeViewController())
         music.tabBarItem = UITabBarItem(title: "Music",

@@ -62,6 +62,7 @@
 		22330FBD285BC66C001F94C5 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22330F8D285BC66C001F94C5 /* Protocols.swift */; };
 		2234CF00289F71A900FFEF25 /* EmptyContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2234CEFF289F71A800FFEF25 /* EmptyContentViewController.swift */; };
 		2234CF02289F734600FFEF25 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2234CF01289F734600FFEF25 /* ErrorViewController.swift */; };
+		224F6C2C28FB7F45008FA375 /* ReleasesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224F6C2B28FB7F44008FA375 /* ReleasesViewController.swift */; };
 		22732DC328D37ACD00562485 /* channelPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22732DC228D37ACC00562485 /* channelPageViewController.swift */; };
 		22790B5B28779B880092BBA2 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22790B5A28779B840092BBA2 /* HomeViewController.swift */; };
 		227D483D2878EADC00FCF2DE /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227D483C2878EADB00FCF2DE /* testViewController.swift */; };
@@ -161,6 +162,7 @@
 		223900DD286156270009E493 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		223900E0286156270009E493 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		223900E2286156270009E493 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		224F6C2B28FB7F44008FA375 /* ReleasesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleasesViewController.swift; sourceTree = "<group>"; };
 		22732DC228D37ACC00562485 /* channelPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = channelPageViewController.swift; sourceTree = "<group>"; };
 		22790B5A28779B840092BBA2 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		227D483C2878EADB00FCF2DE /* testViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testViewController.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				2234CF01289F734600FFEF25 /* ErrorViewController.swift */,
 				2217C6B628DF78CA00B2365F /* floatingPlayerViewController.swift */,
 				22790B5A28779B840092BBA2 /* HomeViewController.swift */,
+				224F6C2B28FB7F44008FA375 /* ReleasesViewController.swift */,
 				22330F62285BC66B001F94C5 /* Library.swift */,
 				22330F64285BC66B001F94C5 /* LibraryViewController.swift */,
 				22330F86285BC66B001F94C5 /* LoadingViewController.swift */,
@@ -515,6 +518,7 @@
 				22330F9E285BC66C001F94C5 /* SecuritySettingsVc.swift in Sources */,
 				22330F9F285BC66C001F94C5 /* AccountSettingsVc.swift in Sources */,
 				22330FA4285BC66C001F94C5 /* TrackQueueListViewController.swift in Sources */,
+				224F6C2C28FB7F45008FA375 /* ReleasesViewController.swift in Sources */,
 				2234CF00289F71A900FFEF25 /* EmptyContentViewController.swift in Sources */,
 				22330F8E285BC66C001F94C5 /* CoreDataManager.swift in Sources */,
 				22330FBA285BC66C001F94C5 /* UtilityFunctions.swift in Sources */,

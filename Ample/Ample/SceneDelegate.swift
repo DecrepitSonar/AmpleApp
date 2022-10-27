@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
                                                             
         window?.rootViewController = customTab()
-//        window?.rootViewController = UINavigationController(rootViewController: AlbumViewController())
+//        window?.rootViewController = UINavigationController(rootViewController: ReleasesViewController())
         window?.makeKeyAndVisible()
      
     }

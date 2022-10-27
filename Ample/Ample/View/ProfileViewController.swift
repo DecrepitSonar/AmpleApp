@@ -35,9 +35,12 @@ class ProfileViewController: UIViewController {
 //        backbutton.tintColor = .gray
 //        navigationItem.leftBarButtonItem = backbutton
         
+        
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
         header = ProfileHead(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 520))
         
-        NetworkManager.Get(url: "artist?id=\(id!)") { (data: ProfileObject?, error: NetworkError ) in
+        NetworkManager.Get(url: "artist?id=\("f16cb42875013a1118c1a0b3717202e9536851e0")") { (data: ProfileObject?, error: NetworkError ) in
             switch( error){
             case .success:
                 
@@ -62,13 +65,13 @@ class ProfileViewController: UIViewController {
         tableview.frame = view.frame
         tableview.delegate = self
         tableview.dataSource = self
+        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
 
         tableview.separatorColor = UIColor.clear
         tableview.register(TrackWithPlayCount.self, forCellReuseIdentifier: TrackWithPlayCount.reuseIdentifier)
         tableview.register(AlbumFlowSection.self, forCellReuseIdentifier: AlbumFlowSection.reuseIdentifier)
         tableview.register(videoCollectionFlowCell.self, forCellReuseIdentifier: videoCollectionFlowCell.reuseIdentifier)
         tableview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        tableview.backgroundColor = .black
         initHeader()
         tableview.tableHeaderView = header
         
@@ -89,6 +92,7 @@ class ProfileViewController: UIViewController {
         )
         
         header.setupHeader(artist: artist)
+        header.backgroundColor = .clear
         
     }
     
@@ -114,6 +118,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = TableSectionHeader()
         header.label.text = data.items[section].tagline
+        header.backgroundColor = .clear
         return header
     }
 
@@ -141,7 +146,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableview.dequeueReusableCell(withIdentifier: TrackWithPlayCount.reuseIdentifier, for: indexPath) as! TrackWithPlayCount
             cell.configureWithChart(with: track, index: nil, withChart: false)
             cell.selectionStyle = .none
-            cell.backgroundColor = .black
+            cell.backgroundColor = .clear
             return cell
             
         case "Videos":
@@ -167,12 +172,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableview.dequeueReusableCell(withIdentifier: videoCollectionFlowCell.reuseIdentifier, for: indexPath) as! videoCollectionFlowCell
             cell.configure(data: videos, navigationController: self.navigationController!)
             cell.selectionStyle = .none
+            cell.backgroundColor = .clear
         
             return cell
             
         default:
             let cell = tableview.dequeueReusableCell(withIdentifier: AlbumFlowSection.reuseIdentifier, for: indexPath) as! AlbumFlowSection
             cell.configure(data: data.items[indexPath.section].items!, navigationController: self.navigationController!)
+            cell.backgroundColor = .clear
             return cell
             
         }

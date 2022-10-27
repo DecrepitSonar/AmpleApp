@@ -23,22 +23,23 @@ public class DynamicTableView: UITableView {
         }
     }
 }
-class SearchViewController: UIViewController, UISearchResultsUpdating, UITableViewDelegate, UITableViewDataSource {
+class SearchViewController: UIViewController, UISearchResultsUpdating, UICollectionViewDelegate, UICollectionViewDataSource {
 
-    var tableview: UITableView!
-    let dataManager = DataMananager()
+    var collectionView: UICollectionView!
     
-    let Genres = ["R&B", "Hip-Hop", "Rap", "Soul", "Jazz", "Pop"]
-    var trackHistory = [NSManagedObject](){
-        didSet{
-            DispatchQueue.main.async {
-                self.tableview.reloadData()
-            }
-        }
-    }
+//    let dataManager = DataMananager()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    let Genres = ["R&B", "Hip-Hop", "Rap", "Soul", "Jazz", "Pop", "Alternative", "Afro", "Indie", "Rock", "Metal", "Instrumentals"]
+//    var trackHistory = [NSManagedObject](){
+//        didSet{
+//            DispatchQueue.main.async {
+//                self.tableview.reloadData()
+//            }
+//        }
+//    }
+    
+    override func loadView() {
+        super.loadView()
         
         navigationController!.navigationBar.prefersLargeTitles = true
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -46,19 +47,19 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
         
         let searchController = UISearchController(searchResultsController: SearchResultViewController())
         searchController.searchResultsUpdater = self
+        searchController.automaticallyShowsCancelButton = true
         navigationItem.searchController = searchController
         
-        tableview = UITableView(frame: .zero, style: .grouped)
-//        tableview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        tableview.delegate = self
-        tableview.dataSource = self
-        tableview.frame = view.frame
-        tableview.separatorColor = UIColor.clear
-        tableview.rowHeight = UITableView.automaticDimension
         
-        guard let items = dataManager.getAllSearchHistoryItems() else {
-            return
-        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        
+//        guard let items = dataManager.getAllSearchHistoryItems() else {
+//            return
+//        }
 
 //        NetworkManager.Get(url: "search/history?userId=\(user)", completion: { (data: [LibItem]?, error: NetworkError) in
 //
@@ -74,14 +75,43 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
 //            }
 //        })
 
-        view.addSubview(tableview)
+//        view.addSubview(collectionView)
         
-        tableview.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
-        tableview.register(GenreColletionCell.self, forCellReuseIdentifier: GenreColletionCell.reuseableIdentifier)
-        tableview.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
+//        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
+//        collectionView.register(GenreColletionCell.self, forCellReuseIdentifier: GenreColletionCell.reuseableIdentifier)
+//        collectionView.register(TrackStrip.self, forCellReuseIdentifier: TrackStrip.reuseIdentifier)
         
-        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+//        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
+        setupView()
+        
+    }
+    
+    func setupView(){
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+//        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
+        layout.itemSize = CGSize(width: ( view.bounds.width / 2 ) - 30, height: 100)
+        
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.register(GenreCell.self, forCellWithReuseIdentifier: GenreCell.reuseableidentifier)
+        collectionView.contentInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
+        view.addSubview(collectionView)
+        
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        view.addSubview(collectionView)
     }
     
     func updateSearchResults(for searchController: UISearchController) {
@@ -109,133 +139,30 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UITableVi
             }
             
         }
-    
-        print(text)
-    }
-    
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if( indexPath.row == 0 && indexPath.section == 0 ){
-            return 100
-        }
-        return 65
-    }
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if( section == 0){
-            return "Search Genres"
-        }
-        return "Recent Searches"
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if( section == 0 ){
-            return 1
-        }
-        
-        if(trackHistory.count > 0){
-            return trackHistory.count
-        }
-        else{
-            return 1
-        }
-    }
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        if( indexPath.section == 0 ){
-            let cell = tableview.dequeueReusableCell(withIdentifier: GenreColletionCell.reuseableIdentifier) as! GenreColletionCell
-            cell.configure(genres: Genres)
-            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-            return cell
-        }
-        
-//        if(trackHistory.count > 0 ){
-//
-//            switch(trackHistory[indexPath.row].value(forKey: "type") as! String){
-//            case "Artist":
-//                return configureTableCell(tableview: tableView, AviTableCell.self, with: trackHistory[indexPath.row], indexPath: indexPath)
-//
-//            default:
-//                return configureTableCell(tableview: tableView, TrackStrip.self, with: trackHistory[indexPath.row], indexPath: indexPath)
-//            }
-//        }
-        else{
-            let cell = tableview.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
-            cell.textLabel?.text = "No Recent Searchs"
-            cell.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-            return cell
-        }
-        
-    }
-}
-
-class GenreColletionCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    
-    static var reuseableIdentifier: String = "genre cell"
-    
-    var data = [String]()
-    
-    var collectionview: UICollectionView! = nil
-
-    func configure(genres: [String]){
-        
-        data = genres
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 20)
-        
-        collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionview.dataSource = self
-        collectionview.delegate = self
-        collectionview.translatesAutoresizingMaskIntoConstraints = false
-        collectionview.register(GenreCell.self, forCellWithReuseIdentifier: GenreCell.reuseableidentifier)
-        collectionview.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        collectionview.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        collectionview.showsHorizontalScrollIndicator = false
-        
-        addSubview(collectionview)
-        
-        NSLayoutConstraint.activate([
-            collectionview.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionview.topAnchor.constraint(equalTo: topAnchor),
-            collectionview.bottomAnchor.constraint(equalTo: bottomAnchor),
-            collectionview.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-        
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-        let cell = collectionview.dequeueReusableCell(withReuseIdentifier: GenreCell.reuseableidentifier, for: indexPath) as! GenreCell
-        cell.label.text = data[indexPath.row]
-        cell.image.image = UIImage(named: data[indexPath.row])
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GenreCell.reuseableidentifier, for: indexPath) as! GenreCell
+        cell.label.text = Genres[indexPath.row]
+//        cell.image.image = UIImage(named: Genres[indexPath.row])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return data.count
+        return Genres.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 200, height: 100)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return CGSize(width: 100, height: 100)
     }
 
 }
+
 
 class GenreCell: UICollectionViewCell {
     
@@ -244,6 +171,7 @@ class GenreCell: UICollectionViewCell {
     let image: UIImageView = {
         let view = UIImageView()
 //        view.backgroundColor = .red
+        view.image = UIImage(named: "pastel-gradient-art-wtlblhphaj0kja3d")
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
         view.contentMode = .scaleAspectFill
@@ -267,13 +195,26 @@ class GenreCell: UICollectionViewCell {
         return label
     }()
     
+    
+    let contentImage: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 20
+        image.heightAnchor.constraint(equalToConstant:  40).isActive = true
+        image.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        image.clipsToBounds = true
+        return image
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        clipsToBounds = true
         addSubview(image)
         addSubview(containerOverlay)
         
         containerOverlay.addSubview(label)
+        
         
         NSLayoutConstraint.activate([
             image.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -281,14 +222,19 @@ class GenreCell: UICollectionViewCell {
             image.bottomAnchor.constraint(equalTo: bottomAnchor),
             image.trailingAnchor.constraint(equalTo: trailingAnchor),
             
+            image.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            image.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+
             containerOverlay.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerOverlay.topAnchor.constraint(equalTo: topAnchor),
             containerOverlay.bottomAnchor.constraint(equalTo: bottomAnchor),
             containerOverlay.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
+
             label.centerXAnchor.constraint(equalTo: containerOverlay.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: containerOverlay.centerYAnchor)
         ])
+        
+//        backgroundColor = .red
     }
     
     required init?(coder: NSCoder) {

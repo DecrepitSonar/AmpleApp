@@ -77,7 +77,7 @@ class Library: UIViewController {
         collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         collectionView.register(SmallVideoPoster.self, forCellWithReuseIdentifier: SmallVideoPoster.reuseIdentifier)
-        
+        collectionView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         createDataSource()
         reloadData()
         

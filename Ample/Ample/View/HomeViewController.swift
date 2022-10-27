@@ -23,6 +23,7 @@ class HomeViewController: UIViewController{
         title = "Home"
         navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
         NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
             case .success:
@@ -87,7 +88,7 @@ class HomeViewController: UIViewController{
         collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
         collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
         collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
-        
+        collectionView.backgroundColor = .clear
         createDataSource()
         reloadData()
         
@@ -179,6 +180,20 @@ class HomeViewController: UIViewController{
                 header.title.text = section.type
                 header.navigationController = self!.navigationController
                 header.vc = TrackHistoryViewController()
+                
+                sectionHeader = header
+                
+            case "Releases":
+                
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier, for: IndexPath) as? SectionHeaderWithButton else{
+                    print("could not dequeue supplementory view")
+                    return nil
+                }
+
+                header.tagline.text = section.tagline
+                header.title.text = section.type
+                header.navigationController = self!.navigationController
+                header.vc = ReleasesViewController()
                 
                 sectionHeader = header
                 
@@ -376,6 +391,13 @@ class CatagoryCollectionCell: UICollectionViewCell, Cell {
         return view
     }()
     
+    let contentOverlay: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.3)
+        return view
+    }()
+    
     func configure(with item: LibItem, rootVc: UINavigationController?, indexPath: Int?) {
         self.catagory = item.title!
         
@@ -386,7 +408,9 @@ class CatagoryCollectionCell: UICollectionViewCell, Cell {
         backgroundImage.image = UIImage(named: item.imageURL!)
         backgroundImage.isUserInteractionEnabled = true
         
-        addSubview(sectionLabel)
+        addSubview(contentOverlay)
+        
+        contentOverlay.addSubview(sectionLabel)
         sectionLabel.text = item.title
 
         layer.cornerRadius = 5
@@ -395,13 +419,19 @@ class CatagoryCollectionCell: UICollectionViewCell, Cell {
         
         NSLayoutConstraint.activate([
             
-            sectionLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            sectionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-
             backgroundImage.leadingAnchor.constraint(equalTo: leadingAnchor),
             backgroundImage.trailingAnchor.constraint(equalTo: trailingAnchor),
             backgroundImage.bottomAnchor.constraint(equalTo: bottomAnchor),
-            backgroundImage.topAnchor.constraint(equalTo: topAnchor)
+            backgroundImage.topAnchor.constraint(equalTo: topAnchor),
+            
+            contentOverlay.topAnchor.constraint(equalTo: topAnchor),
+            contentOverlay.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentOverlay.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentOverlay.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            sectionLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            sectionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+
             
         ])
     }
@@ -424,6 +454,9 @@ class CatagoryCollectionCell: UICollectionViewCell, Cell {
         var _view: UIViewController!
         
         switch( catagory){
+        case "Catalog":
+            _view = SearchViewController()
+            
         case "Trending":
             _view = TrendingCollectionViewController()
             

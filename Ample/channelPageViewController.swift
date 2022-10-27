@@ -56,6 +56,8 @@ class channelPageViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.register(EpisodeCell.self, forCellReuseIdentifier: EpisodeCell.reuseIdentifier)
         tableView.separatorColor = .clear
+        tableView.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
         header = channelHeader(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 300))
         header.config(channel: channel)
         tableView.tableHeaderView = header

@@ -8,7 +8,6 @@
 import Foundation
 import  UIKit
 
-
 class CustomGestureRecognizer: UITapGestureRecognizer{
     var id: String?
     var track: Track?
@@ -354,3 +353,4 @@ class LayoutManager {
     }
     
 }
+
