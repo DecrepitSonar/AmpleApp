@@ -24,7 +24,7 @@ class HomeViewController: UIViewController{
         navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
-        NetworkManager.Get(url: "home?user=\(user)") { (data: [LibObject]?, error: NetworkError) in
+        NetworkManager.Get(url: "/") { (data: [LibObject]?, error: NetworkError) in
             switch(error){
             case .success:
                 print("success",data!)
@@ -83,11 +83,11 @@ class HomeViewController: UIViewController{
                                 withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-        collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
-        collectionView.register(LargePlaylistCover.self, forCellWithReuseIdentifier: LargePlaylistCover.reuseIdentifier)
-        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
-        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
-        collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
+//        collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
+//        collectionView.register(LargePlaylistCover.self, forCellWithReuseIdentifier: LargePlaylistCover.reuseIdentifier)
+//        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+//        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
+//        collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
         collectionView.backgroundColor = .clear
         createDataSource()
         reloadData()
@@ -111,38 +111,38 @@ class HomeViewController: UIViewController{
                                                    FeaturedHeader.self,
                                                    with: item,
                                                    indexPath: IndexPath)
-            case "Browse":
-                
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   CatagoryCollectionCell.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
-                
-            case "History":
-                
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   SmallImageSlider.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
-                
-            case "Playlists":
-                
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   LargePlaylistCover.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
-            
-                
-            case "Mix":
-                
-                return LayoutManager.configureCell(collectionView: self.collectionView,
-                                                   navigationController: self.navigationController,
-                                                   PlayList.self,
-                                                   with: item,
-                                                   indexPath: IndexPath)
+//            case "Browse":
+//                
+//                return LayoutManager.configureCell(collectionView: self.collectionView,
+//                                                   navigationController: self.navigationController,
+//                                                   CatagoryCollectionCell.self,
+//                                                   with: item,
+//                                                   indexPath: IndexPath)
+//                
+//            case "History":
+//                
+//                return LayoutManager.configureCell(collectionView: self.collectionView,
+//                                                   navigationController: self.navigationController,
+//                                                   SmallImageSlider.self,
+//                                                   with: item,
+//                                                   indexPath: IndexPath)
+//                
+//            case "Playlists":
+//                
+//                return LayoutManager.configureCell(collectionView: self.collectionView,
+//                                                   navigationController: self.navigationController,
+//                                                   LargePlaylistCover.self,
+//                                                   with: item,
+//                                                   indexPath: IndexPath)
+//            
+//                
+//            case "Mix":
+//                
+//                return LayoutManager.configureCell(collectionView: self.collectionView,
+//                                                   navigationController: self.navigationController,
+//                                                   PlayList.self,
+//                                                   with: item,
+//                                                   indexPath: IndexPath)
                 
             default:
 

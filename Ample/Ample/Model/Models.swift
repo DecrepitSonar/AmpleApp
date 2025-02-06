@@ -8,11 +8,17 @@
 import Foundation
 
 struct UserData: Decodable {
+//    var id: String
+//    var username: String
+//    var password: String
+//    var email: String
+//    var joinDate: String
+//    
     var id: String
     var username: String
-    var password: String
-    var email: String
-    var joinDate: String
+    var imageURL: String
+    var verified: Bool
+    var headerPosterURL: String
 }
 
 struct LoginCredentials: Codable{
@@ -46,6 +52,15 @@ struct LibObject: Codable, Hashable {
     var items: [LibItem]?
     var videos: [VideoItemModel]?
 }
+
+//struct LibObject: Codable, Hashable {
+//    var id: String
+//    var type: String
+//    var tagline: String?
+//    var items: [LibItem]?
+//    var videos: [VideoItemModel]?
+//}
+
 
 
 struct LibItem: Codable, Hashable {  

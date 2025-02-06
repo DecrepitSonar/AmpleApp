@@ -88,7 +88,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = LargePrimaryButton()
         btn.setupButton(label: "Login")
-        btn.backgroundColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1)
+        btn.backgroundColor = UIColor.init(displayP3Red: 198 / 255, green: 161 / 255, blue: 104 / 255, alpha: 1)
         btn.setTitleColor(UIColor.black, for: .normal)
         btn.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         
@@ -99,7 +99,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         let btn = LargePrimaryButton()
         btn.setupButton(label: "Sign Up")
         btn.layer.borderColor =  UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5).cgColor
-        btn.setTitleColor(UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1), for: .normal)
+        btn.setTitleColor(UIColor.init(displayP3Red: 198 / 255, green: 161 / 255, blue: 104 / 255, alpha: 1), for: .normal)
         
         return btn
     }()
@@ -107,7 +107,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         
         let btn = UIButton()
         btn.setTitle("Forgot password?", for: .normal)
-        btn.setTitleColor(UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 1), for: .normal)
+        btn.setTitleColor(UIColor.init(displayP3Red: 198 / 255, green: 161 / 255, blue: 104 / 255, alpha: 1), for: .normal)
         btn.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 10)
         btn.translatesAutoresizingMaskIntoConstraints = false
         
@@ -122,7 +122,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         field.placeholder = "Password"
         field.layer.cornerRadius = 8
         field.layer.borderWidth = 1
-        field.layer.borderColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.3).cgColor
+        field.layer.borderColor = UIColor.init(displayP3Red: 198 / 255, green: 161 / 255, blue: 104 / 255, alpha: 0.3).cgColor
         
         field.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.5)
         field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
@@ -136,7 +136,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         field.placeholder = "Username / Email"
         field.layer.cornerRadius = 8
         field.layer.borderWidth = 1
-        field.layer.borderColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.3).cgColor
+        field.layer.borderColor = UIColor.init(displayP3Red: 198 / 255, green: 161 / 255, blue: 104 / 255, alpha: 0.3).cgColor
         
         field.addTarget(self, action: #selector(updateTextInputField(_sender:)), for: .editingChanged)
         field.tag = 1
@@ -147,7 +147,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
     let seperator: UIView = {
         
         let view = UIView(frame: .zero)
-        view.backgroundColor = .quaternaryLabel
+        view.backgroundColor = .separator
         
         return view
         
@@ -170,7 +170,7 @@ class LoginService {
     
     func authenticateWithCredentials(credentials: LoginCredentials){
         
-        NetworkManager.Post(url: "authenticate", data: credentials) {(data: UserData?, error: NetworkError) in
+        NetworkManager.Post(url: "login", data: credentials) {(data: UserData?, error: NetworkError) in
             switch(error){
             case .servererr:
                 print(error.localizedDescription)
@@ -191,7 +191,7 @@ class LoginService {
 class LoginViewController: UIViewController {
     
     var animation: UIViewPropertyAnimator!
-    let tabVc = customTab()
+    
     let loginForm = LoginForm()
     
     override func viewWillAppear(_ animated: Bool) {
@@ -222,24 +222,25 @@ class LoginViewController: UIViewController {
         
         view.addSubview(viewLayer)
         
-        viewLayer.addSubview(bgImage)
-        viewLayer.addSubview(logo)
+//        viewLayer.addSubview(bgImage)
+//        viewLayer.addSubview(logo)
         
         loginForm.layer.zPosition = 3
         
         viewLayer.addSubview(loginForm)
+        view.backgroundColor = UIColor.init(red: 33 / 255, green: 33 / 255, blue: 41 / 255, alpha: 1)
         
         NSLayoutConstraint.activate([
 
-            bgImage.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
-            bgImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
+//            bgImage.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
+//            bgImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
             
-            
-            logo.topAnchor.constraint(equalTo: viewLayer.topAnchor, constant:250),
-            logo.centerXAnchor.constraint(equalTo: viewLayer.centerXAnchor),
+//            logo.topAnchor.constraint(equalTo: viewLayer.topAnchor, constant:250),
+//            logo.centerXAnchor.constraint(equalTo: viewLayer.centerXAnchor),
 
             loginForm.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loginForm.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 100),
+//            loginForm.topAnchor.constraint(equalTo: logo.bottomAnchor, constant: 100),
+            loginForm.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             loginForm.leadingAnchor.constraint(equalTo: viewLayer.leadingAnchor, constant: 20),
             loginForm.trailingAnchor.constraint(equalTo: viewLayer.trailingAnchor, constant: -20),
             

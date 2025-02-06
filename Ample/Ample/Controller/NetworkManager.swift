@@ -25,7 +25,7 @@ class NetworkManager {
     
 //    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
 //        static let baseURL = "http://159.89.118.206/api/v1"
-    static let baseURL = "http://localhost:8000/api/v1"
+    static let baseURL = "http://127.0.0.1:5000/"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
 
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -92,7 +92,7 @@ class NetworkManager {
     }
     static func Post<T: Decodable, D: Encodable>(url: String, data: D, completion: @escaping (T?, NetworkError) -> ()){
         
-        let _url = URL(string: "\(baseURL)/\(url)")
+        let _url = URL(string: "\(baseURL)\(url)")
         print(baseURL)
         print(_url)
         var request = URLRequest(url: _url!)
@@ -104,7 +104,6 @@ class NetworkManager {
             return
         }
         
-        request.httpBody = encoded
 
         let task = URLSession.shared.uploadTask(with: request, from: encoded) { data, response, error in
             

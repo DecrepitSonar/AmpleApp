@@ -353,24 +353,24 @@ class customTab: UITabBarController, PlayerDelegate, AVAudioPlayerDelegate {
         let themeColor = UIColor()
 
         let music = UINavigationController(rootViewController: HomeViewController())
-        music.tabBarItem = UITabBarItem(title: "Music",
-                                         image: UIImage(systemName: "hifispeaker.2"),
+        music.tabBarItem = UITabBarItem(title: "",
+                                         image: UIImage(systemName: "house"),
                                          tag: 0)
-        music.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        music.navigationController?.navigationBar.tintColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5)
         
         let search = UINavigationController(rootViewController: SearchViewController())
-        search.tabBarItem = UITabBarItem(title: "Videos",
+        search.tabBarItem = UITabBarItem(title: "",
                                          image: UIImage(systemName: "magnifyingglass"),
                                          tag: 1)
-        search.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        search.navigationController?.navigationBar.tintColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5)
 
         let library = UINavigationController(rootViewController: Library())
-        library.tabBarItem = UITabBarItem(title: "Library",
+        library.tabBarItem = UITabBarItem(title: "",
                                           image: UIImage(systemName: "books.vertical"),
                                           tag: 2)
-        library.navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        library.navigationController?.navigationBar.tintColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5)
         
-        tabBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
+        tabBar.tintColor = UIColor.init(displayP3Red: 246 / 255, green: 135 / 255, blue: 31 / 255, alpha: 0.5)
 //
 //        tabBar.backgroundColor = UIColor.init(displayP3Red: 22 / 255,
 //                                              green: 22 / 255,
