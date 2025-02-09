@@ -80,7 +80,7 @@ class VideoCollectionCell: UITableViewCell {
         
         videoTitleLabel.text = item.title
         videoArtistNameLabel.text = item.artist
-        videoViewCount.text = String(item.views)
+        videoViewCount.text = String(item.views!)
         
         image.setUpImage(url: item.posterURL!, interactable: false)
         

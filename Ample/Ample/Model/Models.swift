@@ -42,7 +42,7 @@ struct VideoItemModel: Codable, Hashable {
     var artist: String
     var artistImageURL: String?
     var albumId: String?
-    var views: Int32
+    var views: Int32?
 }
 
 struct LibObject: Codable, Hashable {

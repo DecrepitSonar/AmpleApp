@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import AVFoundation
 import CoreData
+import SwiftUI
 
 protocol LoginFormViewDelegate {
     func handleLogin()
@@ -16,6 +17,9 @@ protocol LoginFormViewDelegate {
 }
 
 class LoginForm: UIStackView, LoginFormViewDelegate{
+    
+    @StateObject private var coreDataStack = CoreDataStack.shared
+    @Environment(\.managedObjectContext) private var viewContext
     
     var rootVc: UIViewController!
     
@@ -26,11 +30,12 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
     var username: String?
     var password: String?
     
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         loginService.delegate = self
-        
+        CoreDataStack.shared.addItemToSearchHistory(itemId: "1234567890")
         addArrangedSubview(UsernameTextField)
         addArrangedSubview(PasswordTextField)
         addArrangedSubview(LoginBtn)
@@ -43,7 +48,6 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         distribution = .equalSpacing
         translatesAutoresizingMaskIntoConstraints = false
         layer.zPosition = 3
-
         
         NSLayoutConstraint.activate([
             PasswordResetBtn.leadingAnchor.constraint(equalTo: trailingAnchor),
@@ -77,6 +81,7 @@ class LoginForm: UIStackView, LoginFormViewDelegate{
         print("did authorize user")
         
 //      Inititialize new user for core data model
+
         UserDefaults.standard.set(user.id, forKey: "user")
         DispatchQueue.main.async {
             self.window!.rootViewController = self.tabVc
@@ -170,7 +175,7 @@ class LoginService {
     
     func authenticateWithCredentials(credentials: LoginCredentials){
         
-        NetworkManager.Post(url: "login", data: credentials) {(data: UserData?, error: NetworkError) in
+        NetworkManager.Post(url: "/auth/login", data: credentials) {(data: UserData?, error: NetworkError) in
             switch(error){
             case .servererr:
                 print(error.localizedDescription)

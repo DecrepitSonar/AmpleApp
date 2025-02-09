@@ -28,12 +28,12 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         seperator.translatesAutoresizingMaskIntoConstraints = false
         seperator.backgroundColor = .tertiaryLabel
         
-        let labelStack = UIStackView(arrangedSubviews: [type, title, tagline])
+        let labelStack = UIStackView(arrangedSubviews: [title, tagline])
         labelStack.translatesAutoresizingMaskIntoConstraints = false
         labelStack.axis = .vertical
         labelStack.spacing = 2
         
-        let stackview = UIStackView(arrangedSubviews: [ seperator,labelStack, image ])
+        let stackview = UIStackView(arrangedSubviews: [ image, labelStack, seperator ])
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .vertical
         stackview.spacing = 10
@@ -61,7 +61,7 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         
         self.NavVc = rootVc
         image.setUpImage(url: catalog.posterImage!, interactable: true)
-        featuredTrackImage.setUpImage(url: catalog.imageURL!, interactable: true)
+//        featuredTrackImage.setUpImage(url: catalog.imageURL!, interactable: true)
         
         image.addGestureRecognizer(tapGesture)
 
@@ -149,7 +149,6 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         return label
     }()
     
-    
     let artistName: UILabel = {
         let label = UILabel()
         label.textColor = .secondaryLabel
@@ -166,10 +165,9 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         return label
     }()
     
-    
     let featuredTrackImage: UIImageView = {
         let view = UIImageView()
-//        view.backgroundColor = .red
+        view.backgroundColor = .red
         view.translatesAutoresizingMaskIntoConstraints = false
         view.clipsToBounds = true
         view.contentMode = .scaleAspectFill
@@ -181,7 +179,6 @@ class FeaturedHeader: UICollectionViewCell, Cell{
         _view.translatesAutoresizingMaskIntoConstraints = false
         return _view
     }()
-    
     
 }
 class LargePlaylistCover: UICollectionViewCell, Cell{
@@ -219,7 +216,6 @@ class LargePlaylistCover: UICollectionViewCell, Cell{
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 10
         return image
-        
     }()
     
 }
@@ -1361,7 +1357,7 @@ class SmallVideoPosterCell: UICollectionViewCell, Cell {
     
         artistLabel.text = with.artist
         title.text = with.title
-        viewCountLabel.text = "Views: \(String(with.views))"
+        viewCountLabel.text = "Views: \(String(with.views!))"
         posterImage.setUpImage(url: with.posterURL!, interactable: false)
         
         self.video = with

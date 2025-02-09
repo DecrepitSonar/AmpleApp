@@ -9,32 +9,37 @@ import Foundation
 import CoreData
 import UIKit
 
-class DataMananager {
+class CoreDataStack: ObservableObject {
+    static let shared = CoreDataStack()
     
-//    var managedContext: NSPersistentContainer!
-    var viewContext: NSManagedObjectContext!
-    enum DBError: Error {
-        case Failed
-        case Success
-    }
-    
-    
-    static let shared = DataMananager()
-    
-    init() {
+    // Create a persistent container as a llazy vasriable to defer instantiation until its first use.
+    lazy var persistentContainer: NSPersistentContainer = {
         
-        DispatchQueue.main.async {
-            guard let appDelegate =
-                UIApplication.shared.delegate as? AppDelegate else {
-                return
-              }
-            
-            let managedContext =
-                appDelegate.persistentContainer
-            
-            self.viewContext = managedContext.viewContext
+        // Pass the data model filename to the container's initializer.
+        let container = NSPersistentContainer(name: "Ample")
+        
+        // Load any persistnt stores, which creates a store if none exists.
+        container.loadPersistentStores {_, error in
+            if let error {
+                //Handle the error appropriately. However, it's useful to use
+                // 'fatalError*_:file:line:)' during development.
+                fatalError("Failed to load persistent stores: \(error.localizedDescription)")
+            }}
+        return container
+    }()
+    
+    func save() {
+        // Verify that the context has uncommitted changes.
+        guard persistentContainer.viewContext.hasChanges else { return }
+        
+        do {
+            // Attempt to save changes.
+            try persistentContainer.viewContext.save()
         }
-        
+        catch {
+            // Handle the error appropriately
+            print( "Failed to save the context:", error.localizedDescription)
+        }
     }
 
     // Todo: get all items from search history context
@@ -44,7 +49,10 @@ class DataMananager {
     // Todo: remove item from search historycontext
     func removeItemFromSearchHistory(itemId: String){}
     // Todo: remove all items from search History
-    func removeAllItemsFromSearchHistory(){}
+    func removeAllItemsFromSearchHistory(){
+        save()
+    }
     
     
 }
+

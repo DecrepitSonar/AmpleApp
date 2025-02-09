@@ -22,15 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.overrideUserInterfaceStyle = .dark
 //
-        guard let user = UserDefaults.standard.object(forKey: "user") else {
+//        guard let user = UserDefaults.standard.object(forKey: "user") else {
             window?.rootViewController = LoginViewController()
             window?.makeKeyAndVisible()
-            return
-        }
+//            return
+//        }
                                                             
-        window?.rootViewController = customTab()
+//        window?.rootViewController = customTab()
 //        window?.rootViewController = UINavigationController(rootViewController: ReleasesViewController())
-        window?.makeKeyAndVisible()
+//        window?.makeKeyAndVisible()
      
     }
 

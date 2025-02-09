@@ -24,7 +24,11 @@ class HomeViewController: UIViewController{
         navigationController?.navigationBar.tintColor = UIColor.init(red: 142 / 255, green: 5 / 255, blue: 194 / 255, alpha: 1)
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         view.backgroundColor = UIColor.init(displayP3Red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 1)
+        
         NetworkManager.Get(url: "/") { (data: [LibObject]?, error: NetworkError) in
+            
+            print( data )
+            
             switch(error){
             case .success:
                 print("success",data!)
@@ -83,11 +87,11 @@ class HomeViewController: UIViewController{
                                 withReuseIdentifier: SectionHeaderWithButton.reuseIdentifier)
         
         collectionView.register(FeaturedHeader.self, forCellWithReuseIdentifier: FeaturedHeader.reuseIdentifier)
-//        collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
-//        collectionView.register(LargePlaylistCover.self, forCellWithReuseIdentifier: LargePlaylistCover.reuseIdentifier)
-//        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
-//        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
-//        collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
+        collectionView.register(CatagoryCollectionCell.self, forCellWithReuseIdentifier: CatagoryCollectionCell.reuseIdentifier)
+        collectionView.register(LargePlaylistCover.self, forCellWithReuseIdentifier: LargePlaylistCover.reuseIdentifier)
+        collectionView.register(MediumImageSlider.self, forCellWithReuseIdentifier: MediumImageSlider.reuseIdentifier)
+        collectionView.register(SmallImageSlider.self, forCellWithReuseIdentifier: SmallImageSlider.reuseIdentifier)
+        collectionView.register(PlayList.self, forCellWithReuseIdentifier: PlayList.reuseIdentifier)
         collectionView.backgroundColor = .clear
         createDataSource()
         reloadData()
@@ -325,7 +329,6 @@ class LargeSliderCollection: UIView, UICollectionViewDelegate, UICollectionViewD
     }
     
 }
-
 class ContentNavigatonSection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
    
     static let reuseIdentifier: String = "contentNav"

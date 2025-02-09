@@ -1,5 +1,5 @@
 //
-//  NetworkManager.swift
+    //  NetworkManager.swift
 //  spotlight
 //
 //  Created by Robert Aubow on 7/23/21.
@@ -25,7 +25,7 @@ class NetworkManager {
     
 //    static let baseURL = "https://spotlight-ap.herokuapp.com/api/v1"
 //        static let baseURL = "http://159.89.118.206/api/v1"
-    static let baseURL = "http://127.0.0.1:5000/"
+    static let baseURL = "http://127.0.0.1:8000/api/v1"
 //    static let baseURL = "https://app-server-savi4.ondigitalocean.app/"
 
     static let CDN = "https://prophile.nyc3.digitaloceanspaces.com/";
@@ -44,8 +44,6 @@ class NetworkManager {
             guard let httpresponse = response as? HTTPURLResponse else {
                 return
             }
-            
-            print(httpresponse)
             
             switch(httpresponse.statusCode){
         
@@ -68,18 +66,17 @@ class NetworkManager {
                     print("reponse ok")
                 
                     guard let mimeType = httpresponse.mimeType, mimeType == "application/json" else {
-            
                         completion(nil, .success)
-                        
                         return
                     }
                     
                     let decoder = JSONDecoder()
-                
+//                
                     do {
                         let dataResponse = try decoder.decode(T.self, from: data!)
+                        print( dataResponse )
                         completion(dataResponse, .success)
-                        
+//                        
                     }
                     catch{
                         print(error)
@@ -114,7 +111,7 @@ class NetworkManager {
             guard let response = response as? HTTPURLResponse else {
                 return
             }
-            
+        
             print(response)
             
             switch(response.statusCode){

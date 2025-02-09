@@ -465,7 +465,7 @@ class LargeVideoCell: UITableViewCell {
         
         artistName.text = with.artist
         videoTitle.text = with.title
-        viewCounter.text = "Views: \(String(with.views))"
+        viewCounter.text = "Views: \(String(with.views!))"
         container.setUpImage(url: with.posterURL!, interactable: false)
         
         NSLayoutConstraint.activate([
